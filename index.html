@@ -88,6 +88,17 @@
 @media(max-width:950px){.measure-guide{grid-template-columns:1fr}.measure-card.offline{grid-column:auto}.result-chart-card{padding:17px}}
 @media(max-width:760px){.result-kpis{grid-template-columns:repeat(3,1fr);gap:6px}.result-kpi{padding:11px}.result-kpi strong{font-size:21px}.result-kpi span{font-size:10px}.setup-pairs{grid-template-columns:1fr}.chart-top{align-items:flex-start}.metric-switch{width:100%}.metric-switch button{flex:1;padding:8px 5px}.bar-line{grid-template-columns:45px minmax(0,1fr) 65px}.result-chart-card{padding:12px}}
 
+/* Synchronized benchmark timing methodology, placed before Experimental setup. */
+.timing-method-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px 20px}
+.timing-method-card p{font-size:12.5px;line-height:1.7;color:#526a7c;margin:0 0 12px}
+.timing-method-card p:last-child{margin-bottom:0}
+.timing-method-card b{color:#233e55}
+.timing-method-card code{font-size:11.5px;padding:2px 4px;border-radius:4px;background:#f0f4f8;color:#245b8a}
+.timing-steps{list-style:none;margin:13px 0 14px;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:9px}
+.timing-steps li{padding:9px 12px;font-size:11.5px;font-weight:650;color:#245b8a;background:#f2f7fc;border:1px solid #d9e8f6;border-radius:8px}
+.timing-steps li:not(:last-child):after{content:"→";margin-left:14px;color:#849db3}
+@media(max-width:630px){.timing-method-card{padding:15px}.timing-steps{gap:7px}.timing-steps li{font-size:10.8px;padding:7px 9px}.timing-steps li:not(:last-child):after{margin-left:9px}}
+
 /* Experimental setup: a compact summary and an explicit CKKS configuration table. */
 .experimental-config{margin-top:30px;padding-top:12px;border-top:1px solid var(--line)}
 .config-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:11px}
@@ -280,7 +291,19 @@ compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python pa
     </tbody></table></div>
   <p class="result-footer">Recorded setup boundaries differ, so this table is <b>not</b> an isolated compiler-time comparison. HEIR has faster warm encrypted compute in all six cases; its recorded setup is longer in five of six.</p>
   <div class="result-footline"><b>Correctness:</b> all six paired configurations pass the recorded numerical checks and match reference argmax. HEIR uses the propagated output scale for its primary correctness check.</div>
-  <p class="result-footer"><b>Measurement and interpretation:</b> one warmup + three synchronized timing repetitions; one-time setup excluded from warm online latency. Different CROSS revisions and arithmetic schedules mean this is a comparison of full execution paths, <b>not</b> a same-revision single-pass ablation. The recorded 128-bit uniform-ternary QP-bit ceiling assessment is met at 32K, not 8K/16K.</p>
+  <section class="timing-methodology" aria-labelledby="timing-heading">
+   <h2 class="result-section-title" id="timing-heading">Measurement methodology</h2>
+   <div class="timing-method-card">
+    <p>We measure <b>synchronized host wall-clock latency</b> with Python <code>time.perf_counter()</code>—not CPU execution time or isolated TPU-kernel time.</p>
+    <ol class="timing-steps" aria-label="Timing sequence">
+     <li>Start timer</li><li>Invoke TPU operation</li><li>Wait with <code>block_until_ready()</code></li><li>Stop timer</li>
+    </ol>
+    <p>JAX dispatch is asynchronous, so waiting for completion ensures the timing includes <b>CPU-to-TPU dispatch, TPU computation, and synchronization</b>.</p>
+    <p><b>Benchmark protocol:</b> One warmup and three synchronized repetitions per repeated metric; report the median. One-time preparation and compilation are excluded from warm online latency.</p>
+    <p><b>XProf:</b> Traces come from separate instrumented profiling runs and do not supply the benchmark latency figures.</p>
+   </div>
+  </section>
+  <p class="result-footer"><b>Comparison limitations:</b> Different CROSS revisions and arithmetic schedules mean this is a comparison of full execution paths, <b>not</b> a same-revision single-pass ablation. The recorded 128-bit uniform-ternary QP-bit ceiling assessment is met at 32K, not 8K/16K.</p>
   <section class="experimental-config" id="results-setup" aria-labelledby="setup-heading">
    <h2 class="result-section-title" id="setup-heading">Experimental setup</h2>
    <div class="config-grid">
