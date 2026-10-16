@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="Interactive research walkthrough of HEIR → CROSS → TPU compiled-region optimization.">
+<title>HEIR → CROSS | Interactive Research Walkthrough</title>
+<style>
+:root{--ink:#1b2b3e;--mute:#64748b;--dim:#8190a1;--bg:#f7f9fc;--paper:#fff;--line:#dce4ed;--blue:#2b72b8;--blue-ink:#1e578f;--blue-bg:#ecf4fd;--green:#15826e;--green-ink:#126957;--green-bg:#eaf8f3;--sand:#a77736;--sand-ink:#80591f;--sand-bg:#fcf6e9;--navy:#132b40;--radius:15px;--shadow:0 5px 20px rgba(22,44,70,.045)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,"Segoe UI",-apple-system,BlinkMacSystemFont,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.48;-webkit-font-smoothing:antialiased}button{font:inherit}button, [role="button"]{cursor:pointer}button:focus-visible,[role="button"]:focus-visible{outline:3px solid #88b5ec;outline-offset:3px}code,pre,.mono{font-family:"Cascadia Code","SFMono-Regular",Consolas,"Liberation Mono",monospace}
+.app{display:grid;grid-template-columns:246px minmax(0,1fr);min-height:100vh}
+.sidebar{background:#fff;border-right:1px solid var(--line);padding:31px 18px 26px;display:flex;flex-direction:column;gap:34px;position:sticky;top:0;height:100vh;z-index:4}
+.brand{display:flex;gap:11px;align-items:center;padding:0 10px}.brand-mark{width:36px;height:36px;border-radius:11px;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:14px;font-weight:800;letter-spacing:-1px}.brand strong{font-size:14px;letter-spacing:-.4px}.brand small{display:block;color:var(--mute);font-size:10.5px;letter-spacing:.035em;margin-top:1px}
+.side-label{margin:0 12px 11px;color:#92a0ae;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:800}
+.nav{display:flex;flex-direction:column;gap:6px}.nav button{border:1px solid transparent;background:transparent;text-align:left;padding:12px 11px;border-radius:10px;display:flex;gap:11px;align-items:center;color:#526578;transition:background .15s,color .15s;line-height:1.25}.nav button:hover{background:#f3f7fb}.nav button.active{background:#eaf2f8;border-color:#d9e8f2;color:#173d5d;font-weight:700}.nav-num{width:27px;height:27px;border:1px solid #d6e1eb;border-radius:8px;display:grid;place-items:center;font-size:11px;font-weight:800;flex:none}.nav button.active .nav-num{background:#fff;border-color:#cddfeb}.nav .nav-name{font-size:13px}.nav .nav-sub{display:block;font-size:10.5px;color:#8392a3;font-weight:400;margin-top:3px}
+.sidebar-bottom{margin-top:auto;border-top:1px solid var(--line);padding:19px 11px 0;color:#8391a1;font-size:11px}.sidebar-bottom b{color:#344a61}.side-kbd{display:flex;gap:5px;margin-top:12px;align-items:center}.kbd{background:#f4f7fa;border:1px solid #e1e8ee;border-radius:5px;padding:2px 6px;font-size:10px;color:#6b8094}
+.main{min-width:0}.topbar{height:71px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:rgba(255,255,255,.8);padding:0 clamp(25px,4vw,67px);position:sticky;top:0;z-index:3;backdrop-filter:blur(12px)}.topbar-left{display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#6f8193;font-weight:800}.topbar-left .dot{width:7px;height:7px;border-radius:50%;background:#18a089}.topbar-right{font-size:11px;color:#8190a2}.topbar-right b{color:#344b62}.content{max-width:1450px;margin:0 auto;padding:39px clamp(25px,4vw,67px) 80px}.screen{display:none;animation:fadeUp .24s ease}.screen.active{display:block}@keyframes fadeUp{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.eyebrow{font-size:11px;color:var(--green);font-weight:800;text-transform:uppercase;letter-spacing:.135em;display:flex;align-items:center;gap:10px;margin-bottom:10px}.eyebrow:before{content:"";width:23px;height:2px;background:#1c9e89}h1{font-size:clamp(31px,3vw,43px);line-height:1.15;letter-spacing:-1.4px;margin:0 0 11px;font-weight:750;color:#152a40}h2{font-size:20px;letter-spacing:-.5px;margin:0 0 9px}h3{font-size:16px;letter-spacing:-.25px;margin:0 0 9px}.lede{max-width:850px;color:#63758a;font-size:15px;margin:0 0 25px;line-height:1.65}.meta-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid #dce5ed;padding:5px 10px;border-radius:99px;background:#fff;font-size:11px;color:#617589;font-weight:650}.pill .mini-dot{width:6px;height:6px;border-radius:50%;background:#229985}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#173d60;border:1px solid #173d60;color:#fff;font-size:12px;font-weight:750;border-radius:9px;padding:11px 15px;transition:transform .12s,background .15s;text-decoration:none}.btn:hover{background:#24567e;transform:translateY(-1px)}.btn.secondary{background:#fff;border-color:#ccd9e4;color:#274560}.btn.secondary:hover{background:#f0f5f9}.btn.slim{padding:8px 11px}.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.section-kicker{font-weight:850;text-transform:uppercase;letter-spacing:.09em;font-size:10px;color:#8294a6;margin-bottom:8px}.muted{color:var(--mute)}.fine{font-size:12px;color:#7c8e9f;line-height:1.6}
+/* overview */
+.pipeline-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,.78fr);gap:19px;align-items:start}.pipeline-window{background:#fff;padding:9px;border-radius:16px;border:1px solid var(--line);box-shadow:var(--shadow)}.pipeline-scroller{height:min(68vh,715px);min-height:515px;overflow-y:auto;overflow-x:hidden;border-radius:10px;background:#f5f8fc;scrollbar-color:#c3d0df #f5f8fc;scrollbar-width:thin}.pipeline-scroller svg{display:block;width:100%;height:auto}.pipeline-hit{fill:#007b71;fill-opacity:0;stroke:transparent;stroke-width:2;transition:fill-opacity .15s,stroke .15s}.pipeline-hit:hover,.pipeline-hit:focus{fill-opacity:.085;stroke:#148a7c}.pipeline-hit:focus{outline:none;stroke-width:4}.pipeline-notice{padding:12px 13px 4px;display:flex;justify-content:space-between;align-items:center;gap:6px;color:#728498;font-size:11px}.overview-side{display:grid;gap:15px}.overview-panel{padding:21px}.overview-panel h3{margin:0 0 10px}.overview-panel p{margin:0 0 10px;color:var(--mute);font-size:13px;line-height:1.65}.fivesteps{counter-reset:step;list-style:none;margin:14px 0;padding:0;display:grid;gap:10px}.fivesteps li{counter-increment:step;display:flex;gap:11px;align-items:flex-start;font-size:12px;color:#425a70}.fivesteps li:before{content:counter(step);width:19px;height:19px;background:#e8f6f2;color:var(--green);font-size:10px;border-radius:6px;display:grid;place-items:center;flex:none;font-weight:800}.highlight-tip{border-left:3px solid var(--green);background:#f1faf7;border-radius:0 9px 9px 0;padding:12px 14px;font-size:12px;color:#37685c;line-height:1.6}.phase-caption{display:flex;align-items:center;gap:8px;font-weight:800;font-size:11px;color:var(--navy);margin-bottom:12px}.phase-caption .tinybar{width:4px;height:16px;border-radius:9px;background:var(--green)}
+/* motivation */
+.story{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:22px}.story-card{padding:20px;display:flex;flex-direction:column;gap:10px}.story-index{font-size:11px;letter-spacing:.1em;font-weight:800;color:#9baabc}.story-card h3{font-size:16px;min-height:37px;margin:0}.story-card p{font-size:12px;color:#63778a;line-height:1.64;margin:0}.story-card pre{font-size:11px;background:#f6f8fb;border:1px solid #e9eef4;border-radius:9px;padding:13px;white-space:pre-wrap;word-break:break-word;margin:0;color:#31506b;line-height:1.75;flex:1}.story-card.previous{border-top:3px solid #90a5b8}.story-card.attempt{border-top:3px solid #d5a159}.story-card.solution{border-top:3px solid var(--blue)}.status{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;align-self:flex-start;border:1px solid #dde7ef;border-radius:30px;padding:4px 9px;color:#657d91;background:#f7fafc}.status.warn{background:#fff6e8;color:#9a6933;border-color:#f4dfbe}.status.good{background:#edf6ff;color:#2b689e;border-color:#d8e9fb}
+.insight-panel{margin-top:19px;border-radius:15px;background:#15334b;padding:22px 26px;color:white;display:flex;align-items:center;justify-content:space-between;gap:20px}.insight-panel .section-kicker{color:#a4cee5;margin-bottom:7px}.insight-panel h3{font-size:17px;margin-bottom:6px;color:#fff}.insight-panel p{font-size:12px;max-width:800px;margin:0;color:#c4d5e0;line-height:1.7}.insight-panel .btn{background:#fff;color:#173d60;border-color:#fff;white-space:nowrap}
+.jit-details{margin-top:18px;padding:0;overflow:hidden}.jit-details summary{cursor:pointer;padding:16px 20px;font-size:13px;font-weight:750;display:flex;align-items:center;justify-content:space-between}.jit-details summary:hover{background:#f9fbfd}.jit-details .jit-inner{padding:0 20px 19px;font-size:13px;color:#607588;line-height:1.65}.jit-details .jit-inner b{color:#31465e}
+.jit-primer{padding:15px 19px;margin:0 0 17px;border-left:3px solid #4f88ba;background:#fcfeff}.jit-primer strong{display:block;color:#254964;font-size:13px;margin-bottom:5px}.jit-primer p{margin:0;color:#4e6579;font-size:12px;line-height:1.55}.jit-primer span{display:block;margin-top:6px;color:#73889b;font-size:11.2px}
+/* architecture */
+.architecture-figure{background:white;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:23px 24px 19px;margin-top:19px;overflow:hidden}.figure-header{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:16px}.figure-header strong{font-size:14px}.figure-header span{font-size:11px;color:#8695a5}.phase-h{display:flex;align-items:center;gap:9px;margin:16px 0 12px;color:#7a8d9f;font-size:10.5px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}.phase-h:after{content:"";height:1px;background:#e1e8ef;flex:1}.diagram-box{background:white;border:1px solid #d4e1eb;border-radius:10px;padding:14px 13px;min-width:0;text-align:center;color:var(--ink);transition:border .15s,box-shadow .15s,transform .15s}.diagram-box:hover,.diagram-box:focus-visible{border-color:#83a6c9;box-shadow:0 5px 16px rgba(33,87,130,.13);transform:translateY(-1px)}.diagram-box .box-title{display:block;font-size:13px;font-weight:760;line-height:1.25;letter-spacing:-.1px}.diagram-box .box-sub{display:block;font-size:11px;color:#708396;line-height:1.45;margin-top:6px}.diagram-box .box-code{font-size:10.5px;color:#53728b;line-height:1.6;margin-top:7px;display:block}.diagram-box.outline{border-color:#3f9e8b;background:#f0faf7}.diagram-box.outline .box-title{color:#0d705f}.compiler-track{display:grid;grid-template-columns:1fr 28px 1.3fr 28px 1fr 28px 1.3fr;align-items:center;gap:8px}.arrow-right{height:1.5px;background:#adc0cf;position:relative;display:block}.arrow-right:after{content:"";position:absolute;right:0;top:-4px;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid #adc0cf}.junction{height:26px;display:flex;justify-content:center;align-items:center}.junction:after{content:"";width:1px;height:26px;background:#afc0ce}.split-lede{font-size:11px;color:#8798a8;text-align:center;margin:1px 0 9px}.lanes{display:grid;grid-template-columns:1fr 1fr;gap:17px}.lane{border:1px solid #d9e6f4;background:#f7fbff;border-radius:12px;padding:17px 17px 15px;text-align:center;min-width:0;position:relative}.lane.green{border-color:#d0eadd;background:#f7fdf9}.lane .lane-label{display:flex;justify-content:center;gap:8px;align-items:center;font-size:10px;font-weight:850;letter-spacing:.065em;text-transform:uppercase;color:var(--blue-ink);margin-bottom:9px}.lane.green .lane-label{color:var(--green-ink)}.swatch{height:9px;width:9px;border-radius:3px;background:var(--blue)}.green .swatch{background:var(--green)}.lane strong{display:block;font-size:14px;letter-spacing:-.2px;margin-bottom:7px}.lane p{font-size:11.5px;color:#60798e;line-height:1.5;margin:0 auto;max-width:370px}.lane.green p{color:#567b6d}.lane-code{font-size:10px;color:#2b6799;display:block;margin-top:8px}.lane.green .lane-code{color:#1a7665}.lane button,.artifact{display:block;background:white;border:1px solid #c8ddeb;border-radius:10px;width:100%;text-align:center;cursor:pointer}.lane button{padding:14px 15px}.lane.green button{border-color:#c9e4d5}.lane button:hover{box-shadow:0 4px 16px rgba(35,81,119,.1)}.artifacts{display:grid;grid-template-columns:1fr 1fr;gap:17px}.artifact{font-weight:760;font-size:12px;color:var(--blue-ink);background:var(--blue-bg);border-color:#c9dff3;padding:12px 16px}.artifact.green{background:var(--green-bg);color:var(--green-ink);border-color:#c7e6da}.artifact:hover{filter:brightness(.985)}.two-arrow{display:grid;grid-template-columns:1fr 1fr;gap:17px;margin:0}.two-arrow div{height:22px;display:grid;place-items:center;font-size:20px;color:#7e9bb2;line-height:1}.two-arrow div:last-child{color:#66a890}.subtime{text-align:center;font-size:10px;color:#93a0ae;margin:8px 0 0}.online-box{background:#fdfaf5;border:1px solid #eadcc3;border-radius:12px;padding:17px 18px 19px}.online-flow{display:grid;grid-template-columns:minmax(0,.95fr) 18px minmax(0,1.25fr) 18px minmax(0,1.08fr) 18px minmax(0,1.03fr);align-items:center;gap:9px}.online-step{background:#fff;border:1px solid #e3d5bb;border-radius:9px;padding:13px 10px;text-align:center;min-height:74px}.online-step:hover{border-color:#c99d64;box-shadow:0 4px 13px rgba(111,82,34,.1)}.online-step strong{font-size:11.7px;display:block;line-height:1.35}.online-step small{color:#a1845b;font-size:10px;display:block;margin-top:5px;line-height:1.45}.online-arr{text-align:center;color:#b59a74;font-size:18px}.note{font-size:11px;color:#8697a8;margin-top:13px;padding:10px 12px;border-radius:8px;background:#f7f9fb;line-height:1.6}.legend{display:flex;align-items:center;gap:17px;flex-wrap:wrap;padding:17px 3px 2px;margin-top:5px}.legend b{font-size:11px;margin-right:5px}.legend span{display:inline-flex;align-items:center;gap:7px;font-size:11px;color:#617488}.key-square{width:11px;height:11px;border-radius:3px;background:var(--blue)}.key-square.green{background:var(--green)}.key-square.sand{background:#d8b37e}
+.speaker{display:flex;align-items:flex-start;gap:12px;margin-top:18px;padding:17px 19px;background:#fff;border:1px dashed #ccd9e4;border-radius:13px}.speaker-badge{background:#eef3f7;color:#3c617d;border-radius:8px;font-size:10px;font-weight:800;padding:6px 8px;white-space:nowrap}.speaker p{margin:0;color:#4d637a;font-size:12px;line-height:1.7}.foot{margin-top:26px;border-top:1px solid #e0e7ed;padding-top:16px;font-size:11px;color:#95a4b2;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tooltip #tooltipText{font-size:11px;color:#dae7f0;line-height:1.55}
+.tooltip.step11-tooltip{width:385px;max-width:min(385px, calc(100vw - 28px));padding:17px 18px;background:#173248}
+.tooltip.step11-tooltip b{font-size:13px;margin-bottom:9px}
+.tooltip.step11-tooltip ol{margin:0;padding-left:20px;display:grid;gap:6px}
+.tooltip.step11-tooltip li{font-size:11.6px;line-height:1.45}
+.tooltip.step11-tooltip small{display:none}
+/* interaction */
+.tooltip{position:fixed;z-index:20;max-width:290px;min-width:200px;background:#173248;color:white;padding:12px 14px;border-radius:10px;box-shadow:0 12px 35px rgba(10,30,50,.22);pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .08s,transform .08s}.tooltip.visible{opacity:1;transform:translateY(0)}.tooltip b{display:block;font-size:12px;margin-bottom:5px}.tooltip p{font-size:11px;color:#dae7f0;margin:0;line-height:1.55}.tooltip small{display:block;font-size:10px;color:#90c5e0;margin-top:8px}.scrim{position:fixed;inset:0;background:rgba(14,28,42,.26);z-index:7;opacity:0;pointer-events:none;transition:opacity .2s}.scrim.show{opacity:1;pointer-events:auto}.drawer{position:fixed;top:0;right:0;bottom:0;width:min(510px,100vw);z-index:8;background:#fff;transform:translateX(104%);transition:transform .25s ease;box-shadow:-8px 0 35px rgba(18,36,54,.12);display:flex;flex-direction:column}.drawer.show{transform:translateX(0)}.drawer-head{padding:22px 26px 20px;border-bottom:1px solid #e4ebf1;display:flex;align-items:flex-start;gap:12px;justify-content:space-between}.drawer-tag{font-size:10px;color:#247f70;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.drawer-head h2{margin:6px 0 0;font-size:21px;line-height:1.3}.icon-close{border:1px solid #dbe4ed;background:#f9fbfd;border-radius:8px;width:31px;height:31px;display:grid;place-items:center;font-size:19px;color:#60758b;flex:none}.drawer-body{padding:24px 26px 40px;overflow:auto}.drawer-body p{font-size:13px;color:#587083;line-height:1.75;margin:0 0 17px}.drawer-body h4{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:#8a9baa;margin:25px 0 11px}.drawer-body ol,.drawer-body ul{margin:0;padding-left:21px}.drawer-body li{font-size:12.5px;color:#425b72;line-height:1.7;margin-bottom:7px}.code-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:23px;margin-bottom:7px}.code-head h4{margin:0}.copy{font-size:10px;font-weight:800;background:#f3f7fa;color:#55728a;border:1px solid #dbe5ed;border-radius:6px;padding:6px 9px}.codebox{overflow-x:auto;margin:0;border-radius:10px;background:#192b3b;color:#dbe9f5;padding:17px 16px;font-size:11px;line-height:1.7;white-space:pre;tab-size:2}.drawer-note{background:#f3faf7;border-left:3px solid var(--green);padding:12px 13px;border-radius:0 8px 8px 0;margin-top:20px;color:#4b7668;font-size:12px;line-height:1.65}.drawer-cta{margin-top:18px}.mobile-nav{display:none}
+@media(max-width:1120px){.app{grid-template-columns:205px minmax(0,1fr)}.sidebar{padding-left:11px;padding-right:11px}.content{padding-left:26px;padding-right:26px}.pipeline-layout{grid-template-columns:1fr}.overview-side{grid-template-columns:1fr 1fr}.compiler-track{grid-template-columns:1fr 15px 1.2fr 15px 1fr 15px 1.25fr;gap:5px}.architecture-figure{padding:18px}.online-flow{gap:5px}}
+@media(max-width:760px){.app{display:block}.sidebar{display:none}.mobile-nav{display:flex;gap:4px;overflow:auto;padding:10px 15px;background:white;border-bottom:1px solid var(--line);position:sticky;top:60px;z-index:4}.mobile-nav button{border:none;background:transparent;padding:9px;border-radius:7px;color:#617488;font-size:12px;font-weight:700;white-space:nowrap}.mobile-nav button.active{background:#e8f3f0;color:#127460}.topbar{height:60px;top:0;padding:0 19px}.topbar-right{display:none}.content{padding:27px 16px 55px}h1{font-size:30px}.pipeline-scroller{height:530px;min-height:350px}.overview-side{grid-template-columns:1fr}.story{grid-template-columns:1fr}.insight-panel{flex-direction:column;align-items:flex-start}.architecture-figure{padding:14px 11px}.compiler-track{grid-template-columns:1fr;gap:6px}.arrow-right{height:13px;width:1.5px;justify-self:center}.arrow-right:after{right:-4px;top:auto;bottom:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid #adc0cf;border-bottom:0}.lanes,.artifacts,.two-arrow{gap:8px}.lane{padding:12px 8px}.lane strong{font-size:12px}.lane p{font-size:10px}.lane-code{font-size:9px}.lane button{padding:10px 7px}.online-flow{display:flex;flex-direction:column}.online-step{width:100%;min-height:auto}.online-arr{transform:rotate(90deg)}.speaker{flex-direction:column}.figure-header span{display:none}.drawer-head,.drawer-body{padding-left:18px;padding-right:18px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Minimal presentation layout */
+.pipeline-layout{display:block;max-width:950px;margin:0 auto}
+.pipeline-scroller{height:min(74vh,800px)}
+#view-overview > .btn-row{max-width:950px;margin:16px auto 0}
+#view-motivation .story-card p{line-height:1.55}
+#view-motivation .insight-panel{background:#18364d}
+.sidebar{gap:29px}
+@media(max-width:760px){.pipeline-scroller{height:570px}#view-overview > .btn-row{margin-top:13px}}
+
+/* Only Step 11 uses a hover reveal. The cue is local to that diagram box. */
+.diagram-box.outline{cursor:help;border-width:1.5px;box-shadow:0 0 0 3px rgba(21,130,110,.065)}
+.diagram-box.outline:hover,.diagram-box.outline:focus-visible{border-color:#15826e;box-shadow:0 0 0 4px rgba(21,130,110,.16),0 6px 16px rgba(21,130,110,.10)}
+.hover-cue{display:inline-flex;align-items:center;justify-content:center;gap:5px;margin:10px auto 0;border:1px solid #b8ded1;background:#e2f4ee;border-radius:100px;padding:3px 9px;color:#0c7967;font-size:10px;font-weight:760;white-space:nowrap}
+.hover-cue-symbol{display:inline-grid;place-items:center;width:13px;height:13px;border:1.5px solid #168470;border-radius:50%;font-family:Georgia,serif;font-size:10px;font-weight:900;line-height:1}
+
+/* Results — intentionally compact, with measured boundaries explained up front. */
+.results-wrap{max-width:1120px;margin:0 auto}
+.result-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:17px 0 20px}
+.result-kpi{padding:15px 19px;border-radius:12px;background:#fff;border:1px solid var(--line)}
+.result-kpi strong{font-size:25px;letter-spacing:-.9px;color:#18364d;display:block;line-height:1.2}
+.result-kpi span{font-size:11px;color:#687c8d;display:block;margin-top:5px}
+.result-section-title{margin:27px 0 10px;font-size:16px;font-weight:770;letter-spacing:-.3px}
+.measure-guide{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:12px 0 0}
+.measure-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:19px 20px}
+.measure-card h3{margin:0 0 3px;font-size:15px}
+.measure-card .measure-scope{font-size:11px;color:#7b8b9b;margin:0 0 12px}
+.measure-card ol{counter-reset:measure;display:grid;gap:8px;list-style:none;padding:0;margin:0}
+.measure-card li{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:#455d70;line-height:1.45}
+.measure-card li:before{counter-increment:measure;content:counter(measure);flex:none;display:grid;place-items:center;width:20px;height:20px;border-radius:6px;font-size:10px;font-weight:800;color:#456a89;background:#eef4f9}
+.measure-card .measure-note{font-size:10.5px;color:#7c8c9b;margin:12px 0 0;line-height:1.5}
+.measure-card.offline{grid-column:1/-1;margin-top:12px}
+.setup-pairs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.setup-column{background:#f7fafc;border:1px solid #e7edf3;border-radius:9px;padding:12px 13px}
+.setup-column b{display:block;font-size:11px;color:#344d64;margin-bottom:7px}
+.setup-column ol{gap:7px}.setup-column li{font-size:11px}
+.result-chart-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-top:15px}
+.chart-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:13px;margin-bottom:5px}.chart-top h3{font-size:16px;margin:0}.chart-note{font-size:11px;color:#76899b;margin-bottom:15px}
+.metric-switch{display:flex;background:#eef3f7;border:1px solid #dfe8ef;border-radius:9px;padding:3px;gap:3px}.metric-switch button{border:0;background:transparent;color:#6a7c8e;font-size:11px;font-weight:750;border-radius:7px;padding:8px 12px}.metric-switch button[aria-pressed="true"]{background:#fff;color:#173f5f;box-shadow:0 1px 4px rgba(32,56,76,.1)}
+.results-legend{display:flex;gap:17px;margin:10px 0 12px;color:#627689;font-size:10.5px}.results-legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;background:#9baebe}.results-legend i.heir{background:#2476ba}
+.bar-comparison{display:grid;gap:12px}.bar-group{border-top:1px solid #edf2f6;padding-top:10px}.bar-group:first-child{border-top:0;padding-top:0}
+.bar-heading{display:flex;align-items:center;justify-content:space-between;gap:7px;margin:0 0 6px}.bar-heading strong{font-size:12px;font-weight:760}.bar-heading .speedup{font-size:12px;font-weight:800;color:#0e6a59}
+.bar-line{display:grid;grid-template-columns:52px minmax(0,1fr) 76px;gap:9px;align-items:center;margin:4px 0}.bar-line .bar-label{font-size:10px;color:#75879a}.bar-line .bar-track{height:10px;border-radius:3px;background:#f3f6f9;overflow:hidden}.bar-line .bar-fill{height:100%;border-radius:3px;background:#9baebe;min-width:2px}.bar-line.heir .bar-fill{background:#2476ba}.bar-line .bar-number{font-size:11px;text-align:right;color:#304a61;font-variant-numeric:tabular-nums}
+.setup-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background:#fff;margin-top:13px}
+.setup-table{width:100%;border-collapse:collapse;font-size:12px;text-align:left;white-space:nowrap}.setup-table th{padding:12px 14px;background:#f0f5f8;color:#3b5369;font-size:11px}.setup-table td{padding:10px 14px;border-top:1px solid #e8edf2;color:#3f566b;font-variant-numeric:tabular-nums}.setup-table tr:nth-child(even) td{background:#fafbfd}.setup-table td:first-child{font-weight:720}.setup-table td.positive{color:#875e2a}.setup-table td.negative{color:#0a7564}
+.result-footer{font-size:11px;line-height:1.6;color:#75879a;margin-top:12px}.result-footer b{color:#526a7c}.result-footline{margin-top:20px;padding:13px 16px;background:#f0f6f4;border:1px solid #daebe5;border-radius:11px;font-size:12px;color:#366e5f}
+@media(max-width:950px){.measure-guide{grid-template-columns:1fr}.measure-card.offline{grid-column:auto}.result-chart-card{padding:17px}}
+@media(max-width:760px){.result-kpis{grid-template-columns:repeat(3,1fr);gap:6px}.result-kpi{padding:11px}.result-kpi strong{font-size:21px}.result-kpi span{font-size:10px}.setup-pairs{grid-template-columns:1fr}.chart-top{align-items:flex-start}.metric-switch{width:100%}.metric-switch button{flex:1;padding:8px 5px}.bar-line{grid-template-columns:45px minmax(0,1fr) 65px}.result-chart-card{padding:12px}}
+
+/* Experimental setup: a compact summary and an explicit CKKS configuration table. */
+.experimental-config{margin-top:30px;padding-top:12px;border-top:1px solid var(--line)}
+.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:11px}
+.config-card{border:1px solid var(--line);background:#fff;border-radius:12px;padding:16px 18px;min-width:0}
+.config-card h3{font-size:13px;font-weight:800;color:#2c4b65;margin:0 0 10px}
+.config-facts{display:grid;gap:7px;margin:0}
+.config-facts div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;font-size:12px;line-height:1.42}
+.config-facts dt{font-weight:600;color:#708397;flex-shrink:0}
+.config-facts dd{margin:0;color:#2d4256;text-align:right;font-weight:700}
+.config-table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:12px}
+.config-table th{background:#f0f5f8;font-size:11px;color:#38536b;text-align:right;padding:9px 12px}
+.config-table th:first-child{text-align:left}
+.config-table td{padding:9px 12px;border-top:1px solid #e7edf3;text-align:right;font-variant-numeric:tabular-nums;color:#405a70}
+.config-table td:first-child{text-align:left;font-weight:650;color:#40556b}
+.config-table tr:nth-child(even){background:#fafbfd}
+.config-table .not-met{color:#955429;font-weight:800}.config-table .met{color:#13725b;font-weight:800}
+.config-aside{margin:10px 0 0;color:#77889a;font-size:11px;line-height:1.65}
+.config-extra{margin-top:12px;background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.config-extra summary{font-size:12px;color:#4a657c;font-weight:740;cursor:pointer;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;gap:8px;list-style:none}
+.config-extra summary::-webkit-details-marker{display:none}
+.config-extra summary:after{content:'+';font-size:17px;line-height:1;color:#7f93a7}
+.config-extra[open] summary:after{content:'−'}
+.config-extra[open] summary{border-bottom:1px solid #e7edf3}
+.config-extra-inner{padding:14px 16px 18px;font-size:11.5px;line-height:1.75;color:#52697d;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.config-extra-inner p{margin:0 0 8px}.config-extra-inner strong{color:#2b4860}
+@media(max-width:880px){.config-grid{grid-template-columns:1fr}.config-extra-inner{grid-template-columns:1fr}.config-facts div{flex-wrap:wrap}}
+@media(max-width:480px){.config-card{padding:13px}.config-facts div{display:block}.config-facts dd{text-align:left;margin-top:2px}.config-table{font-size:10.8px}.config-table th,.config-table td{padding:9px 8px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" aria-label="Main navigation">
+  <div class="brand"><div class="brand-mark">H↗C</div><div><strong>HEIR → CROSS</strong></div></div>
+  <div><div class="side-label">Explore</div><nav class="nav">
+    <button class="active" data-view="motivation"><span class="nav-num">01</span><span class="nav-name">Motivation</span></button>
+    <button data-view="overview"><span class="nav-num">02</span><span class="nav-name">Full pipeline</span></button>
+    <button data-view="architecture"><span class="nav-num">03</span><span class="nav-name">Our optimization</span></button>
+    <button data-view="results"><span class="nav-num">04</span><span class="nav-name">Results</span></button>
+  </nav></div>
+
+</aside>
+<div class="main">
+<header class="topbar"><div class="topbar-left"><span class="dot"></span> HEIR → CROSS · TPU</div><div class="topbar-right">Compilation · preparation · inference</div></header>
+<nav class="mobile-nav" aria-label="Mobile navigation"><button class="active" data-view="motivation">01 Motivation</button><button data-view="overview">02 Pipeline</button><button data-view="architecture">03 Optimization</button><button data-view="results">04 Results</button></nav>
+<main class="content" id="mainContent">
+<section class="screen" id="view-overview" aria-labelledby="overviewTitle">
+ <div class="eyebrow">02 / Pipeline</div><h1 id="overviewTitle">HEIR → CROSS → TPU pipeline</h1>
+ <p class="lede">Explore the compilation pipeline. Select Stage 11 to open our optimization.</p>
+ <div class="pipeline-layout">
+   <div class="pipeline-window"><div class="pipeline-scroller" id="pipelineScroll"><svg baseProfile="full" height="2136" version="1.1" viewBox="0 0 1080 2136" width="1080" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"><defs /><rect fill="#F5F8FC" height="2136" width="1080" x="0" y="0" /><rect fill="#067C71" height="78" rx="4" width="8" x="91" y="72" /><text fill="#102A45" font-family="DejaVu Sans, Arial, sans-serif" font-size="42" font-weight="bold" text-anchor="start" x="119" y="102">HEIR → CROSS → TPU</text><text fill="#52657D" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" font-weight="normal" text-anchor="start" x="120" y="139">Compilation &amp; execution pipeline</text><line stroke="#DCE5ED" stroke-width="2" x1="91" x2="989" y1="170" y2="170" /><line stroke="#AABBCB" stroke-width="2.6" x1="540" x2="540" y1="302" y2="318" /><polygon fill="#AABBCB" points="534,313 546,313 540,321" /><rect fill="#CFDCE6" height="105" opacity="0.35" rx="15" width="898" x="93" y="198" /><rect fill="#FFFFFF" height="105" rx="15" stroke="#DBE4EC" stroke-width="1.3" width="898" x="91" y="194" /><rect fill="#3B69AE" height="77" rx="3" width="6" x="91" y="208" /><circle cx="139" cy="245" fill="#3B69AE" r="21" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" x="139" y="252">1</text><text fill="#19314B" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="start" x="183" y="236">PyTorch / torch-mlir frontend</text><text fill="#52657D" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="normal" text-anchor="start" x="183" y="272">PyTorch model → Linalg-on-Tensors MLIR</text><line stroke="#AABBCB" stroke-width="2.6" x1="540" x2="540" y1="434" y2="450" /><polygon fill="#AABBCB" points="534,445 546,445 540,453" /><rect fill="#CFDCE6" height="105" opacity="0.35" rx="15" width="898" x="93" y="330" /><rect fill="#FFFFFF" height="105" rx="15" stroke="#DBE4EC" stroke-width="1.3" width="898" x="91" y="326" /><rect fill="#3B69AE" height="77" rx="3" width="6" x="91" y="340" /><circle cx="139" cy="377" fill="#3B69AE" r="21" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" x="139" y="384">2</text><text fill="#19314B" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="start" x="183" y="368">Linalg preprocessing and optimization</text><text fill="#52657D" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="normal" text-anchor="start" x="183" y="404">Activation canonicalization · linear-op fusion · constant folding · CSE</text><line stroke="#AABBCB" stroke-width="2.6" x1="540" x2="540" y1="566" y2="582" /><polygon fill="#AABBCB" points="534,577 546,577 540,585" /><rect fill="#CFDCE6" height="105" opacity="0.35" rx="15" width="898" x="93" y="462" /><rect fill="#FFFFFF" height="105" rx="15" stroke="#DBE4EC" stroke-width="1.3" width="898" x="91" y="458" /><rect fill="#5867AE" height="77" rx="3" width="6" x="91" y="472" /><circle cx="139" cy="509" fill="#5867AE" r="21" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" x="139" y="516">3</text><text fill="#19314B" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="start" x="183" y="500">Secret arithmetic and SIMD transformations</text><text fill="#52657D" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="normal" text-anchor="start" x="183" y="536">Secret IR · data-oblivious transforms · loop unrolling · rotation optimization</text><line stroke="#AABBCB" stroke-width="2.6" x1="540" x2="540" y1="698" y2="714" /><polygon fill="#AABBCB" points="534,709 546,709 540,717" /><rect fill="#CFDCE6" height="105" opacity="0.35" rx="15" width="898" x="93" y="594" /><rect fill="#FFFFFF" height="105" rx="15" stroke="#DBE4EC" stroke-width="1.3" width="898" x="91" y="590" /><rect fill="#5867AE" height="77" rx="3" width="6" x="91" y="604" /><circle cx="139" cy="641" fill="#5867AE" r="21" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" x="139" y="648">4</text><text fill="#19314B" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="start" x="183" y="632">Ciphertext packing and layout optimization</text><text fill="#52657D" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="normal" text-anchor="start" x="183" y="668">LayoutPropagation → LayoutOptimization → ConvertToCiphertextSemantics</text><line stroke="#AABBCB" stroke-width="2.6" x1="540" x2="540" y1="830" y2="846" /><polygon fill="#AABBCB" points="534,841 546,841 540,849" /><rect fill="#CFDCE6" height="105" opacity="0.35" rx="15" width="898" x="93" y="726" /><rect fill="#FFFFFF" height="105" rx="15" stroke="#DBE4EC" stroke-width="1.3" width="898" x="91" y="722" /><rect fill="#5867AE" height="77" rx="3" width="6" x="91" y="736" /><circle cx="139" cy="773" fill="#5867AE" r="21" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" x="139" y="780">5</text><text fill="#19314B" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="start" x="183" y="764">CKKS ciphertext management</text><text fill="#52657D" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="normal" text-anchor="start" x="183" y="800">Rescale · modulus switching · relinearization · level management</text><line stroke="#AABBCB" stroke-width="2.6" x1="540" x2="540" y1="962" y2="978" /><polygon fill="#AABBCB" points="534,973 546,973 540,981" /><rect fill="#CFDCE6" height="105" opacity="0.35" rx="15" width="898" x="93" y="858" /><rect fill="#FFFFFF" height="105" rx="15" stroke="#DBE4EC" stroke-width="1.3" width="898" x="91" y="854" /><rect fill="#5867AE" height="77" rx="3" width="6" x="91" y="868" /><circle cx="139" cy="905" fill="#5867AE" r="21" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" x="139" y="912">6</text><text fill="#19314B" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="start" x="183" y="896">CKKS parameter and scale selection</text><text fill="#52657D" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="normal" text-anchor="start" x="183" y="932">GenerateParamCKKS → PopulateScaleCKKS</text><line stroke="#AABBCB" stroke-width="2.6" x1="540" x2="540" y1="1094" y2="1110" /><polygon fill="#AABBCB" points="534,1105 546,1105 540,1113" /><rect fill="#CFDCE6" height="105" opacity="0.35" rx="15" width="898" x="93" y="990" /><rect fill="#FFFFFF" height="105" rx="15" stroke="#DBE4EC" stroke-width="1.3" width="898" x="91" y="986" /><rect fill="#5867AE" height="77" rx="3" width="6" x="91" y="1000" /><circle cx="139" cy="1037" fill="#5867AE" r="21" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" x="139" y="1044">7</text><text fill="#19314B" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="start" x="183" y="1028">Scheme lowering and preprocessing</text><text fill="#52657D" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="normal" text-anchor="start" x="183" y="1064">SecretToCKKS → AnnotatePlaintextLevel → SplitPreprocessing → cleanup</text><line stroke="#AABBCB" stroke-width="2.6" x1="540" x2="540" y1="1226" y2="1242" /><polygon fill="#AABBCB" points="534,1237 546,1237 540,1245" /><rect fill="#CFDCE6" height="105" opacity="0.35" rx="15" width="898" x="93" y="1122" /><rect fill="#FFFFFF" height="105" rx="15" stroke="#DBE4EC" stroke-width="1.3" width="898" x="91" y="1118" /><rect fill="#2B8191" height="77" rx="3" width="6" x="91" y="1132" /><circle cx="139" cy="1169" fill="#2B8191" r="21" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" x="139" y="1176">8</text><text fill="#19314B" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="start" x="183" y="1160">CKKS → LWE lowering</text><text fill="#52657D" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="normal" text-anchor="start" x="183" y="1196">ckks-to-lwe</text><line stroke="#AABBCB" stroke-width="2.6" x1="540" x2="540" y1="1358" y2="1374" /><polygon fill="#AABBCB" points="534,1369 546,1369 540,1377" /><rect fill="#CFDCE6" height="105" opacity="0.35" rx="15" width="898" x="93" y="1254" /><rect fill="#FFFFFF" height="105" rx="15" stroke="#DBE4EC" stroke-width="1.3" width="898" x="91" y="1250" /><rect fill="#2B8191" height="77" rx="3" width="6" x="91" y="1264" /><circle cx="139" cy="1301" fill="#2B8191" r="21" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" x="139" y="1308">9</text><text fill="#19314B" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="start" x="183" y="1292">LWE → JaxiteWord lowering</text><text fill="#52657D" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="normal" text-anchor="start" x="183" y="1328">lwe-to-jaxiteword</text><line stroke="#AABBCB" stroke-width="2.6" x1="540" x2="540" y1="1490" y2="1506" /><polygon fill="#AABBCB" points="534,1501 546,1501 540,1509" /><rect fill="#CFDCE6" height="105" opacity="0.35" rx="15" width="898" x="93" y="1386" /><rect fill="#FFFFFF" height="105" rx="15" stroke="#DBE4EC" stroke-width="1.3" width="898" x="91" y="1382" /><rect fill="#2B8191" height="77" rx="3" width="6" x="91" y="1396" /><circle cx="139" cy="1433" fill="#2B8191" r="21" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" x="139" y="1440">10</text><text fill="#19314B" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="start" x="183" y="1424">JaxiteWord backend preparation</text><text fill="#52657D" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="normal" text-anchor="start" x="183" y="1460">AnnotateEncodeRescaleLevels · ConfigureCryptoContext</text><line stroke="#AABBCB" stroke-width="2.6" x1="540" x2="540" y1="1622" y2="1638" /><polygon fill="#AABBCB" points="534,1633 546,1633 540,1641" /><rect fill="#CFDCE6" height="105" opacity="0.35" rx="15" width="898" x="93" y="1518" /><rect fill="#E9FBF5" height="105" rx="15" stroke="#067C71" stroke-width="3" width="898" x="91" y="1514" /><rect fill="#067C71" height="77" rx="3" width="6" x="91" y="1528" /><circle cx="139" cy="1565" fill="#067C71" r="21" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" x="139" y="1572">11</text><text fill="#0B554C" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="start" x="183" y="1556">OutlineCompiledRegions</text><text fill="#416073" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="normal" text-anchor="start" x="183" y="1592">Group compatible homomorphic operations → CompiledRegionOp</text><rect fill="#067C71" height="30" rx="15" width="145" x="821" y="1528" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" x="894" y="1549">OUR NEW PASS</text><line stroke="#AABBCB" stroke-width="2.6" x1="540" x2="540" y1="1754" y2="1770" /><polygon fill="#AABBCB" points="534,1765 546,1765 540,1773" /><rect fill="#CFDCE6" height="105" opacity="0.35" rx="15" width="898" x="93" y="1650" /><rect fill="#FFFFFF" height="105" rx="15" stroke="#DBE4EC" stroke-width="1.3" width="898" x="91" y="1646" /><rect fill="#2B8191" height="77" rx="3" width="6" x="91" y="1660" /><circle cx="139" cy="1697" fill="#2B8191" r="21" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" x="139" y="1704">12</text><text fill="#19314B" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="start" x="183" y="1688">JaxiteWord Python emitter</text><text fill="#52657D" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="normal" text-anchor="start" x="183" y="1724">JaxiteWordEmitter.cpp → generated Python with compiled JAX region</text><line stroke="#AABBCB" stroke-width="2.6" x1="540" x2="540" y1="1886" y2="1902" /><polygon fill="#AABBCB" points="534,1897 546,1897 540,1905" /><rect fill="#CFDCE6" height="105" opacity="0.35" rx="15" width="898" x="93" y="1782" /><rect fill="#FFFFFF" height="105" rx="15" stroke="#DBE4EC" stroke-width="1.3" width="898" x="91" y="1778" /><rect fill="#8362A3" height="77" rx="3" width="6" x="91" y="1792" /><circle cx="139" cy="1829" fill="#8362A3" r="21" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" x="139" y="1836">13</text><text fill="#19314B" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="start" x="183" y="1820">Offline preparation and JAX compilation</text><text fill="#52657D" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="normal" text-anchor="start" x="183" y="1856">Prepare plaintexts and evaluators → jax.jit / XLA → prepared plan</text><rect fill="#CFDCE6" height="105" opacity="0.35" rx="15" width="898" x="93" y="1914" /><rect fill="#FFFFFF" height="105" rx="15" stroke="#DBE4EC" stroke-width="1.3" width="898" x="91" y="1910" /><rect fill="#8362A3" height="77" rx="3" width="6" x="91" y="1924" /><circle cx="139" cy="1961" fill="#8362A3" r="21" /><text fill="#FFFFFF" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" x="139" y="1968">14</text><text fill="#19314B" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="start" x="183" y="1952">Warm online encrypted inference</text><text fill="#52657D" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="normal" text-anchor="start" x="183" y="1988">plan.execute() → validate metadata → CROSS raw-array kernels → TPU → wrap output</text><line stroke="#DCE5ED" stroke-width="2" x1="91" x2="989" y1="2043" y2="2043" /><text fill="#66788B" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="normal" text-anchor="start" x="91" y="2079">High-level pipeline · Repeated canonicalization and CSE cleanup passes are summarized.</text><g id="interactive-pipeline-hotspots"><rect class="pipeline-hit" data-pipeline="11" x="91" y="1514" width="898" height="105" rx="15" tabindex="0" role="button" aria-label="Open our optimization at Step 11" /></g></svg></div><div class="pipeline-notice"><span>Scroll the pipeline · Select Stage 11 to open our optimization</span><button class="btn secondary slim" id="jump11">Jump to Step 11 ↓</button></div></div>
+ </div>
+ </section>
+<section class="screen active" id="view-motivation" aria-labelledby="motivationTitle">
+ <div class="eyebrow">01 / Motivation</div><h1 id="motivationTitle">Why compiled regions?</h1>
+ <p class="lede">The original HEIR-generated Python called CROSS public APIs. Simply wrapping that path in <code>jax.jit</code> did not give the desired improvement because array arithmetic remained mixed with Python-side orchestration and metadata handling.</p>
+
+ <div class="card jit-primer">
+   <strong>What does JAX actually compile?</strong>
+   <p>JAX traces a <b>Python function containing supported array operations</b>, lowers that computation through XLA, and compiles a reusable executable for the target device. It does not automatically compile arbitrary Python object handling or merge separately compiled calls.</p>
+   <span>Our goal: expose one connected raw-array function to JAX/XLA, rather than JIT-wrapping the original CROSS public-API orchestration.</span>
+ </div>
+ <div class="story">
+   <article class="card story-card previous"><span class="story-index">01 · ORIGINAL EXECUTION</span><h3>Public CROSS APIs</h3><span class="status">Object-oriented operation calls</span><pre>rotated = ctx.he_rot[level, 1].rotate(ct)
+product = ctx.ptct_mul[level].mul(rotated, pt)
+result  = ctx.he_add[level].add(product, ct2)</pre><p>These calls operate on CROSS ciphertext objects. Their surrounding Python can perform evaluator lookup, validations, metadata updates, and wrapper construction.</p></article>
+   <article class="card story-card attempt"><span class="story-index">02 · INITIAL EXPERIMENT</span><h3>Wrap the existing path in JIT?</h3><span class="status warn">Insufficient performance improvement</span><pre>def original_model(ct, pt, ct2):
+    ...  # Public API operations
+
+compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python path did not achieve the desired optimization in our experiments. JAX cannot automatically turn arbitrary Python-side orchestration into efficient fused XLA computation.</p></article>
+   <article class="card story-card solution"><span class="story-index">03 · ARCHITECTURAL INSIGHT</span><h3>Expose one raw-array computation</h3><span class="status good">Our compiled-region approach</span><pre>def raw_region(ct_array, args):
+    a = rot._rotate_array(ct_array, ...)
+    b = mul._mul_array(a, ...)
+    c = add._add_array(b, ...)
+    return c</pre><p>Move reusable preparation and metadata bookkeeping offline. Give JAX/XLA a connected array computation to trace and compile together.</p></article>
+ </div>
+ <div class="insight-panel"><div><h3>Our approach</h3><p>Use <code>OutlineCompiledRegions</code> to select connected JaxiteWord operations; generate one raw-array function and separate offline metadata preparation. JAX requires a traceable function, not an MLIR region.</p></div><button class="btn" data-view="overview">View the pipeline →</button></div>
+</section>
+<section class="screen" id="view-architecture" aria-labelledby="architectureTitle">
+ <div class="eyebrow">03 / Our contribution</div><h1 id="architectureTitle">Inside the compiled-region optimization.</h1>
+ <p class="lede">Compiler transformation → generated Python → offline preparation → online inference.</p>
+ <div class="architecture-figure">
+   <div class="figure-header"><strong>Compiled-region execution</strong></div>
+   <div class="phase-h">A · Compiler and emitter</div>
+   <div class="compiler-track">
+     <button class="diagram-box" data-detail="jaxite-ir"><span class="box-title">JaxiteWord IR</span><span class="box-sub">Individual homomorphic operations</span></button><span class="arrow-right"></span>
+     <button class="diagram-box outline" data-detail="outline" aria-label="Step 11 OutlineCompiledRegions. Hover or focus to see the five actions of the pass."><span class="box-title">Step 11 · OutlineCompiledRegions</span><span class="box-sub">Group connected operations · define region I/O</span><span class="hover-cue"><span class="hover-cue-symbol" aria-hidden="true">i</span> Hover for steps</span></button><span class="arrow-right"></span>
+     <button class="diagram-box" data-detail="compiled-region"><span class="box-title">CompiledRegionOp</span><span class="box-sub">Explicit compilation boundary</span></button><span class="arrow-right"></span>
+     <button class="diagram-box" data-detail="emitter"><span class="box-title">Step 12 · JaxiteWordEmitter</span><span class="box-sub">Generate Python source</span></button>
+   </div>
+   <div class="junction"></div><div class="split-lede">Two complementary parts of generated Python</div>
+   <div class="lanes">
+     <div class="lane"><div class="lane-label"><i class="swatch"></i> BLUE PATH · COMPUTATION</div><button data-detail="raw"><strong>Generate raw-array computation</strong><p>Translate JaxiteWord operations into connected CROSS <code>_array</code> calls.</p><span class="lane-code mono">_mul_array() · _rotate_array() · _rescale_array()</span></button></div>
+     <div class="lane green"><div class="lane-label"><i class="swatch"></i> GREEN PATH · METADATA</div><button data-detail="metadata"><strong>Generate metadata expressions</strong><p>Follow SSA dependencies; derive scale/NSD, track level/component count, emit checks.</p><span class="lane-code mono">scaleOf() · nsdOf() · elementsOf()</span></button></div>
+   </div>
+   <div class="phase-h">B · Offline preparation / generated Python</div>
+   <div class="lanes">
+     <div class="lane"><div class="lane-label"><i class="swatch"></i> BUILD EXECUTABLE</div><button data-detail="offline-array"><strong>Prepare, trace, lower, compile</strong><p>Prepare plaintexts, evaluators and rotation state; compile the region using JAX/XLA.</p><span class="lane-code mono">jax.jit(...).lower(...).compile()</span></button></div>
+     <div class="lane green"><div class="lane-label"><i class="swatch"></i> EVALUATE METADATA</div><button data-detail="offline-meta"><strong>Validate and build templates</strong><p>Evaluate generated expressions against input specs, check compatibility and prepare output metadata.</p><span class="lane-code mono">_prepare_compiled_output_template(...)</span></button></div>
+   </div>
+   <div class="two-arrow"><div>↓</div><div>↓</div></div>
+   <div class="artifacts"><button class="artifact" data-detail="cache">Cached JAX executable + prepared operands</button><button class="artifact green" data-detail="template">Prepared ciphertext output templates</button></div>
+   <div class="phase-h">C · Warm online inference</div>
+   <div class="online-box"><div class="online-flow">
+     <button class="online-step" data-detail="validate"><strong>Validate new ciphertext</strong><small>Match prepared input specs</small></button><span class="online-arr">→</span>
+     <button class="online-step" data-detail="execute"><strong>Execute compiled function</strong><small>Pass <code>ct.polynomial</code></small></button><span class="online-arr">→</span>
+     <button class="online-step" data-detail="wrap"><strong>Wrap result using template</strong><small>Reuse prepared metadata</small></button><span class="online-arr">→</span>
+     <button class="online-step" data-detail="output"><strong>Output CROSS ciphertext</strong><small>Encrypted payload + metadata</small></button>
+   </div></div>
+   <div class="legend"><b>KEY</b><span><i class="key-square"></i> Blue — polynomial-array computation</span><span><i class="key-square green"></i> Green — CKKS metadata handling</span><span><i class="key-square sand"></i> Beige — online inference</span></div>
+   
+ </div>
+ <div class="btn-row"><button class="btn secondary" data-view="overview">← Full pipeline</button><button class="btn" data-view="results">View results →</button></div>
+</section>
+
+<section class="screen" id="view-results" aria-labelledby="resultsTitle">
+ <div class="results-wrap">
+  <div class="eyebrow">04 / Results</div><h1 id="resultsTitle">Native CROSS vs. HEIR Prepared</h1>
+  <p class="lede">Six model/ring configurations · Google TPU v6e-8 · October 13, 2026. Measurements are medians after one warmup and three synchronized repetitions.</p>
+  <div class="result-kpis">
+   <div class="result-kpi"><strong>3.09×</strong><span>Peak warm compute speedup</span></div>
+   <div class="result-kpi"><strong>1.39×</strong><span>Peak client-to-client speedup</span></div>
+   <div class="result-kpi"><strong>6 / 6</strong><span>Correctness checks passed</span></div>
+  </div>
+  <h2 class="result-section-title">Online measurement boundaries</h2>
+  <div class="measure-guide">
+   <article class="measure-card">
+    <h3>Warm encrypted computation</h3>
+    <p class="measure-scope">Time to execute the already-compiled encrypted neural network, including CPU-to-TPU dispatch and waiting for completion.</p>
+    <ol>
+     <li>Execute encrypted linear layers: rotations, ciphertext–plaintext multiplications, and additions.</li>
+     <li>Compute square activations and add encrypted-model biases.</li>
+     <li>Perform required CKKS transformations such as rescaling and relinearization.</li>
+    </ol>
+    <p class="measure-note"><b>Excludes</b> input packing, encryption, decryption, output extraction, and offline preparation/compilation. Native uses <code>mapping._compiled</code>; HEIR uses <code>plan.execute_raw</code>. This is not a device-kernel-only measurement.</p>
+   </article>
+   <article class="measure-card">
+    <h3>Client-to-client online latency</h3>
+    <p class="measure-scope">One complete inference request after one-time preparation</p>
+    <ol>
+     <li><b>Pack input:</b> arrange the input into the encrypted model's required layout.</li>
+     <li><b>Encode + encrypt:</b> encode packed values into CKKS slots and encrypt them.</li>
+     <li><b>Encrypted forward pass:</b> execute the whole prepared network.</li>
+     <li><b>Decrypt:</b> decrypt the encrypted output into plaintext slots.</li>
+     <li><b>Extract output:</b> recover the model's output vector from decoded slots.</li>
+    </ol>
+    <p class="measure-note">One-time initialization and compilation are <b>not</b> included. Independently measured per-stage medians are not additive.</p>
+   </article>
+  </div>
+
+
+
+  <h2 class="result-section-title">Online performance</h2>
+  <div class="result-chart-card">
+    <div class="chart-top"><h3>Native vs. HEIR latency</h3>
+      <div class="metric-switch" role="group" aria-label="Select latency metric">
+        <button type="button" data-result-metric="warm" aria-pressed="true">Warm encrypted compute</button>
+        <button type="button" data-result-metric="online" aria-pressed="false">Client-to-client</button>
+      </div>
+    </div>
+    <div class="chart-note" id="resultChartDescription">Whole-network encrypted forward pass · milliseconds · lower is better</div>
+    <div class="results-legend"><span><i></i>Native CROSS</span><span><i class="heir"></i>HEIR Prepared</span><span>Speedup = Native ÷ HEIR</span></div>
+    <div id="resultBars" class="bar-comparison" role="img" aria-label="Native and HEIR latency comparison for six configurations"></div>
+  </div>
+  <h2 class="result-section-title">Offline setup comparison</h2>
+   <article class="measure-card offline">
+    <h3>Offline preparation cost</h3>
+    <p class="measure-scope">One-time setup before warm online requests. Native and HEIR record different work.</p>
+    <div class="setup-pairs">
+     <div class="setup-column"><b>Native CROSS</b><ol>
+      <li>Build mapping plan: trace, vectorize and pack the model computation.</li>
+      <li>Materialize mapping: initialize required CKKS resources/constants and produce the compiled program.</li>
+     </ol></div>
+     <div class="setup-column"><b>HEIR Prepared</b><ol>
+      <li>Crypto initialization: configure context and generate public/evaluation keys.</li>
+      <li>Preprocess model inputs and reusable plaintext/constants.</li>
+      <li>Prepare the compiled plan, evaluators and templates; lower/compile the JAX raw-array function.</li>
+     </ol></div>
+    </div>
+    <p class="measure-note">The reported HEIR preparation/compile duration covers the complete preparation function, <b>not isolated XLA compiler time</b>. First encryption and first raw execution were recorded separately.</p>
+   </article>
+  <div class="setup-table-wrap"><table class="setup-table">
+    <thead><tr><th>Model / ring</th><th>Native (s)</th><th>HEIR (s)</th><th>HEIR − Native (s)</th></tr></thead>
+    <tbody>
+    <tr><td>AlexNet-Tiny 8K</td><td>276.58</td><td>601.25</td><td class="positive">+324.67</td></tr>
+    <tr><td>AlexNet-Tiny 16K</td><td>463.61</td><td>700.24</td><td class="positive">+236.62</td></tr>
+    <tr><td>AlexNet-Tiny 32K</td><td>1,046.81</td><td>829.51</td><td class="negative">−217.30</td></tr>
+    <tr><td>LeNet 8K</td><td>359.74</td><td>1,615.41</td><td class="positive">+1,255.67</td></tr>
+    <tr><td>LeNet 16K</td><td>624.72</td><td>1,743.97</td><td class="positive">+1,119.24</td></tr>
+    <tr><td>LeNet 32K</td><td>1,387.46</td><td>1,932.95</td><td class="positive">+545.48</td></tr>
+    </tbody></table></div>
+  <p class="result-footer">Recorded setup boundaries differ, so this table is <b>not</b> an isolated compiler-time comparison. HEIR has faster warm encrypted compute in all six cases; its recorded setup is longer in five of six.</p>
+  <div class="result-footline"><b>Correctness:</b> all six paired configurations pass the recorded numerical checks and match reference argmax. HEIR uses the propagated output scale for its primary correctness check.</div>
+  <p class="result-footer"><b>Measurement and interpretation:</b> one warmup + three synchronized timing repetitions; one-time setup excluded from warm online latency. Different CROSS revisions and arithmetic schedules mean this is a comparison of full execution paths, <b>not</b> a same-revision single-pass ablation. The recorded 128-bit uniform-ternary QP-bit ceiling assessment is met at 32K, not 8K/16K.</p>
+  <section class="experimental-config" id="results-setup" aria-labelledby="setup-heading">
+   <h2 class="result-section-title" id="setup-heading">Experimental setup</h2>
+   <div class="config-grid">
+    <div class="config-card">
+     <h3>System</h3>
+     <dl class="config-facts">
+      <div><dt>Accelerator</dt><dd>Google TPU v6e-8 · 8 devices (2 × 4)</dd></div>
+      <div><dt>Host</dt><dd>AMD EPYC 9B14 · 180 vCPUs</dd></div>
+      <div><dt>Memory</dt><dd>≈ 1,417 GiB</dd></div>
+      <div><dt>Runtime</dt><dd>v2-alpha-tpuv6e · europe-west4-a</dd></div>
+     </dl>
+    </div>
+    <div class="config-card">
+     <h3>Software and workloads</h3>
+     <dl class="config-facts">
+      <div><dt>Python · JAX/jaxlib</dt><dd>3.10.12 · 0.6.2</dd></div>
+      <div><dt>libtpu · NumPy</dt><dd>0.0.17 · 2.2.6</dd></div>
+      <div><dt>Models</dt><dd>AlexNet-Tiny · LeNet</dd></div>
+      <div><dt>Rings</dt><dd>8K · 16K · 32K</dd></div>
+     </dl>
+    </div>
+   </div>
+   <div class="config-card" style="margin-top:12px;padding:0;overflow:hidden">
+    <h3 style="padding:14px 17px 0;margin-bottom:12px">CKKS / FHE parameters</h3>
+    <div style="overflow-x:auto"><table class="config-table" aria-label="CKKS parameter comparison across ring sizes">
+     <thead><tr><th>Parameter</th><th>8K</th><th>16K</th><th>32K</th></tr></thead>
+     <tbody>
+      <tr><td>Ring degree N</td><td>8,192</td><td>16,384</td><td>32,768</td></tr>
+      <tr><td>CKKS slots (N/2)</td><td>4,096</td><td>8,192</td><td>16,384</td></tr>
+      <tr><td>Q / P towers</td><td>18 / 4</td><td>18 / 4</td><td>18 / 4</td></tr>
+      <tr><td>Composite degree / max logical level</td><td>2 / 8</td><td>2 / 8</td><td>2 / 8</td></tr>
+      <tr><td>Decomposition dnum / α</td><td>5 / 4</td><td>5 / 4</td><td>5 / 4</td></tr>
+      <tr><td>Polynomial layout (r × c)</td><td>64 × 128</td><td>128 × 128</td><td>128 × 256</td></tr>
+      <tr><td>Total QP bits</td><td>665</td><td>665</td><td>665</td></tr>
+      <tr><td>128-bit QP-bit ceiling*</td><td>218</td><td>438</td><td>881</td></tr>
+      <tr><td>Meets stated ceiling?*</td><td class="not-met">No</td><td class="not-met">No</td><td class="met">Yes</td></tr>
+     </tbody>
+    </table></div>
+   </div>
+   <p class="config-aside">Native CROSS and HEIR Prepared use the same fundamental CKKS parameters and identical ordered Q/P prime chains within each ring size. *The QP-bit ceilings reflect the report’s OpenFHE 1.5.1 128-bit uniform-ternary assessment, not independent security certification. Under that assessment, 8K and 16K do not meet the stated ceiling.</p>
+   <details class="config-extra">
+    <summary>Additional setup and comparison controls</summary>
+    <div class="config-extra-inner">
+     <div><p><strong>Cryptographic settings.</strong> Ring-specific integer scale parameters are 1,152,763,181,911,621,633 (8K), 1,152,534,504,430,796,801 (16K), and 1,151,303,352,054,251,521 (32K), all near 2<sup>60</sup>. σ ≈ 3.19; noise multiplier = 1; uniform-ternary secret; Barrett arithmetic; uint32 payloads; JAX x64 enabled.</p><p><strong>Matched environment.</strong> Separate otherwise matching TPU VMs; same Python, JAX, jaxlib, libtpu, NumPy and SciPy versions, host CPU, memory and kernel.</p></div>
+     <div><p><strong>Workloads.</strong> AlexNet-Tiny: input 3 × 16 × 16; LeNet: input 1 × 28 × 28. Both use batch 1, float32 inputs, square activations and four linear + four bias + three square operations. Paired inputs and packaged model weights were checked for correspondence.</p><p><strong>Limitations.</strong> Native and HEIR use different CROSS revisions, BSGS choices and rescale placement. These timings compare full execution implementations—not an isolated effect of the outlining pass. One warmup + three synchronized repetitions.</p></div>
+    </div>
+   </details>
+  </section>
+
+  <div class="btn-row"><button class="btn secondary" data-view="architecture">← Our optimization</button></div>
+ </div>
+</section>
+</main></div></div>
+<div class="tooltip" id="tooltip" role="status" aria-hidden="true"><b id="tooltipTitle"></b><div id="tooltipText"></div><small>Click for implementation details →</small></div>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-modal="true" role="dialog" aria-labelledby="drawerTitle" aria-hidden="true"><div class="drawer-head"><div><span class="drawer-tag" id="drawerTag">Implementation detail</span><h2 id="drawerTitle"></h2></div><button class="icon-close" id="closeDrawer" aria-label="Close detail">×</button></div><div class="drawer-body" id="drawerBody"></div></aside>
+<script>
+const DATA = {
+  'jaxite-ir':{tag:'Input IR',title:'Individual JaxiteWord operations',summary:'The pass receives JaxiteWord operations already lowered from CKKS through LWE. Ciphertext values retain lwe::LWECiphertextType.',points:['Operations are represented in MLIR SSA form.','The outlining pass operates on functions with a single body block.','No arrays are extracted and JAX is not invoked at this stage.'],code:'%a = Rot(%ct, 1)\n%b = MulPlain(%a, %pt)\n%c = Add(%b, %ct2)\n%d = ModReduce(%c)',codeLabel:'Illustrative IR (not literal MLIR syntax)'},
+  outline:{tag:'Step 11 · C++ compiler pass',title:'OutlineCompiledRegions',summary:'Our pass finds eligible, ciphertext-connected JaxiteWord operations and replaces their original positions with a region that preserves the computation and its boundaries.',points:['Identify eligible JaxiteWord operations.','Group operations connected through ciphertext dependencies (using roots and produced values).','Determine external region inputs and externally used outputs.','Create CompiledRegionOp; clone selected operations inside it and add CompiledRegionYieldOp.','Redirect external uses to region outputs and erase the original operations.'],code:'bool isEligible(Operation* op) {\n  return isa<MulPlainOp, RotOp, AddOp, AddPlainOp,\n             ModReduceOp, LevelReduceOp,\n             MulNoRelinOp, RelinOp, MulOp, SquareOp>(op);\n}',codeLabel:'Source: OutlineCompiledRegions.cpp',note:'This pass does not calculate CKKS metadata, extract polynomial arrays, or call JAX.',cta:{label:'View detailed architecture',view:'architecture'}},
+  'compiled-region':{tag:'Compiler IR construct',title:'CompiledRegionOp',summary:'A nested MLIR region groups the selected JaxiteWord operations behind an explicit input/output interface.',points:['Block arguments represent external inputs.','Cloned operations preserve the SSA dependence structure.','CompiledRegionYieldOp identifies live outputs.','The Python emitter uses this region as the compilation boundary.'],code:'CompiledRegionOp(%ct, %pt, %ct2) {\n  %a = Rot(%ct)\n  %b = MulPlain(%a, %pt)\n  %c = Add(%b, %ct2)\n  CompiledRegionYieldOp(%c)\n}',codeLabel:'Conceptual region (not literal MLIR)'},
+  emitter:{tag:'Step 12 · C++ emitter',title:'JaxiteWordEmitter',summary:'The emitter sees CompiledRegionOp and generates Python containing one connected raw-array function plus operand preparation, metadata expressions, cache lookup and compilation logic.',points:['Translates selected operations to CROSS _array methods.','Builds scale/NSD expressions from SSA dependencies using helper functions.','Emits compatibility checks and output-template expressions.','Generates explicit jax.jit(...).lower(...).compile() code.'],code:'printOperation(CompiledRegionOp op)\n\n// Generates a Python function such as:\ndef _compiled_region_0_raw(\n    _region_0_arg_0, _region_0_static_args_in):\n    ...',codeLabel:'Handler + excerpt from generated Python',note:'C++ code generation and offline Python execution are separate moments. The emitter writes metadata expressions; it does not evaluate their runtime values.'},
+  raw:{tag:'Blue path · code generation',title:'Raw-array Python function',summary:'Each selected JaxiteWord homomorphic operation becomes a CROSS lower-level _array call. Intermediates remain raw arrays inside one traceable function.',points:['The emitter preserves operation dependencies.','The input parameter is supplied with ct.polynomial when Python executes.','Prepared plaintext payloads and rotation state are passed separately.','The compiled function does not rebuild full ciphertext wrappers between operations.'],code:'_region_0_value_470 = _region_0_evaluator_0._mul_array(\n    _region_0_arg_0, _region_0_prepared_0)\n_region_0_value_471 = _region_0_evaluator_1._rotate_array(\n    _region_0_arg_0,\n    _region_0_evaluator_1_state_0,\n    _region_0_evaluator_1_state_1,\n    _region_0_evaluator_1_state_2)\n_region_0_value_472 = _region_0_evaluator_2._mul_array(\n    _region_0_value_471, _region_0_prepared_1)',codeLabel:'Generated Python, lines 8957–8959 (reformatted)'},
+  metadata:{tag:'Green path · code generation',title:'Metadata expression generation',summary:'The emitter follows SSA producers to derive expressions for the output scale and noise-scale degree (NSD), while tracking levels/component counts and emitting compatibility checks.',points:['scaleOf(value) and nsdOf(value) recursively follow operation dependencies when needed.','The emitter retains generated expression strings; numerical values are not known to C++ code generation.','elementsOf(value) tracks ciphertext component counts.','Generated checks can validate addition scale/NSD compatibility.'],code:'// Conceptual emitted Python:\noutput_scale = _compiled_scale_mul(ct_scale, pt_scale)\noutput_nsd = ct_nsd + 1\n\n// Expressions evaluate later, during preparation.',codeLabel:'Illustrative emitted expressions',note:'Known limitation: the generated HEIR path preserves NSD across explicit rescale, matching CROSS public-operation behavior; native CROSS Mapping uses a different decrementing NSD convention. Numerical agreement does not establish inter-path metadata equivalence.'},
+  'offline-array':{tag:'Offline · generated Python',title:'Prepare and compile one JAX function',summary:'The generated Python prepares operand arrays, evaluators and rotation state, then uses an example encrypted polynomial array to trace/lower/compile the raw function.',points:['Prepare plaintext payloads and evaluator/key state.','Extract ct.polynomial from an example/representative ciphertext.','Compile the generated raw function using explicit JAX lowering and compilation.','Store the executable and prepared arguments under the region cache key.'],code:'jax.jit(\n    _compiled_region_0_raw,\n    device=_compiled_array_device(ct.polynomial)\n).lower(\n    ct.polynomial, prepared_args\n).compile()',codeLabel:'Abbreviated from generated Python, line 10003',note:'No @jax.jit decorator is emitted. JAX is explicitly called during offline preparation on a cache miss.'},
+  'offline-meta':{tag:'Offline · generated Python',title:'Evaluate expressions and create templates',summary:'The generated metadata expressions become real scale/NSD values when Python receives the context and input specifications during preparation.',points:['Evaluate input-dependent scale and NSD expressions.','Run compatibility validation where required.','Determine output level and ciphertext element count.','Create and cache output ciphertext templates with the prepared metadata.'],code:'_prepare_compiled_output_template(\n    ctx, template, level, num_elements,\n    scale, nsd\n)',codeLabel:'Generated Python helper signature',note:'Some metadata checks execute before JAX compilation. On a cache miss, final output templates are constructed after the executable is compiled within the generated cache assignment.'},
+  cache:{tag:'Blue artifact · offline result',title:'Cached JAX executable and arguments',summary:'Prepared artifacts avoid repeated Python-level setup and JAX compilation for compatible new inputs.',points:['The cache stores the compiled executable, prepared argument tuple and output templates.','Cache keys incorporate context and input/operand fingerprints.','The online direct dispatch calls the cached executable directly.'],code:'_region_0_compiled, _region_0_static_args, _region_0_output_templates = (\n    _compiled_region_cache[_region_0_cache_key]\n)',codeLabel:'Generated Python, line 10004 (reformatted)'},
+  template:{tag:'Green artifact · offline result',title:'Prepared ciphertext output templates',summary:'An output template records the expected ciphertext structure and CKKS metadata so raw encrypted arrays can be wrapped correctly.',points:['Level/moduli and polynomial component count are set.','Final numerical scale and NSD expressions are evaluated during preparation.','Warm inference reuses the prepared template rather than propagating metadata through all intermediate operations.'],code:'output = template._clone_with_payload(raw_output)',codeLabel:'Illustration of online wrapper call',note:'Prepared NSD may match the public-operation path but differ from native Mapping after explicit rescale.'},
+  validate:{tag:'Warm online inference',title:'Validate new encrypted input',summary:'The execution plan verifies context, shape/dtype, scale, NSD and other expected input properties before running the compiled executable.',points:['New inputs must match the compiled/prepared metadata assumptions.','Validation detects changed metadata; it does not prove that a metadata convention is mathematically correct.'],code:'encrypted_args = self._validate_inputs(encrypted_args)',codeLabel:'Generated _CompiledExecutionPlan.execute()'},
+  execute:{tag:'Warm online inference',title:'Execute cached raw-array computation',summary:'The plan obtains the ciphertext\'s existing encrypted polynomial payload and passes it directly into the cached JAX executable.',points:['ct.polynomial is encrypted coefficient data, not a plaintext or real/imaginary split.','CROSS low-level _array kernels run as part of the compiled computation.','The executable returns raw output polynomial arrays.'],code:'return compiled(ciphertext.polynomial, static_args)',codeLabel:'Generated _execute_raw_validated(), line 91'},
+  wrap:{tag:'Warm online inference',title:'Attach prepared ciphertext metadata',summary:'The compiled output payload is inserted into a prepared output template to recover a full CROSS ciphertext container.',points:['Raw JAX functions do not automatically produce full ciphertext wrappers.','The prepared template already carries expected scale/NSD/level/component metadata.','Final wrapping avoids object reconstruction at every intermediate operation.'],code:'return tuple(\n    template._clone_with_payload(payload)\n    for template, payload in zip(\n        templates, raw_outputs, strict=True)\n)',codeLabel:'Generated _CompiledExecutionPlan.wrap_raw(), lines 108–110'},
+  output:{tag:'Warm inference result',title:'Output CROSS ciphertext',summary:'The returned object contains the encrypted output polynomial and prepared metadata. Decryption/decoding is a separate step outside the compiled region.',points:['Existing numerical tests support correct decrypted results.','Metadata equivalence to native CROSS Mapping, especially NSD after rescaling, requires separate validation.']}
+};
+const PIPELINE = [
+ ['PyTorch / torch-mlir frontend','PyTorch model → Linalg-on-Tensors MLIR'],
+ ['Linalg preprocessing and optimization','Activation canonicalization, linear-op fusion, constant folding, CSE'],
+ ['Secret arithmetic and SIMD transformations','Secret IR, data-oblivious transforms, loop unrolling, rotation optimization'],
+ ['Ciphertext packing and layout optimization','Layout propagation/optimization, ciphertext semantics'],
+ ['CKKS ciphertext management','Rescale, modulus switching, relinearization, level management'],
+ ['CKKS parameter and scale selection','GenerateParamCKKS and PopulateScaleCKKS'],
+ ['Scheme lowering and preprocessing','SecretToCKKS, level annotation, split preprocessing'],
+ ['CKKS → LWE lowering','ckks-to-lwe'],
+ ['LWE → JaxiteWord lowering','lwe-to-jaxiteword'],
+ ['JaxiteWord backend preparation','AnnotateEncodeRescaleLevels and ConfigureCryptoContext'],
+ ['OutlineCompiledRegions','Our new pass: grouped ciphertext-dependent JaxiteWord operations'],
+ ['JaxiteWord Python emitter','Generates raw-array and metadata-handling Python'],
+ ['Offline preparation and JAX compilation','Prepare operands/evaluators, compile JAX, cache plan'],
+ ['Warm online encrypted inference','Validate ciphertext, compiled array arithmetic, wrap result']
+];
+
+// October 13 measurement record. Values are synchronized warm medians.
+const RESULT_DATA = [
+ {model:'AlexNet-Tiny 8K',warm:[46.272,20.458],online:[173.09,139.85]},
+ {model:'AlexNet-Tiny 16K',warm:[88.711,37.578],online:[361.33,299.32]},
+ {model:'AlexNet-Tiny 32K',warm:[256.554,83.120],online:[804.20,576.66]},
+ {model:'LeNet 8K',warm:[59.265,42.301],online:[187.15,164.12]},
+ {model:'LeNet 16K',warm:[110.705,91.336],online:[398.64,343.35]},
+ {model:'LeNet 32K',warm:[285.960,214.499],online:[845.58,707.79]}
+];
+function renderResults(metric='warm'){
+ const max=Math.max(...RESULT_DATA.map(r=>r[metric][0]));
+ const fmt=(v)=>v.toFixed(2);
+ document.querySelectorAll('[data-result-metric]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.resultMetric===metric)));
+ document.getElementById('resultChartDescription').textContent=metric==='warm'?'Whole-network encrypted forward pass · milliseconds · lower is better':'Complete online inference request, including packing/encryption/decryption · milliseconds · lower is better';
+ document.getElementById('resultBars').innerHTML=RESULT_DATA.map(r=>{
+   const [n,h]=r[metric],speed=(n/h).toFixed(2);
+   const line=(v,cl,label)=>`<div class="bar-line ${cl}"><span class="bar-label">${label}</span><div class="bar-track"><div class="bar-fill" style="width:${(v/max*100).toFixed(2)}%"></div></div><span class="bar-number">${fmt(v)} ms</span></div>`;
+   return `<div class="bar-group"><div class="bar-heading"><strong>${r.model}</strong><span class="speedup">${speed}× faster</span></div>${line(n,'native','Native')}${line(h,'heir','HEIR')}</div>`;
+ }).join('');
+ const label=metric==='warm'?'Warm encrypted execution':'Complete client-to-client request';
+ document.getElementById('resultBars').setAttribute('aria-label',label+'; six models, paired native and HEIR latencies in milliseconds.');
+}
+document.querySelectorAll('[data-result-metric]').forEach(b=>b.addEventListener('click',()=>renderResults(b.dataset.resultMetric)));
+renderResults();
+
+const viewNames=['motivation','overview','architecture','results'];
+let lastFocus=null; let currentView='motivation';
+function navigate(view,recordHash=true){if(!viewNames.includes(view))return;currentView=view;document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='view-'+view));document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.matches('.nav button')) b.setAttribute('aria-current',b.dataset.view===view?'page':'false');});if(recordHash)history.replaceState(null,'','#'+view);hideTip();window.scrollTo({top:0,behavior:'instant'});}
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.view)));
+function detailsFor(target){if(target.dataset.detail)return DATA[target.dataset.detail];if(target.dataset.pipeline){const n=Number(target.dataset.pipeline); if(n===11)return null;const p=PIPELINE[n-1];return {tag:'Pipeline · Step '+n,title:p[0],summary:p[1]+'.',points:n===12?DATA.emitter.points:n===13?DATA['offline-array'].points:n===14?DATA.execute.points:['This stage is represented in the user-provided HEIR → CROSS → TPU pipeline diagram.'],cta:n===12?{label:'Explore the emitter',view:'architecture'}:n===13||n===14?{label:'See offline and online paths',view:'architecture'}:null};}return null;}
+const tip=document.getElementById('tooltip');let tipTimeout;
+function moveTip(e){if(tip.classList.contains('step11-tooltip'))return;let x=e.clientX+16,y=e.clientY+15; const w=tip.offsetWidth||285,h=tip.offsetHeight||105; x=Math.min(x,window.innerWidth-w-14);y=Math.min(y,window.innerHeight-h-14);tip.style.left=Math.max(12,x)+'px';tip.style.top=Math.max(12,y)+'px'}
+function showTip(e){const node=e.currentTarget,d=detailsFor(node);if(!d)return;
+  tip.classList.toggle('step11-tooltip',node.dataset.detail==='outline');
+  document.getElementById('tooltipTitle').textContent=d.title;
+  const txt=document.getElementById('tooltipText');
+  if(node.dataset.detail==='outline'){
+    txt.innerHTML='<ol>'+d.points.map(point=>'<li>'+escapeHTML(point)+'</li>').join('')+'</ol>';
+    const r=node.getBoundingClientRect(),w=385;
+    tip.style.left=Math.max(14,Math.min(window.innerWidth-w-14,r.left+r.width/2-w/2))+'px';
+    const desired=r.bottom+12;
+    tip.style.top=(desired+255>window.innerHeight?Math.max(14,r.top-252):desired)+'px';
+  }else{txt.textContent=d.summary;moveTip(e)}
+  tip.classList.add('visible');tip.setAttribute('aria-hidden','false');
+}
+function hideTip(){tip.classList.remove('visible','step11-tooltip');tip.setAttribute('aria-hidden','true')}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function openDrawer(d){if(!d)return;lastFocus=document.activeElement;hideTip();document.getElementById('drawerTag').textContent=d.tag;document.getElementById('drawerTitle').textContent=d.title;let body='<p>'+escapeHTML(d.summary)+'</p>';if(d.points?.length){body+='<h4>What happens here</h4><ol>'+d.points.map(x=>'<li>'+escapeHTML(x)+'</li>').join('')+'</ol>'}if(d.code){body+='<div class="code-head"><h4>'+escapeHTML(d.codeLabel||'Implementation example')+'</h4><button class="copy" id="copyCode">Copy code</button></div><pre class="codebox"><code>'+escapeHTML(d.code)+'</code></pre>'}if(d.note)body+='<div class="drawer-note">'+escapeHTML(d.note)+'</div>';if(d.cta)body+='<div class="drawer-cta"><button class="btn" id="detailGo">'+escapeHTML(d.cta.label)+' →</button></div>';document.getElementById('drawerBody').innerHTML=body;document.getElementById('drawer').classList.add('show');document.getElementById('drawer').setAttribute('aria-hidden','false');document.getElementById('scrim').classList.add('show');document.body.style.overflow='hidden';document.getElementById('closeDrawer').focus();if(d.code){document.getElementById('copyCode').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(d.code);document.getElementById('copyCode').textContent='Copied ✓'}catch(e){document.getElementById('copyCode').textContent='Select text to copy'}})}if(d.cta)document.getElementById('detailGo').addEventListener('click',()=>{closeDrawer();navigate(d.cta.view)})}
+function closeDrawer(){document.getElementById('drawer').classList.remove('show');document.getElementById('drawer').setAttribute('aria-hidden','true');document.getElementById('scrim').classList.remove('show');document.body.style.overflow='';if(lastFocus?.focus)lastFocus.focus()}
+document.getElementById('closeDrawer').addEventListener('click',closeDrawer);document.getElementById('scrim').addEventListener('click',closeDrawer);
+function wire(node){
+  // Pipeline stage 11 is ONLY a link to the optimization view, not another explanation panel.
+  if(node.dataset.pipeline==='11'){
+    node.addEventListener('click',()=>navigate('architecture'));
+    node.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();navigate('architecture')}});
+    return;
+  }
+  // Hover explanations belong only to Step 11; all other diagram details open on click.
+  if(node.dataset.detail==='outline'){
+    node.addEventListener('mouseenter',showTip);
+    node.addEventListener('mouseleave',hideTip);
+    node.addEventListener('focus',()=>showTip({currentTarget:node,clientX:node.getBoundingClientRect().left,clientY:node.getBoundingClientRect().bottom}));
+    node.addEventListener('blur',hideTip);
+    return;
+  }
+  node.addEventListener('click',()=>openDrawer(detailsFor(node)));
+  if(node.matches('[role="button"]'))node.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDrawer(detailsFor(node))}})
+}
+document.querySelectorAll('[data-detail], [data-pipeline]').forEach(wire);
+document.getElementById('jump11').addEventListener('click',()=>{const target=document.querySelector('[data-pipeline="11"]');const scroller=document.getElementById('pipelineScroll');scroller.scrollTo({top:target.getBoundingClientRect().top-scroller.getBoundingClientRect().top+scroller.scrollTop-scroller.clientHeight/2+target.getBoundingClientRect().height/2,behavior:'smooth'})});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();return}if(e.target.matches('input,textarea,select')||document.getElementById('drawer').classList.contains('show'))return;if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const next=Math.max(0,Math.min(viewNames.length-1,viewNames.indexOf(currentView)+(e.key==='ArrowRight'?1:-1)));navigate(viewNames[next])}});
+if(viewNames.includes(location.hash.slice(1)))navigate(location.hash.slice(1),false);
+</script>
+</body></html>
