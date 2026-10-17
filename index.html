@@ -137,39 +137,35 @@
 .config-extra-inner p{margin:0 0 8px}.config-extra-inner strong{color:#2b4860}
 @media(max-width:880px){.config-grid{grid-template-columns:1fr}.config-extra-inner{grid-template-columns:1fr}.config-facts div{flex-wrap:wrap}}
 @media(max-width:480px){.config-card{padding:13px}.config-facts div{display:block}.config-facts dd{text-align:left;margin-top:2px}.config-table{font-size:10.8px}.config-table th,.config-table td{padding:9px 8px}}
-/* XProf: original trace downloads on Google Drive; no custom or reconstructed timelines. */
-.xprof-wrap{max-width:1060px;margin:auto}.xprof-shell{border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:var(--shadow);padding:23px;margin-top:18px}
-.xprof-description{font-size:12.5px;color:#5b7085;line-height:1.7;margin:0 0 18px}
-.xprof-toplinks{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:21px}
-.xprof-toplinks a,.xprof-drive-action{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;background:#1d5d90;color:#fff;border:1px solid #1d5d90;border-radius:9px;font-size:12px;font-weight:750;padding:10px 13px}
-.xprof-toplinks a.secondary,.xprof-drive-action.secondary{background:#fff;color:#245d86;border-color:#cddce9}
-.xprof-toplinks a:hover,.xprof-drive-action:hover{filter:brightness(.96)}
-.xprof-controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:17px;max-width:600px}
-.xprof-field{display:flex;flex-direction:column;gap:7px;color:#63778a;font-size:11.5px;font-weight:750}
-.xprof-field select{width:100%;height:42px;padding:9px 12px;background:#fbfdff;border:1px solid #cddce8;border-radius:9px;font-family:inherit;font-size:13px;color:#213c54;font-weight:650}
-.xprof-pair{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:15px}
-.xprof-file-card{background:#f8fbfd;border:1px solid #dce7f0;border-radius:12px;padding:19px;min-width:0}
-.xprof-file-card.heir{background:#f6fbf9;border-color:#d5e8df}
-.xprof-file-card h3{font-size:15px;color:#1e405c;margin:0 0 7px}.xprof-file-card.heir h3{color:#146b5d}
-.xprof-file-card p{font-size:11.5px;color:#63768a;line-height:1.5;margin:0 0 13px}
-.xprof-file-card code{display:block;overflow-wrap:anywhere;padding:10px 11px;border:1px solid #e0e9f0;border-radius:8px;background:white;color:#4c6578;font-size:10.8px;margin-bottom:14px}
-.xprof-file-card .xprof-drive-action{width:100%}.xprof-file-card.heir .xprof-drive-action{background:#16806d;border-color:#16806d}
-.xprof-instructions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
-.xprof-instructions article{background:#fff;border:1px solid #e0e8ef;border-radius:11px;padding:15px 17px}
-.xprof-instructions h3{font-size:13px;margin:0 0 8px}
-.xprof-instructions p{font-size:12px;line-height:1.68;color:#65788b;margin:0}
-.xprof-links-title{margin:24px 0 10px;font-size:15px}
-.xprof-table-wrap{border:1px solid #e0e8ef;border-radius:11px;overflow-x:auto}
-.xprof-links-table{width:100%;border-collapse:collapse;font-size:12px}
-.xprof-links-table th,.xprof-links-table td{padding:12px 15px;text-align:left;border-bottom:1px solid #e8edf2;white-space:nowrap}
-.xprof-links-table tr:last-child th,.xprof-links-table tr:last-child td{border-bottom:0}
-.xprof-links-table thead th{background:#f6f9fc;color:#536c80;font-size:10.5px;text-transform:uppercase;letter-spacing:.045em}
-.xprof-links-table tbody th{font-weight:700;color:#304c62}
-.xprof-links-table a{font-weight:750;color:#226a9d;text-decoration:none}
-.xprof-links-table a:hover{text-decoration:underline}
-.xprof-caveat{font-size:11.7px;color:#6a7e90;line-height:1.65;margin-top:15px}
-@media(max-width:700px){.xprof-shell{padding:16px}.xprof-pair,.xprof-instructions{grid-template-columns:1fr}}
-@media(max-width:480px){.xprof-controls{grid-template-columns:1fr}.xprof-toplinks a{flex:1}.xprof-links-table th,.xprof-links-table td{padding:10px}}
+/* XProf: original selector experience; full traces are viewed in Perfetto only. */
+.xprof-wrap{max-width:1120px;margin:auto}.xprof-shell{background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);padding:23px;margin-top:18px}
+.xprof-intro{color:var(--mute);font-size:13px;line-height:1.7;max-width:890px;margin:0 0 20px}
+.xprof-controls{display:grid;grid-template-columns:1.1fr .7fr 1fr;gap:13px;align-items:end;margin:19px 0 24px}
+.xprof-field{display:flex;flex-direction:column;gap:8px;font-size:12px;color:#62778c;font-weight:750}
+.xprof-field select{border:1px solid #cedde9;background:#fcfdff;border-radius:9px;color:#24415a;width:100%;height:44px;padding:10px 12px;font-size:13px;font-family:inherit;font-weight:650}
+.xprof-variants{display:flex;gap:5px;border:1px solid var(--line);border-radius:10px;padding:4px;background:#f5f9fc;min-height:44px}
+.xprof-variants button{flex:1;min-width:0;border:0;background:transparent;color:#60778a;font:750 12px inherit;border-radius:7px;padding:9px 6px;cursor:pointer}
+.xprof-variants button[aria-pressed="true"]{color:#164b73;background:white;box-shadow:0 1px 5px #16476b1b}
+.xprof-selection{background:#f8fbfe;border:1px solid #dbe7f0;border-radius:13px;padding:23px 24px;margin-top:8px}
+.xprof-selection-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.xprof-selection h2{font-size:18px;letter-spacing:-.3px;color:#1a3c57;margin:0 0 4px}
+.xprof-selection p{font-size:12px;color:#647a8d;line-height:1.6;margin:0}
+.xprof-file{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11.5px;color:#687e91;margin:16px 0}
+.xprof-file code{font-size:11.5px;color:#305c7b;background:#e9f3fa;border:1px solid #d9e8f3;border-radius:6px;padding:5px 8px;overflow-wrap:anywhere}
+.xprof-actions{display:flex;gap:10px;flex-wrap:wrap}
+.xprof-action{display:inline-flex;align-items:center;justify-content:center;gap:8px;text-align:center;background:white;color:#225c88;border:1px solid #cadae6;border-radius:9px;padding:11px 16px;text-decoration:none;font-size:12px;font-weight:800;min-height:43px}
+.xprof-action.primary{background:#1c639f;border-color:#1c639f;color:#fff}
+.xprof-action:hover{filter:brightness(.96)}
+.xprof-steps{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:17px}
+.xprof-step{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 18px}
+.xprof-step h3{font-size:12.5px;color:#284b66;margin:0 0 7px}
+.xprof-step p{font-size:12px;line-height:1.65;color:#697f92;margin:0}
+.xprof-note{font-size:11.7px;color:#728597;line-height:1.7;margin-top:15px}
+.xprof-guide{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:17px}
+.xprof-guide>div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 18px}
+.xprof-guide h3{font-size:12.5px;margin:0 0 7px}.xprof-guide p{font-size:12px;line-height:1.65;color:var(--mute);margin:0}
+@media(max-width:860px){.xprof-controls{grid-template-columns:1fr 1fr}.xprof-variants-wrap{grid-column:1/-1}.xprof-steps,.xprof-guide{grid-template-columns:1fr}}
+@media(max-width:500px){.xprof-shell{padding:15px}.xprof-selection{padding:16px}.xprof-controls{grid-template-columns:1fr}.xprof-variants-wrap{grid-column:auto}.xprof-actions{display:grid;grid-template-columns:1fr}.xprof-action{width:100%}}
 </style>
 </head>
 <body>
@@ -415,34 +411,37 @@ compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python pa
 <section class="screen" id="view-xprof" aria-labelledby="xprofTitle">
  <div class="xprof-wrap">
   <div class="eyebrow">05 / Profiling</div><h1 id="xprofTitle">XProf execution traces</h1>
-  <p class="lede">Explore the original Native CROSS and HEIR Prepared TPU profiling captures in Perfetto, without a simplified or reconstructed website preview.</p>
+  <p class="lede">Explore the original Native CROSS and HEIR Prepared CPU/TPU profiling timelines for AlexNet-Tiny and LeNet at three ring sizes.</p>
   <div class="xprof-shell">
-   <p class="xprof-description">The 12 compressed Chrome Trace Event files are stored on Google Drive. Select a model and ring size to access <strong>both original traces</strong>, then open the downloaded files in Perfetto to inspect the real CPU/TPU timeline, XLA modules, and detailed events.</p>
-   <div class="xprof-toplinks">
-    <a href="https://drive.google.com/drive/folders/1PfSgRTl41CSrwESFEiNZtGkPckyDDZdJ" target="_blank" rel="noopener noreferrer">All traces on Google Drive ↗</a>
-    <a class="secondary" href="https://drive.google.com/file/d/1k71Rm02tLtlXXjdxSCPpWR5fEQUAG06D/view" target="_blank" rel="noopener noreferrer">Complete trace archive (.zip) ↗</a>
-    <a class="secondary" href="https://ui.perfetto.dev/" target="_blank" rel="noopener noreferrer">Launch Perfetto ↗</a>
-   </div>
+   <p class="xprof-intro">Select a workload and implementation. The original profiling file is available on Google Drive, and its detailed timeline can be viewed in <strong>Perfetto</strong>. No custom or approximated timeline is shown on this website.</p>
    <div class="xprof-controls">
     <label class="xprof-field">Model<select id="xprofModel"><option value="alexnet-tiny">AlexNet-Tiny</option><option value="lenet">LeNet</option></select></label>
     <label class="xprof-field">Ring degree<select id="xprofRing"><option value="8k">8K · N = 8192</option><option value="16k">16K · N = 16384</option><option value="32k">32K · N = 32768</option></select></label>
+    <div class="xprof-field xprof-variants-wrap"><span>Implementation</span><div class="xprof-variants" role="group" aria-label="Select implementation">
+     <button type="button" data-xprof-variant="native" aria-pressed="true">Native CROSS</button>
+     <button type="button" data-xprof-variant="heir" aria-pressed="false">HEIR Prepared</button>
+    </div></div>
    </div>
-   <div class="xprof-pair" aria-live="polite">
-    <article class="xprof-file-card"><h3>Native CROSS</h3><p>Original recorded profiler capture</p><code id="xprofNativeName">native-alexnet-tiny-8k.trace.json.gz</code><a class="xprof-drive-action" id="xprofNativeLink" href="https://drive.google.com/file/d/1XkehgCz_8PY42qWGzPcwy6-6h-s73GfD/view" target="_blank" rel="noopener noreferrer">View / download on Drive ↗</a></article>
-    <article class="xprof-file-card heir"><h3>HEIR Prepared</h3><p>Original recorded profiler capture</p><code id="xprofHeirName">heir-alexnet-tiny-8k.trace.json.gz</code><a class="xprof-drive-action" id="xprofHeirLink" href="https://drive.google.com/file/d/1g-QoDHtoyOc_ZyLkBfFbP_QlZmHs3wS3/view" target="_blank" rel="noopener noreferrer">View / download on Drive ↗</a></article>
+   <div class="xprof-selection" aria-live="polite">
+    <div class="xprof-selection-head"><div>
+     <h2 id="xprofTraceTitle">Native CROSS · AlexNet-Tiny · 8K</h2>
+     <p>Original XProf trace · Google TPU v6e-8</p>
+    </div></div>
+    <div class="xprof-file">Selected trace: <code id="xprofTraceFile">native-alexnet-tiny-8k.trace.json.gz</code></div>
+    <div class="xprof-actions">
+     <a class="xprof-action primary" id="xprofDownload" href="https://drive.google.com/drive/folders/1PfSgRTl41CSrwESFEiNZtGkPckyDDZdJ" target="_blank" rel="noopener noreferrer">Get selected trace from Drive ↗</a>
+     <a class="xprof-action" id="xprofPerfetto" href="https://ui.perfetto.dev/" target="_blank" rel="noopener noreferrer">Open Perfetto ↗</a>
+    </div>
    </div>
-   <div class="xprof-instructions">
-    <article><h3>1 · Download the trace</h3><p>Open the corresponding Google Drive link and download its <code>.trace.json.gz</code> file. You can download both variants to compare them.</p></article>
-    <article><h3>2 · Open the original in Perfetto</h3><p>Visit <a href="https://ui.perfetto.dev/" target="_blank" rel="noopener noreferrer">ui.perfetto.dev</a>, choose <strong>Open trace file</strong>, and select the downloaded trace. Perfetto renders the full event tracks and timings.</p></article>
+   <div class="xprof-steps">
+    <article class="xprof-step"><h3>1 · Download the selected file</h3><p>Use the Drive link above to download the <code>.trace.json.gz</code> file for this workload.</p></article>
+    <article class="xprof-step"><h3>2 · Inspect it in Perfetto</h3><p>Open Perfetto and select <strong>Open trace file</strong>. Choose the downloaded file to view the complete real timeline, event names, and durations.</p></article>
    </div>
-   <h2 class="xprof-links-title">All 12 original trace files</h2>
-   <div class="xprof-table-wrap"><table class="xprof-links-table" aria-label="Original XProf trace links for all configurations"><thead><tr><th>Model / ring</th><th>Native CROSS</th><th>HEIR Prepared</th></tr></thead><tbody><tr><th scope="row">AlexNet-Tiny 8K</th><td><a href="https://drive.google.com/file/d/1XkehgCz_8PY42qWGzPcwy6-6h-s73GfD/view" target="_blank" rel="noopener noreferrer">Native trace ↗</a></td><td><a href="https://drive.google.com/file/d/1g-QoDHtoyOc_ZyLkBfFbP_QlZmHs3wS3/view" target="_blank" rel="noopener noreferrer">HEIR trace ↗</a></td></tr>
-<tr><th scope="row">AlexNet-Tiny 16K</th><td><a href="https://drive.google.com/file/d/1zrkOY52r3FPeB_OhbdPW8Jjkj-T7bro8/view" target="_blank" rel="noopener noreferrer">Native trace ↗</a></td><td><a href="https://drive.google.com/file/d/1tgtLF9KhExSt_fDz6crITyL3x4FWeF1T/view" target="_blank" rel="noopener noreferrer">HEIR trace ↗</a></td></tr>
-<tr><th scope="row">AlexNet-Tiny 32K</th><td><a href="https://drive.google.com/file/d/1MQP98SsOdgE8PSLYKZUvucShIiGYDMBt/view" target="_blank" rel="noopener noreferrer">Native trace ↗</a></td><td><a href="https://drive.google.com/file/d/19yO_SaOSGcYVavK_U4h9dHDL3TsbdsDB/view" target="_blank" rel="noopener noreferrer">HEIR trace ↗</a></td></tr>
-<tr><th scope="row">LeNet 8K</th><td><a href="https://drive.google.com/file/d/1HOS4RDP-62f9dMqq9xxqj9qczBOpbURI/view" target="_blank" rel="noopener noreferrer">Native trace ↗</a></td><td><a href="https://drive.google.com/file/d/1QmN9pQFnTBQHLhnmVpxliqYwcnwsJBWE/view" target="_blank" rel="noopener noreferrer">HEIR trace ↗</a></td></tr>
-<tr><th scope="row">LeNet 16K</th><td><a href="https://drive.google.com/file/d/1mBpEuOYzatYHDqQVvOQjSLKOECVZcUQT/view" target="_blank" rel="noopener noreferrer">Native trace ↗</a></td><td><a href="https://drive.google.com/file/d/17sKFnJ39pcNgCL5qRa5CCnP9yf84cXTP/view" target="_blank" rel="noopener noreferrer">HEIR trace ↗</a></td></tr>
-<tr><th scope="row">LeNet 32K</th><td><a href="https://drive.google.com/file/d/1TxCYoBCKckn_QiMnXjKE3SHke3YZOpi8/view" target="_blank" rel="noopener noreferrer">Native trace ↗</a></td><td><a href="https://drive.google.com/file/d/1xMLYKlcNl1OlvBhQL7_n2QrYpO10qZkL/view" target="_blank" rel="noopener noreferrer">HEIR trace ↗</a></td></tr></tbody></table></div>
-   <p class="xprof-caveat">XProf captures are instrumented profiles and should not be used in place of the uninstrumented benchmark medians. The two implementations may display different compiled executable names. Google Drive sharing permissions determine whether visitors can access these files.</p>
+   <p class="xprof-note">Directly loading Drive share URLs into Perfetto is not reliable because external trace URLs must support public cross-origin requests. This two-step workflow avoids a broken direct link. Drive sharing must allow your audience to download the traces.</p>
+  </div>
+  <div class="xprof-guide">
+   <div><h3>What to inspect</h3><p>Compare TPU/XLA module names, timing, ordering, host dispatch, and synchronization. The two implementations use different compiled execution paths, so executable names may differ.</p></div>
+   <div><h3>Profiling vs benchmark latency</h3><p>These 12 instrumented captures are for investigation, not replacements for the uninstrumented benchmark medians in Results. Avoid comparing whole trace spans as if they were isolated warm compute latency.</p></div>
   </div>
   <div class="btn-row"><button class="btn secondary" data-view="results">← Benchmark results</button></div>
  </div>
@@ -510,18 +509,28 @@ function renderResults(metric='warm'){
 document.querySelectorAll('[data-result-metric]').forEach(b=>b.addEventListener('click',()=>renderResults(b.dataset.resultMetric)));
 renderResults();
 
-// Google Drive links to the verified original XProf traces. Perfetto opens downloaded trace files.
-const XPROF_DRIVE={"alexnet-tiny-8k":["1XkehgCz_8PY42qWGzPcwy6-6h-s73GfD","1g-QoDHtoyOc_ZyLkBfFbP_QlZmHs3wS3"],"alexnet-tiny-16k":["1zrkOY52r3FPeB_OhbdPW8Jjkj-T7bro8","1tgtLF9KhExSt_fDz6crITyL3x4FWeF1T"],"alexnet-tiny-32k":["1MQP98SsOdgE8PSLYKZUvucShIiGYDMBt","19yO_SaOSGcYVavK_U4h9dHDL3TsbdsDB"],"lenet-8k":["1HOS4RDP-62f9dMqq9xxqj9qczBOpbURI","1QmN9pQFnTBQHLhnmVpxliqYwcnwsJBWE"],"lenet-16k":["1mBpEuOYzatYHDqQVvOQjSLKOECVZcUQT","17sKFnJ39pcNgCL5qRa5CCnP9yf84cXTP"],"lenet-32k":["1TxCYoBCKckn_QiMnXjKE3SHke3YZOpi8","1xMLYKlcNl1OlvBhQL7_n2QrYpO10qZkL"]};
+// Select one original Google Drive XProf trace; view it in Perfetto (not a custom preview).
+const XPROF_DRIVE={
+  'alexnet-tiny-8k':['1XkehgCz_8PY42qWGzPcwy6-6h-s73GfD','1g-QoDHtoyOc_ZyLkBfFbP_QlZmHs3wS3'],
+  'alexnet-tiny-16k':['1zrkOY52r3FPeB_OhbdPW8Jjkj-T7bro8','1tgtLF9KhExSt_fDz6crITyL3x4FWeF1T'],
+  'alexnet-tiny-32k':['1MQP98SsOdgE8PSLYKZUvucShIiGYDMBt','19yO_SaOSGcYVavK_U4h9dHDL3TsbdsDB'],
+  'lenet-8k':['1HOS4RDP-62f9dMqq9xxqj9qczBOpbURI','1QmN9pQFnTBQHLhnmVpxliqYwcnwsJBWE'],
+  'lenet-16k':['1mBpEuOYzatYHDqQVvOQjSLKOECVZcUQT','17sKFnJ39pcNgCL5qRa5CCnP9yf84cXTP'],
+  'lenet-32k':['1TxCYoBCKckn_QiMnXjKE3SHke3YZOpi8','1xMLYKlcNl1OlvBhQL7_n2QrYpO10qZkL']
+};
+let xprofVariant='native';
 function xprofSelect(){
  const model=document.getElementById('xprofModel').value;
  const ring=document.getElementById('xprofRing').value;
- const ids=XPROF_DRIVE[model+'-'+ring];
- const names=['native','heir'];
- for(let i=0;i<2;i++){
-  document.getElementById(i===0?'xprofNativeName':'xprofHeirName').textContent=names[i]+'-'+model+'-'+ring+'.trace.json.gz';
-  document.getElementById(i===0?'xprofNativeLink':'xprofHeirLink').href='https://drive.google.com/file/d/'+ids[i]+'/view';
- }
+ const idx=xprofVariant==='native'?0:1;
+ const fileId=XPROF_DRIVE[model+'-'+ring][idx];
+ const label=model==='lenet'?'LeNet':'AlexNet-Tiny';
+ document.getElementById('xprofTraceTitle').textContent=(idx===0?'Native CROSS':'HEIR Prepared')+' · '+label+' · '+ring.toUpperCase();
+ document.getElementById('xprofTraceFile').textContent=xprofVariant+'-'+model+'-'+ring+'.trace.json.gz';
+ document.getElementById('xprofDownload').href='https://drive.google.com/file/d/'+fileId+'/view';
+ document.querySelectorAll('[data-xprof-variant]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.xprofVariant===xprofVariant)));
 }
+document.querySelectorAll('[data-xprof-variant]').forEach(b=>b.addEventListener('click',()=>{xprofVariant=b.dataset.xprofVariant;xprofSelect()}));
 document.getElementById('xprofModel').addEventListener('change',xprofSelect);
 document.getElementById('xprofRing').addEventListener('change',xprofSelect);
 xprofSelect();
