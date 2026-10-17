@@ -1,7 +1,11 @@
-XProf trace exports from the October 2026 Native CROSS and HEIR Prepared TPU profiling captures.
+XProf trace captures for Native CROSS and HEIR Prepared (October 2026)
 
-Files are compressed Chrome Trace Event JSON suitable for Perfetto and the website's interactive trace timeline.
+The 12 original sanitized compressed Chrome Trace Event JSON files were verified by checksum and moved to Google Drive.
 
-The four files native-alexnet-tiny-32k, native-lenet-8k, native-lenet-16k, and native-lenet-32k are size-optimized public versions with bulky per-event auxiliary properties removed. Their recorded event names, ordering, timestamps, durations, process/thread identifiers, and retained HLO categories have not been changed. This preserves the execution timeline while avoiding overly large GitHub uploads. Other files are the originally staged sanitized exports.
+Google Drive folder: https://drive.google.com/drive/folders/1PfSgRTl41CSrwESFEiNZtGkPckyDDZdJ
+Website XProf section: https://zohaib58.github.io/heir-cross-presentation/#xprof
+Full trace viewer: https://ui.perfetto.dev/
 
-Profiling traces are diagnostic; benchmark medians are reported separately on the Results page.
+Download the selected .trace.json.gz file from Google Drive, then use Perfetto > Open trace file. The website no longer approximates the original trace with a custom renderer.
+
+The instrumented XProf captures are diagnostic and must not be equated to the clean benchmark medians shown in Results. Shared access depends on Google Drive permissions.
