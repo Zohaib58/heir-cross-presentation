@@ -112,6 +112,21 @@
 .dataset-validation-state b{color:#25465e}
 @media(max-width:630px){.dataset-accuracy{padding:13px 14px}}
 
+/* Recorded numerical correctness per model/ring (one deterministic input each). */
+.correctness-results{margin:17px 0 16px}
+.correctness-results h3{font-size:13.5px;margin:0 0 5px;color:#284c67}
+.correctness-results .correctness-table-intro{font-size:11.8px;margin:0 0 10px;color:#637789;line-height:1.65}
+.correctness-results .correctness-table-wrap{overflow-x:auto;border:1px solid #dce5ed;border-radius:10px;background:#fff}
+.correctness-results table{width:100%;border-collapse:collapse;font-size:12px}
+.correctness-results th,.correctness-results td{text-align:left;padding:10px 12px;border-bottom:1px solid #e6edf3;white-space:nowrap}
+.correctness-results thead th{color:#527088;background:#f5f8fb;font-size:11px;font-weight:750}
+.correctness-results tbody th{color:#304e64;font-weight:650}
+.correctness-results tbody tr:last-child th,.correctness-results tbody tr:last-child td{border-bottom:0}
+.correctness-results .correctness-match{color:#177763;font-weight:750}
+.correctness-results .correctness-numeric{font-variant-numeric:tabular-nums}
+.correctness-results .correctness-table-note{color:#6e8191;font-size:11.5px;line-height:1.65;margin:10px 0 0}
+@media(max-width:630px){.correctness-results th,.correctness-results td{padding:9px 10px;font-size:11px}}
+
 /* Synchronized benchmark timing methodology, placed before Experimental setup. */
 .timing-method-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px 20px}
 .timing-method-card p{font-size:12.5px;line-height:1.7;color:#526a7c;margin:0 0 12px}
@@ -353,6 +368,24 @@ compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python pa
     </div>
     <p>We then run encrypted inference with <b>Native CROSS</b> and <b>HEIR Prepared</b>, decrypt the results, and compare them with the plaintext reference using <b>relative error, maximum absolute error, and output argmax</b>.</p>
     <p>This checks numerical correctness for the selected inputs—not classification accuracy over the full dataset.</p>
+    <section class="correctness-results" aria-labelledby="recorded-correctness-heading">
+     <h3 id="recorded-correctness-heading">Recorded correctness results</h3>
+     <p class="correctness-table-intro">Maximum absolute error against the unencrypted plaintext reference, using the same deterministic test input for each implementation.</p>
+     <div class="correctness-table-wrap">
+      <table aria-label="Fixed-input numerical correctness for Native CROSS and HEIR Prepared">
+       <thead><tr><th scope="col">Configuration</th><th scope="col">Native max error</th><th scope="col">HEIR max error</th><th scope="col">Same reference argmax?</th></tr></thead>
+       <tbody>
+     <tr><th scope="row">AlexNet-Tiny 8K</th><td class="correctness-numeric">1.11 × 10<sup>−9</sup></td><td class="correctness-numeric">6.23 × 10<sup>−6</sup></td><td class="correctness-match">✓ Yes</td></tr>
+     <tr><th scope="row">AlexNet-Tiny 16K</th><td class="correctness-numeric">1.11 × 10<sup>−9</sup></td><td class="correctness-numeric">6.23 × 10<sup>−6</sup></td><td class="correctness-match">✓ Yes</td></tr>
+     <tr><th scope="row">AlexNet-Tiny 32K</th><td class="correctness-numeric">1.11 × 10<sup>−9</sup></td><td class="correctness-numeric">6.23 × 10<sup>−6</sup></td><td class="correctness-match">✓ Yes</td></tr>
+     <tr><th scope="row">LeNet 8K</th><td class="correctness-numeric">2.81 × 10<sup>−12</sup></td><td class="correctness-numeric">4.73 × 10<sup>−6</sup></td><td class="correctness-match">✓ Yes</td></tr>
+     <tr><th scope="row">LeNet 16K</th><td class="correctness-numeric">1.90 × 10<sup>−12</sup></td><td class="correctness-numeric">4.73 × 10<sup>−6</sup></td><td class="correctness-match">✓ Yes</td></tr>
+     <tr><th scope="row">LeNet 32K</th><td class="correctness-numeric">8.03 × 10<sup>−12</sup></td><td class="correctness-numeric">4.73 × 10<sup>−6</sup></td><td class="correctness-match">✓ Yes</td></tr>
+       </tbody>
+      </table>
+     </div>
+     <p class="correctness-table-note">All six pairs pass the recorded numerical correctness checks. For AlexNet-Tiny 8K, the maximum difference <em>between the Native and HEIR decrypted outputs</em> is approximately 6.23 × 10<sup>−6</sup>. These single-input results do not establish accuracy across a full dataset.</p>
+    </section>
     <div class="dataset-accuracy" aria-labelledby="dataset-accuracy-heading">
      <h3 id="dataset-accuracy-heading">Dataset-level classification accuracy · additional validation</h3>
      <p>To verify that HEIR-emitted CROSS and Native CROSS maintain comparable model accuracy, evaluate <strong>the same trained model</strong> on <strong>the same labeled test dataset</strong> with identical weights, preprocessing, input order, and classification rule.</p>
