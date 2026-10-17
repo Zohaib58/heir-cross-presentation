@@ -137,21 +137,39 @@
 .config-extra-inner p{margin:0 0 8px}.config-extra-inner strong{color:#2b4860}
 @media(max-width:880px){.config-grid{grid-template-columns:1fr}.config-extra-inner{grid-template-columns:1fr}.config-facts div{flex-wrap:wrap}}
 @media(max-width:480px){.config-card{padding:13px}.config-facts div{display:block}.config-facts dd{text-align:left;margin-top:2px}.config-table{font-size:10.8px}.config-table th,.config-table td{padding:9px 8px}}
-/* XProf trace browser */
-.xprof-wrap{max-width:1160px;margin:auto}.xprof-shell{border:1px solid var(--line);border-radius:17px;background:white;box-shadow:var(--shadow);padding:22px;margin-top:18px}
-.xprof-intro{color:var(--mute);font-size:13px;line-height:1.65;max-width:900px}.xprof-controls{display:grid;grid-template-columns:1.1fr .65fr 1fr;gap:13px;align-items:end;margin:20px 0 16px}
-.xprof-field{display:flex;flex-direction:column;gap:7px;font-size:12px;color:var(--mute);font-weight:700}.xprof-field select{border:1px solid #cedde9;background:#fcfdff;border-radius:9px;color:var(--ink);padding:11px;font:600 13px inherit;width:100%;height:42px}
-.xprof-variants{display:flex;gap:6px;border:1px solid var(--line);border-radius:10px;padding:4px;background:#f6f9fc}.xprof-variants button{flex:1;border:0;background:transparent;color:#536d82;font:700 12px inherit;border-radius:7px;padding:9px;cursor:pointer}.xprof-variants button[aria-pressed="true"]{color:#0c5263;background:#fff;box-shadow:0 1px 5px #16476b1b}
-.xprof-trace-head{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.xprof-trace-head h2{font-size:17px;margin:0 0 4px}.xprof-trace-head p{font-size:12px;color:var(--mute);margin:0}
-.xprof-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.xprof-action{display:inline-flex;align-items:center;gap:6px;border:1px solid #cbdce9;border-radius:9px;padding:10px 12px;background:white;color:#245d8d;text-decoration:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}.xprof-action.primary{background:#1c639f;color:white;border-color:#1c639f}.xprof-action:hover{filter:brightness(.97)}
-.xprof-smallstats{display:flex;gap:15px;flex-wrap:wrap;color:#607b8f;font-size:11.5px;margin-bottom:15px}.xprof-smallstats b{color:#183850}
-.xprof-viewer{border:1px solid #e0e8f1;border-radius:12px;overflow:hidden;background:#f8fbfe}.xprof-viewbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:10px 12px;border-bottom:1px solid #e0e8f1;background:#fff}
-.xprof-viewbar span{font-size:12px;font-weight:750;color:#1b405e}.xprof-zoom{display:flex;gap:5px}.xprof-zoom button{font:700 13px inherit;color:#2c5879;border:1px solid #dbe5ed;border-radius:6px;background:#fff;cursor:pointer;min-width:36px;padding:5px 9px}.xprof-zoom button:disabled{opacity:.45;cursor:default}
-.xprof-placeholder{min-height:300px;display:flex;align-items:center;justify-content:center;text-align:center;flex-direction:column;gap:11px;color:#6e8397;font-size:13px;padding:30px}.xprof-placeholder strong{color:#1a3f5c;font-size:16px}.xprof-placeholder p{max-width:470px;line-height:1.65;margin:0}
-.xprof-canvas{width:100%;height:385px;display:none;cursor:crosshair;touch-action:pan-y}.xprof-canvas.show{display:block}.xprof-event-detail{border-top:1px solid #e0e8f1;background:#fff;padding:10px 13px;font-size:11.5px;line-height:1.6;color:#43596e;min-height:43px;overflow-wrap:anywhere}
-.xprof-note{font-size:11.6px;line-height:1.6;color:var(--mute);margin-top:14px}.xprof-guide{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}.xprof-guide div{border-radius:12px;border:1px solid var(--line);padding:15px 17px;background:#fff}.xprof-guide h3{font-size:13px;margin:0 0 7px}.xprof-guide p{font-size:12px;line-height:1.65;color:var(--mute);margin:0}
-@media(max-width:850px){.xprof-controls{grid-template-columns:1fr 1fr}.xprof-controls .xprof-variants-wrap{grid-column:1/-1}.xprof-shell{padding:16px}.xprof-guide{grid-template-columns:1fr}}
-@media(max-width:480px){.xprof-controls{grid-template-columns:1fr}.xprof-controls .xprof-variants-wrap{grid-column:auto}.xprof-canvas{height:340px}.xprof-action{padding:9px 10px;font-size:11px}}
+/* XProf: original trace downloads on Google Drive; no custom or reconstructed timelines. */
+.xprof-wrap{max-width:1060px;margin:auto}.xprof-shell{border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:var(--shadow);padding:23px;margin-top:18px}
+.xprof-description{font-size:12.5px;color:#5b7085;line-height:1.7;margin:0 0 18px}
+.xprof-toplinks{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:21px}
+.xprof-toplinks a,.xprof-drive-action{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;background:#1d5d90;color:#fff;border:1px solid #1d5d90;border-radius:9px;font-size:12px;font-weight:750;padding:10px 13px}
+.xprof-toplinks a.secondary,.xprof-drive-action.secondary{background:#fff;color:#245d86;border-color:#cddce9}
+.xprof-toplinks a:hover,.xprof-drive-action:hover{filter:brightness(.96)}
+.xprof-controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:17px;max-width:600px}
+.xprof-field{display:flex;flex-direction:column;gap:7px;color:#63778a;font-size:11.5px;font-weight:750}
+.xprof-field select{width:100%;height:42px;padding:9px 12px;background:#fbfdff;border:1px solid #cddce8;border-radius:9px;font-family:inherit;font-size:13px;color:#213c54;font-weight:650}
+.xprof-pair{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:15px}
+.xprof-file-card{background:#f8fbfd;border:1px solid #dce7f0;border-radius:12px;padding:19px;min-width:0}
+.xprof-file-card.heir{background:#f6fbf9;border-color:#d5e8df}
+.xprof-file-card h3{font-size:15px;color:#1e405c;margin:0 0 7px}.xprof-file-card.heir h3{color:#146b5d}
+.xprof-file-card p{font-size:11.5px;color:#63768a;line-height:1.5;margin:0 0 13px}
+.xprof-file-card code{display:block;overflow-wrap:anywhere;padding:10px 11px;border:1px solid #e0e9f0;border-radius:8px;background:white;color:#4c6578;font-size:10.8px;margin-bottom:14px}
+.xprof-file-card .xprof-drive-action{width:100%}.xprof-file-card.heir .xprof-drive-action{background:#16806d;border-color:#16806d}
+.xprof-instructions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.xprof-instructions article{background:#fff;border:1px solid #e0e8ef;border-radius:11px;padding:15px 17px}
+.xprof-instructions h3{font-size:13px;margin:0 0 8px}
+.xprof-instructions p{font-size:12px;line-height:1.68;color:#65788b;margin:0}
+.xprof-links-title{margin:24px 0 10px;font-size:15px}
+.xprof-table-wrap{border:1px solid #e0e8ef;border-radius:11px;overflow-x:auto}
+.xprof-links-table{width:100%;border-collapse:collapse;font-size:12px}
+.xprof-links-table th,.xprof-links-table td{padding:12px 15px;text-align:left;border-bottom:1px solid #e8edf2;white-space:nowrap}
+.xprof-links-table tr:last-child th,.xprof-links-table tr:last-child td{border-bottom:0}
+.xprof-links-table thead th{background:#f6f9fc;color:#536c80;font-size:10.5px;text-transform:uppercase;letter-spacing:.045em}
+.xprof-links-table tbody th{font-weight:700;color:#304c62}
+.xprof-links-table a{font-weight:750;color:#226a9d;text-decoration:none}
+.xprof-links-table a:hover{text-decoration:underline}
+.xprof-caveat{font-size:11.7px;color:#6a7e90;line-height:1.65;margin-top:15px}
+@media(max-width:700px){.xprof-shell{padding:16px}.xprof-pair,.xprof-instructions{grid-template-columns:1fr}}
+@media(max-width:480px){.xprof-controls{grid-template-columns:1fr}.xprof-toplinks a{flex:1}.xprof-links-table th,.xprof-links-table td{padding:10px}}
 </style>
 </head>
 <body>
@@ -397,28 +415,35 @@ compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python pa
 <section class="screen" id="view-xprof" aria-labelledby="xprofTitle">
  <div class="xprof-wrap">
   <div class="eyebrow">05 / Profiling</div><h1 id="xprofTitle">XProf execution traces</h1>
-  <p class="lede">Explore synchronized CPU/TPU profiling timelines for Native CROSS and HEIR Prepared across both models and all three ring sizes.</p>
+  <p class="lede">Explore the original Native CROSS and HEIR Prepared TPU profiling captures in Perfetto, without a simplified or reconstructed website preview.</p>
   <div class="xprof-shell">
-   <p class="xprof-intro">Select a configuration to inspect its XProf trace. The <strong>interactive preview</strong> shows recorded TPU/XLA and host events; <strong>Open in Perfetto</strong> launches a full timeline viewer with search, zoom, and track inspection. Each configuration has a downloadable, compressed Chrome Trace Event JSON capture.</p>
+   <p class="xprof-description">The 12 compressed Chrome Trace Event files are stored on Google Drive. Select a model and ring size to access <strong>both original traces</strong>, then open the downloaded files in Perfetto to inspect the real CPU/TPU timeline, XLA modules, and detailed events.</p>
+   <div class="xprof-toplinks">
+    <a href="https://drive.google.com/drive/folders/1PfSgRTl41CSrwESFEiNZtGkPckyDDZdJ" target="_blank" rel="noopener noreferrer">All traces on Google Drive ↗</a>
+    <a class="secondary" href="https://drive.google.com/file/d/1k71Rm02tLtlXXjdxSCPpWR5fEQUAG06D/view" target="_blank" rel="noopener noreferrer">Complete trace archive (.zip) ↗</a>
+    <a class="secondary" href="https://ui.perfetto.dev/" target="_blank" rel="noopener noreferrer">Launch Perfetto ↗</a>
+   </div>
    <div class="xprof-controls">
     <label class="xprof-field">Model<select id="xprofModel"><option value="alexnet-tiny">AlexNet-Tiny</option><option value="lenet">LeNet</option></select></label>
     <label class="xprof-field">Ring degree<select id="xprofRing"><option value="8k">8K · N = 8192</option><option value="16k">16K · N = 16384</option><option value="32k">32K · N = 32768</option></select></label>
-    <div class="xprof-field xprof-variants-wrap"><span>Implementation</span><div class="xprof-variants" role="group" aria-label="XProf implementation"><button type="button" data-xprof-variant="native" aria-pressed="true">Native CROSS</button><button type="button" data-xprof-variant="heir" aria-pressed="false">HEIR Prepared</button></div></div>
    </div>
-   <div class="xprof-trace-head">
-    <div><h2 id="xprofTraceTitle">Native CROSS · AlexNet-Tiny · 8K</h2><p id="xprofTraceSubtitle">Captured with XProf · TPU v6e-8</p></div>
-    <div class="xprof-actions"><button class="xprof-action primary" type="button" id="xprofLoad">Load timeline preview</button><a class="xprof-action" href="#" id="xprofPerfetto" target="_blank" rel="noopener noreferrer">Open in Perfetto ↗</a><a class="xprof-action" href="#" id="xprofDownload" download>Download trace ↓</a></div>
+   <div class="xprof-pair" aria-live="polite">
+    <article class="xprof-file-card"><h3>Native CROSS</h3><p>Original recorded profiler capture</p><code id="xprofNativeName">native-alexnet-tiny-8k.trace.json.gz</code><a class="xprof-drive-action" id="xprofNativeLink" href="https://drive.google.com/file/d/1XkehgCz_8PY42qWGzPcwy6-6h-s73GfD/view" target="_blank" rel="noopener noreferrer">View / download on Drive ↗</a></article>
+    <article class="xprof-file-card heir"><h3>HEIR Prepared</h3><p>Original recorded profiler capture</p><code id="xprofHeirName">heir-alexnet-tiny-8k.trace.json.gz</code><a class="xprof-drive-action" id="xprofHeirLink" href="https://drive.google.com/file/d/1g-QoDHtoyOc_ZyLkBfFbP_QlZmHs3wS3/view" target="_blank" rel="noopener noreferrer">View / download on Drive ↗</a></article>
    </div>
-   <div class="xprof-smallstats" id="xprofStats" aria-live="polite"></div>
-   <div class="xprof-viewer">
-    <div class="xprof-viewbar"><span>CPU / TPU event timeline</span><div class="xprof-zoom"><button type="button" id="xprofZoomIn" title="Zoom in" disabled>+</button><button type="button" id="xprofZoomOut" title="Zoom out" disabled>−</button><button type="button" id="xprofReset" title="Reset timeline" disabled>Reset</button></div></div>
-    <div class="xprof-placeholder" id="xprofPlaceholder"><strong>Interactive trace preview</strong><p>Choose a model and ring size, then load a trace to explore XLA modules, TPU operations, and host-side activity. Select a drawn event to inspect its timing.</p></div>
-    <canvas class="xprof-canvas" id="xprofCanvas" aria-label="Interactive XProf trace timeline with select-to-inspect events"></canvas>
-    <div class="xprof-event-detail" id="xprofEventDetail" aria-live="polite">Event timing and details appear here when you select a timeline bar.</div>
+   <div class="xprof-instructions">
+    <article><h3>1 · Download the trace</h3><p>Open the corresponding Google Drive link and download its <code>.trace.json.gz</code> file. You can download both variants to compare them.</p></article>
+    <article><h3>2 · Open the original in Perfetto</h3><p>Visit <a href="https://ui.perfetto.dev/" target="_blank" rel="noopener noreferrer">ui.perfetto.dev</a>, choose <strong>Open trace file</strong>, and select the downloaded trace. Perfetto renders the full event tracks and timings.</p></article>
    </div>
-   <p class="xprof-note">The trace represents a profiling capture, not the isolated benchmark median shown in Results. Captures can include setup, host dispatch, multiple executions and profiler overhead. Do not infer speedups by directly subtracting total trace spans. Perfetto is an external trace viewer; if it cannot load a direct link, download the trace and use its <em>Open trace file</em> option.</p>
+   <h2 class="xprof-links-title">All 12 original trace files</h2>
+   <div class="xprof-table-wrap"><table class="xprof-links-table" aria-label="Original XProf trace links for all configurations"><thead><tr><th>Model / ring</th><th>Native CROSS</th><th>HEIR Prepared</th></tr></thead><tbody><tr><th scope="row">AlexNet-Tiny 8K</th><td><a href="https://drive.google.com/file/d/1XkehgCz_8PY42qWGzPcwy6-6h-s73GfD/view" target="_blank" rel="noopener noreferrer">Native trace ↗</a></td><td><a href="https://drive.google.com/file/d/1g-QoDHtoyOc_ZyLkBfFbP_QlZmHs3wS3/view" target="_blank" rel="noopener noreferrer">HEIR trace ↗</a></td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td><a href="https://drive.google.com/file/d/1zrkOY52r3FPeB_OhbdPW8Jjkj-T7bro8/view" target="_blank" rel="noopener noreferrer">Native trace ↗</a></td><td><a href="https://drive.google.com/file/d/1tgtLF9KhExSt_fDz6crITyL3x4FWeF1T/view" target="_blank" rel="noopener noreferrer">HEIR trace ↗</a></td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td><a href="https://drive.google.com/file/d/1MQP98SsOdgE8PSLYKZUvucShIiGYDMBt/view" target="_blank" rel="noopener noreferrer">Native trace ↗</a></td><td><a href="https://drive.google.com/file/d/19yO_SaOSGcYVavK_U4h9dHDL3TsbdsDB/view" target="_blank" rel="noopener noreferrer">HEIR trace ↗</a></td></tr>
+<tr><th scope="row">LeNet 8K</th><td><a href="https://drive.google.com/file/d/1HOS4RDP-62f9dMqq9xxqj9qczBOpbURI/view" target="_blank" rel="noopener noreferrer">Native trace ↗</a></td><td><a href="https://drive.google.com/file/d/1QmN9pQFnTBQHLhnmVpxliqYwcnwsJBWE/view" target="_blank" rel="noopener noreferrer">HEIR trace ↗</a></td></tr>
+<tr><th scope="row">LeNet 16K</th><td><a href="https://drive.google.com/file/d/1mBpEuOYzatYHDqQVvOQjSLKOECVZcUQT/view" target="_blank" rel="noopener noreferrer">Native trace ↗</a></td><td><a href="https://drive.google.com/file/d/17sKFnJ39pcNgCL5qRa5CCnP9yf84cXTP/view" target="_blank" rel="noopener noreferrer">HEIR trace ↗</a></td></tr>
+<tr><th scope="row">LeNet 32K</th><td><a href="https://drive.google.com/file/d/1TxCYoBCKckn_QiMnXjKE3SHke3YZOpi8/view" target="_blank" rel="noopener noreferrer">Native trace ↗</a></td><td><a href="https://drive.google.com/file/d/1xMLYKlcNl1OlvBhQL7_n2QrYpO10qZkL/view" target="_blank" rel="noopener noreferrer">HEIR trace ↗</a></td></tr></tbody></table></div>
+   <p class="xprof-caveat">XProf captures are instrumented profiles and should not be used in place of the uninstrumented benchmark medians. The two implementations may display different compiled executable names. Google Drive sharing permissions determine whether visitors can access these files.</p>
   </div>
-  <div class="xprof-guide"><div><h3>What to inspect</h3><p>Use the TPU/XLA tracks to see the ordering and duration of compiled operations. Host tracks help reveal Python/runtime scheduling, dispatch, and synchronization activity where captured.</p></div><div><h3>What is available</h3><p>12 captured timelines: 2 implementations × 2 neural networks × 3 ring sizes. All are extracted from the October 13 XProf archives; the preview uses the actual event timestamps, not reconstructed benchmark bars.</p></div></div>
   <div class="btn-row"><button class="btn secondary" data-view="results">← Benchmark results</button></div>
  </div>
 </section>
@@ -485,99 +510,25 @@ function renderResults(metric='warm'){
 document.querySelectorAll('[data-result-metric]').forEach(b=>b.addEventListener('click',()=>renderResults(b.dataset.resultMetric)));
 renderResults();
 
-// XProf Chrome Trace Event JSON files (compressed with gzip) from the recorded October 13 captures.
-const XPROF_COUNTS={
-  'heir-alexnet-tiny-8k':16948,'native-alexnet-tiny-8k':36661,
-  'heir-alexnet-tiny-16k':21769,'native-alexnet-tiny-16k':42838,
-  'heir-alexnet-tiny-32k':25296,'native-alexnet-tiny-32k':58415,
-  'heir-lenet-8k':27940,'native-lenet-8k':51787,
-  'heir-lenet-16k':34448,'native-lenet-16k':54273,
-  'heir-lenet-32k':38794,'native-lenet-32k':64777
-};
-const xp={variant:'native',trace:null,all:[],lanes:[],lo:0,hi:1,viewLo:0,viewHi:1,selected:null,hover:null,mouseX:0,cache:new Map(),loading:false};
-const xprofFile=()=>`${xp.variant}-${document.getElementById('xprofModel').value}-${document.getElementById('xprofRing').value}`;
-const xprofLabel=()=>`${xp.variant==='native'?'Native CROSS':'HEIR Prepared'} · ${document.getElementById('xprofModel').value==='lenet'?'LeNet':'AlexNet-Tiny'} · ${document.getElementById('xprofRing').value.toUpperCase()}`;
-const xprofSrc=()=>`xprof/${xprofFile()}.trace.json.gz`;
+// Google Drive links to the verified original XProf traces. Perfetto opens downloaded trace files.
+const XPROF_DRIVE={"alexnet-tiny-8k":["1XkehgCz_8PY42qWGzPcwy6-6h-s73GfD","1g-QoDHtoyOc_ZyLkBfFbP_QlZmHs3wS3"],"alexnet-tiny-16k":["1zrkOY52r3FPeB_OhbdPW8Jjkj-T7bro8","1tgtLF9KhExSt_fDz6crITyL3x4FWeF1T"],"alexnet-tiny-32k":["1MQP98SsOdgE8PSLYKZUvucShIiGYDMBt","19yO_SaOSGcYVavK_U4h9dHDL3TsbdsDB"],"lenet-8k":["1HOS4RDP-62f9dMqq9xxqj9qczBOpbURI","1QmN9pQFnTBQHLhnmVpxliqYwcnwsJBWE"],"lenet-16k":["1mBpEuOYzatYHDqQVvOQjSLKOECVZcUQT","17sKFnJ39pcNgCL5qRa5CCnP9yf84cXTP"],"lenet-32k":["1TxCYoBCKckn_QiMnXjKE3SHke3YZOpi8","1xMLYKlcNl1OlvBhQL7_n2QrYpO10qZkL"]};
 function xprofSelect(){
- xp.trace=null;xp.all=[];xp.lanes=[];xp.selected=null;
- const key=xprofFile(),src=xprofSrc(),url=new URL(src,document.baseURI).href;
- document.querySelectorAll('[data-xprof-variant]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.xprofVariant===xp.variant)));
- document.getElementById('xprofTraceTitle').textContent=xprofLabel();
- document.getElementById('xprofTraceSubtitle').textContent='XProf capture · Google TPU v6e-8 · October 13, 2026';
- document.getElementById('xprofDownload').href=src;
- document.getElementById('xprofPerfetto').href='https://ui.perfetto.dev/#!/?url='+encodeURIComponent(url);
- document.getElementById('xprofStats').innerHTML=`<span><b>${XPROF_COUNTS[key].toLocaleString()}</b> trace events</span><span><b>Chrome Trace JSON</b> · gzip</span><span><b>TPU + host</b> event tracks</span>`;
- document.getElementById('xprofCanvas').classList.remove('show');document.getElementById('xprofPlaceholder').style.display='flex';
- document.getElementById('xprofPlaceholder').innerHTML='<strong>Interactive trace preview</strong><p>Load the selected XProf capture to inspect actual recorded event durations and activity tracks.</p>';
- document.getElementById('xprofEventDetail').textContent='Event timing and details appear here when you select a timeline bar.';
- for(const id of ['xprofZoomIn','xprofZoomOut','xprofReset'])document.getElementById(id).disabled=true;
- document.getElementById('xprofLoad').disabled=false;
- document.getElementById('xprofLoad').textContent=xp.cache.has(key)?'Load cached preview':'Load timeline preview';
-}
-function xprofPrepare(j){
- const traces=(j.traceEvents||j).filter(e=>e.ph==='X'&&Number.isFinite(Number(e.ts))&&Number.isFinite(Number(e.dur))&&Number(e.dur)>0);
- const pnames=new Map(),tnames=new Map();
- for(const e of (j.traceEvents||j)) if(e.ph==='M'&&e.name==='process_name')pnames.set(String(e.pid),e.args?.name||'Process '+e.pid);
- else if(e.ph==='M'&&e.name==='thread_name')tnames.set(String(e.pid)+'/'+String(e.tid),e.args?.name||String(e.tid));
- const lanes=new Map();let lo=Infinity,hi=-Infinity;
- for(const e of traces){const key=String(e.pid)+'/'+String(e.tid),ts=Number(e.ts),dur=Number(e.dur);if(ts<lo)lo=ts;if(ts+dur>hi)hi=ts+dur;let lane=lanes.get(key);if(!lane){const proc=pnames.get(String(e.pid))||'Process '+e.pid;lane={key,name:(tnames.get(key)||'Thread '+e.tid),proc,events:[]};lanes.set(key,lane)}lane.events.push({...e,ts,dur});}
- const all=Array.from(lanes.values()).sort((a,b)=>{
- const score=x=>((x.proc.includes('TPU')?100:0)+(x.name==='XLA Modules'?50:x.name==='XLA Ops'?40:x.name.includes('main/')?25:x.name==='python'?20:0));return score(b)-score(a)||b.events.length-a.events.length;
- });
- return {all,lanes:all.slice(0,12),lo,hi};
-}
-async function xprofLoad(){
- const key=xprofFile();if(xp.loading)return;xp.loading=true;
- const b=document.getElementById('xprofLoad'),ph=document.getElementById('xprofPlaceholder');b.disabled=true;b.textContent='Loading trace…';ph.innerHTML='<strong>Loading XProf timeline…</strong><p>Reading and expanding the compressed profiling data in your browser.</p>';
- try{
-  let data=xp.cache.get(key);
-  if(!data){const response=await fetch(xprofSrc());if(!response.ok)throw new Error('HTTP '+response.status+' for '+xprofSrc());const bytes=await response.arrayBuffer();let raw;
-   const gz=new Uint8Array(bytes);const compressed=gz[0]===0x1f&&gz[1]===0x8b;
-   if(compressed){if(typeof DecompressionStream==='undefined')throw new Error('This browser does not support gzip decompression. Download the trace and open it in Perfetto.');raw=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text()}
-   else raw=new TextDecoder().decode(bytes);
-   data=xprofPrepare(JSON.parse(raw));xp.cache.set(key,data);
-  }
-  xp.trace=key;xp.all=data.all;xp.lanes=data.lanes;xp.lo=data.lo;xp.hi=data.hi;xp.viewLo=data.lo;xp.viewHi=data.hi;xp.selected=null;
-  ph.style.display='none';document.getElementById('xprofCanvas').classList.add('show');
-  for(const id of ['xprofZoomIn','xprofZoomOut','xprofReset'])document.getElementById(id).disabled=false;
-  document.getElementById('xprofEventDetail').textContent=`Loaded ${xp.all.reduce((n,l)=>n+l.events.length,0).toLocaleString()} duration events across ${xp.all.length} recorded tracks. Select a bar for details; use +/− to zoom.`;
-  xprofDraw();
- }catch(error){ph.innerHTML='<strong>Unable to display this capture</strong><p>'+String(error.message).replaceAll('<','&lt;').replaceAll('>','&gt;')+'. You can still download the trace or open it in Perfetto.</p>';ph.style.display='flex';document.getElementById('xprofCanvas').classList.remove('show')}
- finally{xp.loading=false;b.disabled=false;b.textContent='Reload timeline preview'}
-}
-function xprofDraw(){
- if(!xp.trace)return;const cv=document.getElementById('xprofCanvas'),w=cv.clientWidth,h=cv.clientHeight,dpr=Math.min(devicePixelRatio||1,2);if(w<10)return;
- cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
- const left=Math.min(205,Math.max(112,w*.24)),right=14,top=39,rowH=(h-top-26)/Math.max(1,xp.lanes.length),width=w-left-right,span=xp.viewHi-xp.viewLo;
- ctx.fillStyle='#fbfdff';ctx.fillRect(0,0,w,h);ctx.textBaseline='middle';ctx.font='10px system-ui, sans-serif';
- for(let i=0;i<=5;i++){const x=left+i*width/5;ctx.strokeStyle='#e4ebf2';ctx.beginPath();ctx.moveTo(x,25);ctx.lineTo(x,h-16);ctx.stroke();ctx.fillStyle='#60788d';ctx.textAlign='center';ctx.fillText(((xp.viewLo-xp.lo+i*span/5)/1000).toFixed(2)+' ms',x,13)}
- ctx.textAlign='left';const pal=['#3284c0','#227b92','#55a5c2','#7999d0','#74b4a8','#427eaf','#83aabd','#51958c'];
- for(let k=0;k<xp.lanes.length;k++){
- const lane=xp.lanes[k],y=top+k*rowH;
- if(k%2===0){ctx.fillStyle='#f1f6fa';ctx.fillRect(0,y-1,w,rowH)}
- ctx.fillStyle=lane.proc.includes('TPU')?'#27587a':'#57738a';ctx.font='10.5px system-ui,sans-serif';
- const name=(lane.proc.includes('TPU')?'TPU · ':'CPU · ')+lane.name;ctx.fillText(name.length>31?name.slice(0,29)+'…':name,9,y+rowH/2);
- ctx.fillStyle=pal[k%pal.length];let cnt=0;
- for(const e of lane.events){const en=e.ts+e.dur;if(en<xp.viewLo||e.ts>xp.viewHi)continue;const x=left+Math.max(0,(e.ts-xp.viewLo)/span)*width;const ex=left+Math.min(1,(en-xp.viewLo)/span)*width;ctx.fillRect(x,y+rowH*.22,Math.max(1,ex-x),Math.max(3,rowH*.55));cnt++}
+ const model=document.getElementById('xprofModel').value;
+ const ring=document.getElementById('xprofRing').value;
+ const ids=XPROF_DRIVE[model+'-'+ring];
+ const names=['native','heir'];
+ for(let i=0;i<2;i++){
+  document.getElementById(i===0?'xprofNativeName':'xprofHeirName').textContent=names[i]+'-'+model+'-'+ring+'.trace.json.gz';
+  document.getElementById(i===0?'xprofNativeLink':'xprofHeirLink').href='https://drive.google.com/file/d/'+ids[i]+'/view';
  }
- ctx.strokeStyle='#d6e1ea';ctx.beginPath();ctx.moveTo(left,top-2);ctx.lineTo(left,h-16);ctx.stroke();
- cv._layout={left,right,top,rowH,width,w,h};
 }
-function xprofEventAt(ev){const cv=document.getElementById('xprofCanvas'),r=cv.getBoundingClientRect(),x=ev.clientX-r.left,y=ev.clientY-r.top,L=cv._layout;if(!L)return null;const row=Math.floor((y-L.top)/L.rowH);if(row<0||row>=xp.lanes.length||x<L.left)return null;const tm=xp.viewLo+(x-L.left)/L.width*(xp.viewHi-xp.viewLo);let match=null,dist=Infinity;
- for(const e of xp.lanes[row].events){const a=e.ts,b=a+e.dur;if(a<=tm&&b>=tm){if(e.dur<dist){match=e;dist=e.dur}}else{const d=Math.min(Math.abs(tm-a),Math.abs(tm-b));if(!match&&d<dist){dist=d;match=e}}}return match?{event:match,lane:xp.lanes[row]}:null;
-}
-function xprofZoom(factor){const m=(xp.viewLo+xp.viewHi)/2,half=Math.max(10,Math.min((xp.hi-xp.lo)/2,(xp.viewHi-xp.viewLo)*factor/2));xp.viewLo=Math.max(xp.lo,m-half);xp.viewHi=Math.min(xp.hi,m+half);xprofDraw()}
-document.querySelectorAll('[data-xprof-variant]').forEach(b=>b.addEventListener('click',()=>{xp.variant=b.dataset.xprofVariant;xprofSelect()}));
-for(const id of ['xprofModel','xprofRing'])document.getElementById(id).addEventListener('change',xprofSelect);
-document.getElementById('xprofLoad').addEventListener('click',xprofLoad);
-document.getElementById('xprofZoomIn').addEventListener('click',()=>xprofZoom(.5));document.getElementById('xprofZoomOut').addEventListener('click',()=>xprofZoom(2));document.getElementById('xprofReset').addEventListener('click',()=>{xp.viewLo=xp.lo;xp.viewHi=xp.hi;xprofDraw()});
-document.getElementById('xprofCanvas').addEventListener('click',ev=>{const hit=xprofEventAt(ev);if(!hit)return;const e=hit.event;const args=e.args&&typeof e.args==='object'?Object.entries(e.args).slice(0,3).map(([a,b])=>a+': '+String(b).slice(0,65)).join(' · '):'';document.getElementById('xprofEventDetail').textContent=`${hit.lane.proc} / ${hit.lane.name} — ${e.name||'Unnamed event'} · duration ${(e.dur/1000).toFixed(5)} ms · offset ${((e.ts-xp.lo)/1000).toFixed(3)} ms${args?' · '+args:''}`});
-window.addEventListener('resize',()=>{if(xp.trace&&document.getElementById('view-xprof').classList.contains('active'))xprofDraw()});
+document.getElementById('xprofModel').addEventListener('change',xprofSelect);
+document.getElementById('xprofRing').addEventListener('change',xprofSelect);
 xprofSelect();
 
 const viewNames=['motivation','overview','architecture','results','xprof'];
 let lastFocus=null; let currentView='motivation';
-function navigate(view,recordHash=true){if(!viewNames.includes(view))return;currentView=view;if(view==='xprof'&&xp.trace)requestAnimationFrame(xprofDraw);document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='view-'+view));document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.matches('.nav button')) b.setAttribute('aria-current',b.dataset.view===view?'page':'false');});if(recordHash)history.replaceState(null,'','#'+view);hideTip();window.scrollTo({top:0,behavior:'instant'});}
+function navigate(view,recordHash=true){if(!viewNames.includes(view))return;currentView=view;document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='view-'+view));document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.matches('.nav button')) b.setAttribute('aria-current',b.dataset.view===view?'page':'false');});if(recordHash)history.replaceState(null,'','#'+view);hideTip();window.scrollTo({top:0,behavior:'instant'});}
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.view)));
 function detailsFor(target){if(target.dataset.detail)return DATA[target.dataset.detail];if(target.dataset.pipeline){const n=Number(target.dataset.pipeline); if(n===11)return null;const p=PIPELINE[n-1];return {tag:'Pipeline · Step '+n,title:p[0],summary:p[1]+'.',points:n===12?DATA.emitter.points:n===13?DATA['offline-array'].points:n===14?DATA.execute.points:['This stage is represented in the user-provided HEIR → CROSS → TPU pipeline diagram.'],cta:n===12?{label:'Explore the emitter',view:'architecture'}:n===13||n===14?{label:'See offline and online paths',view:'architecture'}:null};}return null;}
 const tip=document.getElementById('tooltip');let tipTimeout;
