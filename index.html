@@ -99,34 +99,6 @@
 .correctness-input code{font-size:11.5px;background:#e9f1f8;border-radius:4px;padding:1px 4px;color:#245b8a}
 @media(max-width:630px){.correctness-method-card{padding:15px}.correctness-inputs{grid-template-columns:1fr}}
 
-/* Scope-aware dataset-level accuracy validation request. */
-.dataset-accuracy{margin-top:14px;border:1px solid #dce5ed;border-radius:11px;background:#f8fafc;padding:16px 18px}
-.dataset-accuracy h3{font-size:13px;margin:0 0 7px;color:#294b65;letter-spacing:-.1px}
-.dataset-accuracy p{margin:0 0 10px;font-size:12px;line-height:1.67;color:#5c7082}
-.dataset-accuracy p:last-child{margin-bottom:0}
-.dataset-accuracy ul{margin:8px 0 9px;padding-left:19px;display:grid;gap:5px}
-.dataset-accuracy li{font-size:12px;line-height:1.55;color:#455d70}
-.dataset-accuracy strong{color:#274b64}
-.dataset-validation-state{display:flex;gap:10px;flex-wrap:wrap;margin-top:11px;padding-top:10px;border-top:1px solid #dce5ed}
-.dataset-validation-state span{font-size:11px;color:#61768a}
-.dataset-validation-state b{color:#25465e}
-@media(max-width:630px){.dataset-accuracy{padding:13px 14px}}
-
-/* Recorded numerical correctness per model/ring (one deterministic input each). */
-.correctness-results{margin:17px 0 16px}
-.correctness-results h3{font-size:13.5px;margin:0 0 5px;color:#284c67}
-.correctness-results .correctness-table-intro{font-size:11.8px;margin:0 0 10px;color:#637789;line-height:1.65}
-.correctness-results .correctness-table-wrap{overflow-x:auto;border:1px solid #dce5ed;border-radius:10px;background:#fff}
-.correctness-results table{width:100%;border-collapse:collapse;font-size:12px}
-.correctness-results th,.correctness-results td{text-align:left;padding:10px 12px;border-bottom:1px solid #e6edf3;white-space:nowrap}
-.correctness-results thead th{color:#527088;background:#f5f8fb;font-size:11px;font-weight:750}
-.correctness-results tbody th{color:#304e64;font-weight:650}
-.correctness-results tbody tr:last-child th,.correctness-results tbody tr:last-child td{border-bottom:0}
-.correctness-results .correctness-match{color:#177763;font-weight:750}
-.correctness-results .correctness-numeric{font-variant-numeric:tabular-nums}
-.correctness-results .correctness-table-note{color:#6e8191;font-size:11.5px;line-height:1.65;margin:10px 0 0}
-@media(max-width:630px){.correctness-results th,.correctness-results td{padding:9px 10px;font-size:11px}}
-
 /* Synchronized benchmark timing methodology, placed before Experimental setup. */
 .timing-method-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px 20px}
 .timing-method-card p{font-size:12.5px;line-height:1.7;color:#526a7c;margin:0 0 12px}
@@ -386,20 +358,10 @@ compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python pa
      </div>
      <p class="correctness-table-note">All six pairs pass the recorded numerical correctness checks. For AlexNet-Tiny 8K, the maximum difference <em>between the Native and HEIR decrypted outputs</em> is approximately 6.23 × 10<sup>−6</sup>. These single-input results do not establish accuracy across a full dataset.</p>
     </section>
-    <div class="dataset-accuracy" aria-labelledby="dataset-accuracy-heading">
-     <h3 id="dataset-accuracy-heading">Dataset-level classification accuracy · additional validation</h3>
-     <p>To verify that HEIR-emitted CROSS and Native CROSS maintain comparable model accuracy, evaluate <strong>the same trained model</strong> on <strong>the same labeled test dataset</strong> with identical weights, preprocessing, input order, and classification rule.</p>
-     <ul>
-      <li>Run the plaintext model, Native CROSS encrypted inference, and HEIR Prepared encrypted inference on the same examples.</li>
-      <li>Decrypt both encrypted outputs and compare the predicted classes against the ground-truth labels.</li>
-      <li>Report top-1 accuracy for each path, Native–HEIR prediction agreement, and numerical differences between output vectors.</li>
-     </ul>
-     <div class="dataset-validation-state"><span><b>Fixed-input numerical checks:</b> 6 / 6 passed</span><span><b>Dataset-level accuracy:</b> not yet measured</span></div>
-     <p style="margin-top:10px">These dataset-level metrics must be collected before claiming that both implementations have the same accuracy across the dataset.</p>
-    </div>
+
    </div>
   </section>
-  <div class="result-footline"><b>Recorded correctness:</b> all six paired configurations pass the fixed-input numerical checks and match the plaintext reference argmax. HEIR uses the propagated output scale for its primary correctness check. <b>Dataset-wide classification accuracy has not yet been evaluated.</b></div>
+  <div class="result-footline"><b>Recorded correctness:</b> all six paired configurations pass the fixed-input numerical checks and match the plaintext reference argmax. HEIR uses the propagated output scale for its primary correctness check.</div>
   <section class="timing-methodology" aria-labelledby="timing-heading">
    <h2 class="result-section-title" id="timing-heading">Measurement methodology</h2>
    <div class="timing-method-card">
