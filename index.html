@@ -166,6 +166,19 @@
 .xprof-guide h3{font-size:12.5px;margin:0 0 7px}.xprof-guide p{font-size:12px;line-height:1.65;color:var(--mute);margin:0}
 @media(max-width:860px){.xprof-controls{grid-template-columns:1fr 1fr}.xprof-variants-wrap{grid-column:1/-1}.xprof-steps,.xprof-guide{grid-template-columns:1fr}}
 @media(max-width:500px){.xprof-shell{padding:15px}.xprof-selection{padding:16px}.xprof-controls{grid-template-columns:1fr}.xprof-variants-wrap{grid-column:auto}.xprof-actions{display:grid;grid-template-columns:1fr}.xprof-action{width:100%}}
+
+/* Full-dataset correctness validation section */
+.fdv-wrap{max-width:1120px;margin:0 auto}.fdv-wrap h2{font-size:16px;color:#274660;letter-spacing:-.3px;margin:27px 0 12px}.fdv-lede{max-width:900px;line-height:1.8;color:#60758a;font-size:13px}
+.fdv-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:19px 0}.fdv-kpis>div{background:white;border:1px solid var(--line);border-radius:12px;padding:17px}.fdv-kpis strong{display:block;color:#183a55;font-size:24px}.fdv-kpis span{display:block;font-size:11px;color:#657d91;margin-top:5px}
+.fdv-panel{background:white;border:1px solid var(--line);border-radius:13px;padding:19px 21px;color:#4e6578;font-size:12.5px;line-height:1.75}.fdv-panel p{margin:0 0 11px}.fdv-panel p:last-child{margin:0}.fdv-panel strong{color:#24455f}
+.fdv-paths,.fdv-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}.fdv-paths>div,.fdv-steps>div{border:1px solid #dde8f0;background:#f6f9fc;border-radius:10px;padding:13px;color:#506c80;font-size:12px;line-height:1.6}.fdv-paths strong,.fdv-steps strong{display:block;color:#28516c;margin-bottom:4px}
+.fdv-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.fdv-metrics article{background:white;border:1px solid var(--line);border-radius:12px;padding:17px;color:#526b80;font-size:12px;line-height:1.7}.fdv-metrics h3{font-size:13px;margin:0 0 7px;color:#2d526b}.fdv-metrics p{margin:0 0 9px}.fdv-formula{background:#f1f6fb;border:1px solid #e0eaf2;border-radius:8px;padding:10px;color:#285676;line-height:1.9;overflow:auto}
+.fdv-scroll{overflow-x:auto;background:white;border:1px solid var(--line);border-radius:12px}.fdv-table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:11.5px;font-variant-numeric:tabular-nums}.fdv-table th,.fdv-table td{padding:10px 12px;border-bottom:1px solid #e6eef4;text-align:right;line-height:1.6}.fdv-table th:first-child,.fdv-table td:first-child{text-align:left}.fdv-table thead th{background:#eff5f9;color:#325370;font-weight:800}.fdv-table tbody th{font-weight:750;color:#294b65}.fdv-table tbody td{color:#4e667a}.fdv-table tbody tr:nth-child(even){background:#fafcfd}
+.fdv-note{color:#697e90;font-size:11.7px;line-height:1.75;margin:11px 0 17px}
+.fdv-details{border:1px solid var(--line);border-radius:11px;background:white;margin-top:11px}.fdv-details summary{cursor:pointer;color:#2b566f;font-size:12px;font-weight:750;padding:12px 15px}.fdv-details[open] summary{border-bottom:1px solid var(--line)}.fdv-details>div{color:#506b7f;font-size:12px;line-height:1.7;padding:13px 17px}.fdv-details p{margin:0 0 10px}
+.fdv-finding{padding:16px 20px;border-radius:10px;background:#edf8f4;border-left:4px solid #1a846f;color:#336253;font-size:12.3px;line-height:1.8;margin:18px 0}
+@media(max-width:900px){.fdv-kpis{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.fdv-paths,.fdv-steps,.fdv-metrics{grid-template-columns:1fr}.fdv-kpis strong{font-size:21px}.fdv-panel{padding:15px}}
+
 </style>
 </head>
 <body>
@@ -176,13 +189,15 @@
     <button class="active" data-view="motivation"><span class="nav-num">01</span><span class="nav-name">Motivation</span></button>
     <button data-view="overview"><span class="nav-num">02</span><span class="nav-name">Full pipeline</span></button>
     <button data-view="architecture"><span class="nav-num">03</span><span class="nav-name">Our optimization</span></button>
-    <button data-view="results"><span class="nav-num">04</span><span class="nav-name">Results</span></button><button data-view="xprof"><span class="nav-num">05</span><span class="nav-name">XProf traces</span></button>
+    <button data-view="results"><span class="nav-num">04</span><span class="nav-name">Results</span></button>
+     <button data-view="validation"><span class="nav-num">05</span><span class="nav-name">Full-dataset validation</span></button>
+     <button data-view="xprof"><span class="nav-num">06</span><span class="nav-name">XProf traces</span></button>
   </nav></div>
 
 </aside>
 <div class="main">
 <header class="topbar"><div class="topbar-left"><span class="dot"></span> HEIR → CROSS · TPU</div><div class="topbar-right">Compilation · preparation · inference</div></header>
-<nav class="mobile-nav" aria-label="Mobile navigation"><button class="active" data-view="motivation">01 Motivation</button><button data-view="overview">02 Pipeline</button><button data-view="architecture">03 Optimization</button><button data-view="results">04 Results</button><button data-view="xprof">05 XProf</button></nav>
+<nav class="mobile-nav" aria-label="Mobile navigation"><button class="active" data-view="motivation">01 Motivation</button><button data-view="overview">02 Pipeline</button><button data-view="architecture">03 Optimization</button><button data-view="results">04 Results</button><button data-view="validation">05 Validation</button><button data-view="xprof">06 XProf</button></nav>
 <main class="content" id="mainContent">
 <section class="screen" id="view-overview" aria-labelledby="overviewTitle">
  <div class="eyebrow">02 / Pipeline</div><h1 id="overviewTitle">HEIR → CROSS → TPU pipeline</h1>
@@ -424,12 +439,73 @@ compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python pa
    </details>
   </section>
 
-  <div class="btn-row"><button class="btn secondary" data-view="architecture">← Our optimization</button></div>
+  <div class="btn-row"><button class="btn secondary" data-view="architecture">← Our optimization</button><button class="btn" data-view="validation">Full-dataset validation →</button></div>
  </div>
 </section>
+
+<section class="screen" id="view-validation" aria-labelledby="validationTitle">
+<div class="fdv-wrap">
+ <div class="eyebrow">05 / Full-Dataset Correctness Validation</div><h1 id="validationTitle">Validation of models on full dataset</h1>
+ <p class="fdv-lede"><strong>HEIR Prepared vs. Native CROSS vs. Plaintext | Google TPU v6e-8</strong>. Extending our earlier fixed-input benchmark checks to complete labeled test datasets for all six CKKS configurations. The goal is <strong>implementation correctness</strong>, not improving neural-network accuracy.</p>
+ <div class="fdv-kpis"><div><strong>6 / 6</strong><span>Fully validated configurations</span></div><div><strong>10,000</strong><span>Labeled images per configuration</span></div><div><strong>100%</strong><span>All three pairwise prediction agreements</span></div><div><strong>0</strong><span>Failures across 180,000 inference records</span></div></div>
+ <h2>1. Objective and implementations</h2>
+ <div class="fdv-panel"><p>We compare the original plaintext model to two encrypted executions on the same trained model and identical normalized image inputs. No retraining is performed.</p>
+ <div class="fdv-paths"><div><strong>Plaintext</strong>Execute the original model without encryption.</div><div><strong>Native CROSS</strong>Encrypt the input → run native encrypted inference → decrypt the output logits.</div><div><strong>HEIR Prepared</strong>Encrypt the input → run the HEIR-generated prepared computation using CROSS → decrypt the output logits.</div></div>
+ <p>Native and HEIR use matched benchmark cryptographic parameters but retain their respective saved runtime snapshots; these should not be described as identical source trees.</p></div>
+ <h2>2. Models and datasets</h2>
+ <div class="fdv-scroll"><table class="fdv-table" aria-label="Models and datasets"><thead><tr><th>Property</th><th>LeNet</th><th>AlexNet-Tiny</th></tr></thead><tbody><tr><th>Dataset</th><td>MNIST</td><td>CIFAR-10</td></tr><tr><th>Classification task</th><td>Handwritten digits 0–9</td><td>10 real-world object classes</td></tr><tr><th>Original image dimensions</th><td>28 × 28 × 1</td><td>32 × 32 × 3</td></tr><tr><th>Training images</th><td>60,000</td><td>50,000</td></tr><tr><th>Test images</th><td>10,000</td><td>10,000</td></tr><tr><th>Encrypted model input shape</th><td>1 × 1 × 28 × 28</td><td>1 × 3 × 16 × 16</td></tr></tbody></table></div>
+ <details class="fdv-details"><summary>Dataset preprocessing notes</summary><div>
+ <p><strong>LeNet / MNIST:</strong> Load each grayscale 28 × 28 image as a numerical array. Convert to float32, divide pixel intensities by 255, normalize with mean 0.1307 and standard deviation 0.3081, and produce the 1 × 1 × 28 × 28 input tensor.</p>
+ <p><strong>AlexNet-Tiny / CIFAR-10:</strong> Load RGB 32 × 32 images as float32, divide by 255, normalize channels using means (0.4914, 0.4822, 0.4465) and standard deviations (0.2023, 0.1994, 0.2010), then apply 2 × 2 average pooling, stride 2, before encryption. The encrypted input is 1 × 3 × 16 × 16.</p>
+ <p>All three paths use the same normalized numerical inputs. AlexNet-Tiny's earlier timing benchmark used synthetic random inputs; full-dataset correctness uses correctly preprocessed labeled CIFAR-10 images while retaining the saved benchmark executable.</p></div></details>
+ <h2>3. Experimental workflow</h2>
+ <div class="fdv-steps"><div><strong>1. Load the model and dataset</strong>Use original trained weights and all labeled test images.</div><div><strong>2. Preprocess inputs</strong>Apply dataset normalization and model-specific input transforms.</div><div><strong>3. Prepare execution once</strong>Initialize cryptographic resources and prepared/compiled execution paths per configuration.</div><div><strong>4. Execute three paths</strong>Run each of the 10,000 images through plaintext, Native CROSS and HEIR Prepared.</div><div><strong>5. Decrypt</strong>Recover the ten output logits per image from each encrypted implementation.</div><div><strong>6. Compare</strong>Calculate accuracy, prediction agreement, numerical differences and execution failures.</div></div>
+ <p class="fdv-note">Each image is encrypted separately for each encrypted path; prepared execution is reused across all examples. The three phases run in separate processes. 8K / 16K / 32K refer to CKKS polynomial ring degrees <strong>N = 8192 / 16384 / 32768</strong>, not image counts.</p>
+ <h2>4. Correctness metrics</h2><p class="fdv-note">Each model returns ten logits. The predicted class is the index of the largest: <strong>ŷ = argmax<sub>k∈{0,…,9}</sub> z<sub>k</sub></strong>.</p>
+ <div class="fdv-metrics">
+  <article><h3>4.1 Classification accuracy</h3><p>Measures how often the predicted class equals the true test label. It is model accuracy, not equivalence between implementations.</p><div class="fdv-formula">Accuracy = correct predictions ÷ all requested test images × 100%</div></article>
+  <article><h3>4.2 Prediction agreement</h3><p>Measures matching predicted classes on the same image, regardless of correctness. Equal accuracy does not establish identical mistakes.</p><div class="fdv-formula">Agreement(A,B) = matching predictions ÷ successful image pairs × 100%</div><p style="margin-top:8px">Pairs: Plaintext–Native, Plaintext–HEIR, and Native–HEIR.</p></article>
+  <article><h3>4.3 Numerical consistency</h3><p>Identical classifications do not guarantee identical numerical outputs, so compare every corresponding decrypted class logit.</p><div class="fdv-formula">e<sub>i,k</sub> = |z<sub>i,k</sub><sup>A</sup> − z<sub>i,k</sub><sup>B</sup>|<br>Maximum = max<sub>i,k</sub> e<sub>i,k</sub><br>Mean = Σ<sub>i=1…M</sub> Σ<sub>k=0…9</sub> e<sub>i,k</sub> ÷ (10M)</div><p style="margin-top:8px">10,000 successful image pairs = 100,000 corresponding output logits.</p></article>
+  <article><h3>4.4 Execution reliability</h3><p>Count images attempted, successful inferences, exceptions and invalid/nonfinite logits. A valid misclassification is not an inference failure.</p><p>Failures count against accuracy. Agreement and numerical differences use successful pairs, with their count shown.</p></article>
+ </div>
+ <h2>5. Completed full-dataset results</h2><div class="fdv-panel" style="margin-bottom:12px"><p><strong>5.1 Classification accuracy and prediction agreement.</strong> Every configuration completed all 10,000 labeled test images in all three implementations. All three pairs agree on 100% of predictions, with zero inference failures.</p></div>
+ <div class="fdv-scroll"><table class="fdv-table" aria-label="All six full-dataset classification validation results"><thead><tr><th>Model</th><th>Dataset</th><th>Images</th><th>Plaintext accuracy</th><th>Native accuracy</th><th>HEIR accuracy</th><th>Correct / path</th><th>Wrong / path</th><th>All pair agreements</th><th>Failures</th></tr></thead><tbody><tr><th scope="row">LeNet 8K</th><td>MNIST</td><td>10,000</td><td>98.52%</td><td>98.52%</td><td>98.52%</td><td>9,852</td><td>148</td><td>100%</td><td>0</td></tr>
+<tr><th scope="row">LeNet 16K</th><td>MNIST</td><td>10,000</td><td>98.52%</td><td>98.52%</td><td>98.52%</td><td>9,852</td><td>148</td><td>100%</td><td>0</td></tr>
+<tr><th scope="row">LeNet 32K</th><td>MNIST</td><td>10,000</td><td>98.52%</td><td>98.52%</td><td>98.52%</td><td>9,852</td><td>148</td><td>100%</td><td>0</td></tr>
+<tr><th scope="row">AlexNet-Tiny 8K</th><td>CIFAR-10</td><td>10,000</td><td>48.66%</td><td>48.66%</td><td>48.66%</td><td>4,866</td><td>5,134</td><td>100%</td><td>0</td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td>CIFAR-10</td><td>10,000</td><td>48.66%</td><td>48.66%</td><td>48.66%</td><td>4,866</td><td>5,134</td><td>100%</td><td>0</td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td>CIFAR-10</td><td>10,000</td><td>48.66%</td><td>48.66%</td><td>48.66%</td><td>4,866</td><td>5,134</td><td>100%</td><td>0</td></tr></tbody></table></div>
+ <p class="fdv-note">LeNet: all three implementations correctly classify the same 9,852 images and make the same 148 mistakes. AlexNet-Tiny: all three correctly classify the same 4,866 and make the same 5,134 mistakes. Its 48.66% accuracy reflects this model/checkpoint and evaluation pipeline, not an accuracy reduction introduced by HEIR.</p>
+ <div class="fdv-panel" style="margin-bottom:12px"><p><strong>5.2 Numerical error analysis.</strong> Below are all 18 pairwise comparisons. Each row uses 10,000 successful image pairs and 100,000 corresponding logits; values are displayed to eight decimal mantissa places, with original source values on hover.</p></div>
+ <div class="fdv-scroll"><table class="fdv-table" aria-label="All eighteen model pair numerical comparisons"><thead><tr><th>Model</th><th>Comparison</th><th>Successful pairs</th><th>Agreement</th><th>Max absolute logit difference</th><th>Mean absolute logit difference</th></tr></thead><tbody><tr><th scope="row">LeNet 8K</th><td>Native–HEIR</td><td>10,000</td><td>100%</td><td><span title="4.2123302307572885e-05">4.2123302 × 10<sup>−5</sup></span></td><td><span title="3.211139352989031e-06">3.2111394 × 10<sup>−6</sup></span></td></tr>
+<tr><th scope="row">LeNet 8K</th><td>Plaintext–Native</td><td>10,000</td><td>100%</td><td><span title="1.7266188478970435e-11">1.7266188 × 10<sup>−11</sup></span></td><td><span title="9.013768912001442e-13">9.0137689 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">LeNet 8K</th><td>Plaintext–HEIR</td><td>10,000</td><td>100%</td><td><span title="4.212330750874571e-05">4.2123308 × 10<sup>−5</sup></span></td><td><span title="3.2111394313805254e-06">3.2111394 × 10<sup>−6</sup></span></td></tr>
+<tr><th scope="row">LeNet 16K</th><td>Native–HEIR</td><td>10,000</td><td>100%</td><td><span title="4.2123309114572294e-05">4.2123309 × 10<sup>−5</sup></span></td><td><span title="3.211139500453659e-06">3.2111395 × 10<sup>−6</sup></span></td></tr>
+<tr><th scope="row">LeNet 16K</th><td>Plaintext–Native</td><td>10,000</td><td>100%</td><td><span title="2.020783540501725e-11">2.0207835 × 10<sup>−11</sup></span></td><td><span title="1.856243135778306e-12">1.8562431 × 10<sup>−12</sup></span></td></tr>
+<tr><th scope="row">LeNet 16K</th><td>Plaintext–HEIR</td><td>10,000</td><td>100%</td><td><span title="4.212330750874571e-05">4.2123308 × 10<sup>−5</sup></span></td><td><span title="3.2111394313805254e-06">3.2111394 × 10<sup>−6</sup></span></td></tr>
+<tr><th scope="row">LeNet 32K</th><td>Native–HEIR</td><td>10,000</td><td>100%</td><td><span title="4.2123302009144936e-05">4.2123302 × 10<sup>−5</sup></span></td><td><span title="3.2111402699207395e-06">3.2111403 × 10<sup>−6</sup></span></td></tr>
+<tr><th scope="row">LeNet 32K</th><td>Plaintext–Native</td><td>10,000</td><td>100%</td><td><span title="6.718892109347507e-11">6.7188921 × 10<sup>−11</sup></span></td><td><span title="6.368395364078123e-12">6.3683954 × 10<sup>−12</sup></span></td></tr>
+<tr><th scope="row">LeNet 32K</th><td>Plaintext–HEIR</td><td>10,000</td><td>100%</td><td><span title="4.212330750874571e-05">4.2123308 × 10<sup>−5</sup></span></td><td><span title="3.2111394313805254e-06">3.2111394 × 10<sup>−6</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 8K</th><td>Native–HEIR</td><td>10,000</td><td>100%</td><td><span title="0.00013392547334944993">1.3392547 × 10<sup>−4</sup></span></td><td><span title="2.1658959419651465e-06">2.1658959 × 10<sup>−6</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 8K</th><td>Plaintext–Native</td><td>10,000</td><td>100%</td><td><span title="4.774847184307873e-12">4.7748472 × 10<sup>−12</sup></span></td><td><span title="1.0100253189303481e-13">1.0100253 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 8K</th><td>Plaintext–HEIR</td><td>10,000</td><td>100%</td><td><span title="0.00013392547324997395">1.3392547 × 10<sup>−4</sup></span></td><td><span title="2.1658959454053124e-06">2.1658959 × 10<sup>−6</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td>Native–HEIR</td><td>10,000</td><td>100%</td><td><span title="0.00013392547341339878">1.3392547 × 10<sup>−4</sup></span></td><td><span title="2.1658959364221116e-06">2.1658959 × 10<sup>−6</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td>Plaintext–Native</td><td>10,000</td><td>100%</td><td><span title="4.177991286269389e-12">4.1779913 × 10<sup>−12</sup></span></td><td><span title="1.9612785268807488e-13">1.9612785 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td>Plaintext–HEIR</td><td>10,000</td><td>100%</td><td><span title="0.00013392547324997395">1.3392547 × 10<sup>−4</sup></span></td><td><span title="2.1658959454053124e-06">2.1658959 × 10<sup>−6</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td>Native–HEIR</td><td>10,000</td><td>100%</td><td><span title="0.0001339254690790881">1.3392547 × 10<sup>−4</sup></span></td><td><span title="2.1658958656783315e-06">2.1658959 × 10<sup>−6</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td>Plaintext–Native</td><td>10,000</td><td>100%</td><td><span title="6.181721801112872e-12">6.1817218 × 10<sup>−12</sup></span></td><td><span title="4.4521726017451836e-13">4.4521726 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td>Plaintext–HEIR</td><td>10,000</td><td>100%</td><td><span title="0.00013392547324997395">1.3392547 × 10<sup>−4</sup></span></td><td><span title="2.1658959454053124e-06">2.1658959 × 10<sup>−6</sup></span></td></tr></tbody></table></div>
+ <div class="fdv-finding"><strong>Finding:</strong> Across all six benchmarked configurations, HEIR Prepared preserves every classification decision made by Native CROSS and plaintext inference on the complete test datasets. The decrypted logits differ slightly without changing predicted classes, and the error magnitudes remain nearly unchanged from 8K to 32K.</div>
+ <h2>Evidence, connection to benchmarks and limits</h2>
+ <div class="fdv-panel"><p><strong>Evidence:</strong> Archived per-image logits, predictions, dataset/input/weight hashes, benchmark artifact hashes and logs support reproducibility. The independent offline verifier passed its checks for all <strong>180,000 inference records</strong>, all six HEIR artifact hashes, and the recomputed accuracy, agreement and numerical errors.</p>
+ <p><strong>Benchmarking context:</strong> Section 4 separately contains earlier fixed-input numerical checks and measured TPU performance. The full-dataset correctness campaign complements those measurements; its recorded timing observations are not a new controlled latency study.</p>
+ <p><strong>Scope:</strong> This is empirical correctness evidence for the tested data, model checkpoints and CKKS profiles—not proof for all inputs or a cryptographic security audit. The experimental 8K and 16K parameter profiles are not 128-bit secure. The 32K profiles meet the catalog's stated 128-bit parameter-ceiling criterion, which this validation does not independently assess.</p></div>
+ <div class="btn-row"><button class="btn secondary" data-view="results">← Benchmark results</button><button class="btn" data-view="xprof">XProf traces →</button></div>
+</div></section>
+
 <section class="screen" id="view-xprof" aria-labelledby="xprofTitle">
  <div class="xprof-wrap">
-  <div class="eyebrow">05 / Profiling</div><h1 id="xprofTitle">XProf execution traces</h1>
+  <div class="eyebrow">06 / Profiling</div><h1 id="xprofTitle">XProf execution traces</h1>
   <p class="lede">Explore the original Native CROSS and HEIR Prepared CPU/TPU profiling timelines for AlexNet-Tiny and LeNet at three ring sizes.</p>
   <div class="xprof-shell">
    <p class="xprof-intro">Select a workload and implementation. The original profiling file is available on Google Drive, and its detailed timeline can be viewed in <strong>Perfetto</strong>. No custom or approximated timeline is shown on this website.</p>
@@ -554,7 +630,7 @@ document.getElementById('xprofModel').addEventListener('change',xprofSelect);
 document.getElementById('xprofRing').addEventListener('change',xprofSelect);
 xprofSelect();
 
-const viewNames=['motivation','overview','architecture','results','xprof'];
+const viewNames=['motivation','overview','architecture','results','validation','xprof'];
 let lastFocus=null; let currentView='motivation';
 function navigate(view,recordHash=true){if(!viewNames.includes(view))return;currentView=view;document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='view-'+view));document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.matches('.nav button')) b.setAttribute('aria-current',b.dataset.view===view?'page':'false');});if(recordHash)history.replaceState(null,'','#'+view);hideTip();window.scrollTo({top:0,behavior:'instant'});}
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.view)));
