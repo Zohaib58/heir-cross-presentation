@@ -446,7 +446,6 @@ compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python pa
 <section class="screen" id="view-validation" aria-labelledby="validationTitle">
 <div class="fdv-wrap">
  <div class="eyebrow">05 / Full-Dataset Correctness Validation</div><h1 id="validationTitle">Validation of models on full dataset</h1>
- <p class="fdv-lede"><strong>HEIR Prepared vs. Native CROSS vs. Plaintext | Google TPU v6e-8</strong>. Extending our earlier fixed-input benchmark checks to complete labeled test datasets for all six CKKS configurations. The goal is <strong>implementation correctness</strong>, not improving neural-network accuracy.</p>
  <div class="fdv-kpis"><div><strong>6 / 6</strong><span>Fully validated configurations</span></div><div><strong>10,000</strong><span>Labeled images per configuration</span></div><div><strong>100%</strong><span>All three pairwise prediction agreements</span></div><div><strong>0</strong><span>Failures across 180,000 inference records</span></div></div>
  <h2>1. Objective and implementations</h2>
  <div class="fdv-panel"><p>We compare the original plaintext model to two encrypted executions on the same trained model and identical normalized image inputs. No retraining is performed.</p>
