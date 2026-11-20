@@ -210,6 +210,12 @@
 .phase-path-label{display:inline-block;border-radius:5px;padding:3px 9px;min-width:57px;font-size:11px;font-weight:800;text-align:center}
 .phase-path-label.native{background:#e1ecf7;border:1px solid #cbdceb;color:#2f658d}
 .phase-path-label.heir{background:#dbf2e6;border:1px solid #bee5d1;color:#16775c}
+
+/* Instrumentation call notes beneath the online/offline breakdown tables. */
+.phase-call-example{border:1px solid #dfe8ef;background:#f4f8fb;border-radius:9px;padding:12px 15px;margin:9px 0 17px;color:#2a5270;font-size:12px;line-height:1.8;overflow-x:auto}
+.phase-table[aria-label="Online runner instrumentation calls"],.phase-table[aria-label="HEIR offline benchmark runner setup calls"],.phase-table[aria-label="Native offline benchmark runner setup calls"]{white-space:normal}
+.phase-table[aria-label="Online runner instrumentation calls"] tbody td,.phase-table[aria-label="HEIR offline benchmark runner setup calls"] tbody td,.phase-table[aria-label="Native offline benchmark runner setup calls"] tbody td{text-align:left;font-variant-numeric:normal;min-width:320px}
+.phase-table code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:11px;color:#245b77;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -446,6 +452,18 @@ compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python pa
 <tr class="phase-native"><th scope="row">LeNet 32K</th><td><span class="phase-path-label native">Native</span></td><td>0.030</td><td>431.110</td><td>285.960</td><td>127.449</td><td>0.008</td></tr>
 <tr class="phase-heir"><th scope="row">LeNet 32K</th><td><span class="phase-path-label heir">HEIR</span></td><td>3.316</td><td>356.972</td><td>214.499</td><td>126.340</td><td>3.769</td></tr></tbody></table></div>
  <p class="phase-note">Each stage is timed independently: medians are not additive and should not be summed to calculate client-to-client latency. These values were not extracted from XProf traces.</p>
+
+ <h2 class="result-section-title">Runner instrumentation: online call boundaries</h2>
+ <p class="phase-note">The online phase labels correspond to the following benchmark runner calls or portions of calls (AlexNet-Tiny function names shown). The five stage-timing columns above remain unchanged; <strong>Output Wrap</strong> and <strong>Prepared execution</strong> identify additional execution boundaries rather than additional columns of measured phase timings.</p>
+ <div class="phase-table-wrap"><table class="phase-table" aria-label="Online runner instrumentation calls"><thead><tr><th scope="col">Recorded stage / boundary</th><th scope="col">Call or portion being timed</th></tr></thead><tbody>
+  <tr><th scope="row">Pack</th><td>Input-layout portion of <code>alexnet_tiny__encrypt__arg0(...)</code></td></tr>
+  <tr><th scope="row">Encode + Encrypt</th><td>Encoding/encryption portion of <code>alexnet_tiny__encrypt__arg0(...)</code></td></tr>
+  <tr><th scope="row">Raw Compute</th><td><code>plan.execute_raw(...)</code></td></tr>
+  <tr><th scope="row">Output Wrap</th><td><code>plan.wrap_raw(...)</code></td></tr>
+  <tr><th scope="row">Prepared execution</th><td><code>alexnet_tiny__preprocessed__execute_compiled(plan, ...)</code> → <code>plan.execute(...)</code></td></tr>
+  <tr><th scope="row">Decrypt + Decode</th><td>Decryption/decoding portion of <code>alexnet_tiny__decrypt__result0(...)</code></td></tr>
+  <tr><th scope="row">Extract</th><td>Output-layout portion of <code>alexnet_tiny__decrypt__result0(...)</code></td></tr>
+ </tbody></table></div>
  <div class="btn-row"><button class="btn secondary" data-view="results">← Results overview</button><button class="btn" data-view="results-offline">Offline phase breakdown →</button></div>
 </div></section>
 
@@ -491,6 +509,26 @@ compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python pa
 <tr><th scope="row">LeNet 16K</th><td>0.028</td><td>2,537.53</td><td>537.03</td><td>207.14</td><td>6,374.53</td></tr>
 <tr><th scope="row">LeNet 32K</th><td>0.030</td><td>5,295.63</td><td>1,128.82</td><td>159.01</td><td>13,469.21</td></tr></tbody></table></div>
  <p class="phase-note">These subphase timings are in <strong>milliseconds</strong>; the HEIR Prepared setup table above uses <strong>seconds</strong>.</p>
+
+ <h2 class="result-section-title">Runner instrumentation: offline setup calls</h2>
+ <p class="phase-note">The offline timings were recorded in the <strong>benchmark runner</strong> with wall-clock timers around each setup-stage call. The generated model computation was not edited. Where supported, JAX outputs were synchronized before stopping the timer.</p>
+ <div class="phase-call-example"><code>start = time.perf_counter()<br>result = setup_stage(...)<br># Synchronize supported JAX outputs, if any.<br>elapsed = time.perf_counter() - start</code></div>
+ <h3 class="result-section-title">HEIR → CROSS</h3>
+ <div class="phase-table-wrap"><table class="phase-table" aria-label="HEIR offline benchmark runner setup calls"><thead><tr><th scope="col">Recorded stage</th><th scope="col">Call being timed</th></tr></thead><tbody>
+  <tr><th scope="row">Generate context</th><td><code>alexnet_tiny__generate_crypto_context()</code></td></tr>
+  <tr><th scope="row">PKE key generation</th><td><code>key_gen.gen_pke_pair(...)</code></td></tr>
+  <tr><th scope="row">Evaluation-key generation</th><td><code>key_gen.gen_evaluation_key(...)</code></td></tr>
+  <tr><th scope="row">Evaluation-key layout</th><td>Conversion of generated evaluation keys into the runtime layout</td></tr>
+  <tr><th scope="row">Configure context</th><td><code>alexnet_tiny__configure_crypto_context(...)</code></td></tr>
+  <tr><th scope="row">Preprocessing</th><td><code>alexnet_tiny__preprocessing(...)</code></td></tr>
+  <tr><th scope="row">Preparation + compilation</th><td><code>alexnet_tiny__preprocessed__prepare_compiled(...)</code></td></tr>
+ </tbody></table></div>
+ <h3 class="result-section-title">Native CROSS</h3>
+ <div class="phase-table-wrap"><table class="phase-table" aria-label="Native offline benchmark runner setup calls"><thead><tr><th scope="col">Recorded stage</th><th scope="col">Call being timed</th></tr></thead><tbody>
+  <tr><th scope="row">Build plan</th><td><code>demo.build_plan()</code></td></tr>
+  <tr><th scope="row">Materialization + compilation</th><td><code>demo.materialize_mapping()</code></td></tr>
+ </tbody></table></div>
+ <p class="phase-note">These measurements cover <strong>the full elapsed duration of each call</strong>, including CPU work, allocation, and device work occurring within it. Native materialization combines context/key preparation, constants, and compilation, and does not separately expose the HEIR subphases. <strong>Preparation + compilation is not pure compiler time:</strong> JAX tracing, lowering, and XLA compilation were not timed separately. Offline setup is measured during initialization, separately from <strong>one warmup and three measured warm-inference repetitions</strong>. The function names above are the AlexNet-Tiny examples.</p>
  <div class="btn-row"><button class="btn secondary" data-view="results-online">← Online phase breakdown</button><button class="btn" data-view="validation">Full-dataset validation →</button></div>
 </div></section>
 
