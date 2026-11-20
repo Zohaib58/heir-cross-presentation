@@ -179,6 +179,26 @@
 .fdv-note{color:#526b80;font-size:12.5px;line-height:1.75;margin:11px 0 17px}
 @media(max-width:700px){.fdv-metrics{grid-template-columns:1fr}.fdv-panel{padding:15px}}
 
+
+/* Nested Results subtabs and static timing tables. */
+.nav .result-subnav{display:grid;gap:3px;margin:-2px 0 6px 24px;padding:1px 0 1px 10px;border-left:1px solid #d5e2ec}
+.nav .result-subnav button{display:block;width:100%;font-size:11.5px;font-weight:600;color:#647b8d;padding:9px;line-height:1.35}
+.nav .result-subnav button.active{background:#eaf2f8;color:#173d5d;font-weight:750}
+.nav button.parent-active{color:#244d6e;font-weight:750}
+.phase-table-wrap{overflow:auto;max-width:100%;border:1px solid var(--line);border-radius:12px;background:#fff;margin:11px 0}
+.phase-table{border-collapse:collapse;width:100%;font-size:11.7px;white-space:nowrap;text-align:left}
+.phase-table th,.phase-table td{padding:10px 12px;border-bottom:1px solid #e7edf3;line-height:1.6}
+.phase-table thead th{background:#f0f5f8;color:#36546d;font-size:10.8px;font-weight:800}
+.phase-table tbody th{color:#344f66;font-weight:750;text-align:left}
+.phase-table tbody td{color:#486176;text-align:right;font-variant-numeric:tabular-nums}
+.phase-table tbody tr:nth-child(even){background:#fafcfe}
+.phase-table tbody tr:last-child th,.phase-table tbody tr:last-child td{border-bottom:0}
+.phase-table[aria-label="Online phase descriptions"],.phase-table[aria-label="Offline preparation phase definitions"]{white-space:normal}
+.phase-table[aria-label="Online phase descriptions"] tbody td,.phase-table[aria-label="Offline preparation phase definitions"] tbody td{text-align:left;font-variant-numeric:normal;min-width:280px}
+.phase-note{font-size:11.5px;color:#6a8092;line-height:1.65;margin:11px 0 20px}
+.phase-jump-note{background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px 19px}
+.phase-jump-note p{margin:0 0 12px;color:#576f82;font-size:12px;line-height:1.7}
+@media(max-width:760px){.phase-table{font-size:11px}.phase-table th,.phase-table td{padding:9px 10px}}
 </style>
 </head>
 <body>
@@ -190,6 +210,10 @@
     <button data-view="overview"><span class="nav-num">02</span><span class="nav-name">Full pipeline</span></button>
     <button data-view="architecture"><span class="nav-num">03</span><span class="nav-name">Our optimization</span></button>
     <button data-view="results"><span class="nav-num">04</span><span class="nav-name">Results</span></button>
+<div class="result-subnav" aria-label="Results breakdown subpages">
+ <button data-view="results-online">Online Phase Breakdown</button>
+ <button data-view="results-offline">Offline Phase Breakdown</button>
+</div>
      <button data-view="validation"><span class="nav-num">05</span><span class="nav-name">Full-dataset validation</span></button>
      <button data-view="xprof"><span class="nav-num">06</span><span class="nav-name">XProf traces</span></button>
   </nav></div>
@@ -197,7 +221,7 @@
 </aside>
 <div class="main">
 <header class="topbar"><div class="topbar-left"><span class="dot"></span> HEIR → CROSS · TPU</div><div class="topbar-right">Compilation · preparation · inference</div></header>
-<nav class="mobile-nav" aria-label="Mobile navigation"><button class="active" data-view="motivation">01 Motivation</button><button data-view="overview">02 Pipeline</button><button data-view="architecture">03 Optimization</button><button data-view="results">04 Results</button><button data-view="validation">05 Validation</button><button data-view="xprof">06 XProf</button></nav>
+<nav class="mobile-nav" aria-label="Mobile navigation"><button class="active" data-view="motivation">01 Motivation</button><button data-view="overview">02 Pipeline</button><button data-view="architecture">03 Optimization</button><button data-view="results">04 Results</button><button data-view="results-online">04a Online</button><button data-view="results-offline">04b Offline</button><button data-view="validation">05 Validation</button><button data-view="xprof">06 XProf</button></nav>
 <main class="content" id="mainContent">
 <section class="screen" id="view-overview" aria-labelledby="overviewTitle">
  <div class="eyebrow">02 / Pipeline</div><h1 id="overviewTitle">HEIR → CROSS → TPU pipeline</h1>
@@ -317,35 +341,10 @@ compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python pa
     <div class="results-legend"><span><i></i>Native CROSS</span><span><i class="heir"></i>HEIR Prepared</span><span>Speedup = Native ÷ HEIR</span></div>
     <div id="resultBars" class="bar-comparison" role="img" aria-label="Native and HEIR latency comparison for six configurations"></div>
   </div>
-  <h2 class="result-section-title">Offline setup comparison</h2>
-   <article class="measure-card offline">
-    <h3>Offline preparation cost</h3>
-    <p class="measure-scope">One-time setup before warm online requests. Native and HEIR record different work.</p>
-    <div class="setup-pairs">
-     <div class="setup-column"><b>Native CROSS</b><ol>
-      <li>Build mapping plan: trace, vectorize and pack the model computation.</li>
-      <li>Materialize mapping: initialize required CKKS resources/constants and produce the compiled program.</li>
-     </ol></div>
-     <div class="setup-column"><b>HEIR Prepared</b><ol>
-      <li>Crypto initialization: configure context and generate public/evaluation keys.</li>
-      <li>Preprocess model inputs and reusable plaintext/constants.</li>
-      <li>Prepare the compiled plan, evaluators and templates; lower/compile the JAX raw-array function.</li>
-     </ol></div>
-    </div>
-    <p class="measure-note">The reported HEIR preparation/compile duration covers the complete preparation function, <b>not isolated XLA compiler time</b>. First encryption and first raw execution were recorded separately.</p>
-   </article>
-  <div class="setup-table-wrap"><table class="setup-table">
-    <thead><tr><th>Model / ring</th><th>Native (s)</th><th>HEIR (s)</th><th>HEIR − Native (s)</th></tr></thead>
-    <tbody>
-    <tr><td>AlexNet-Tiny 8K</td><td>276.58</td><td>601.25</td><td class="positive">+324.67</td></tr>
-    <tr><td>AlexNet-Tiny 16K</td><td>463.61</td><td>700.24</td><td class="positive">+236.62</td></tr>
-    <tr><td>AlexNet-Tiny 32K</td><td>1,046.81</td><td>829.51</td><td class="negative">−217.30</td></tr>
-    <tr><td>LeNet 8K</td><td>359.74</td><td>1,615.41</td><td class="positive">+1,255.67</td></tr>
-    <tr><td>LeNet 16K</td><td>624.72</td><td>1,743.97</td><td class="positive">+1,119.24</td></tr>
-    <tr><td>LeNet 32K</td><td>1,387.46</td><td>1,932.95</td><td class="positive">+545.48</td></tr>
-    </tbody></table></div>
-  <p class="result-footer">Recorded setup boundaries differ, so this table is <b>not</b> an isolated compiler-time comparison. HEIR has faster warm encrypted compute in all six cases; its recorded setup is longer in five of six.</p>
-  <section class="timing-methodology" aria-labelledby="timing-heading">
+  
+<h2 class="result-section-title">Offline setup comparison</h2>
+<div class="phase-jump-note"><p>Offline preparation occurs once before warm online requests. Native CROSS and HEIR Prepared include different work in their reported totals. See the detailed breakdown for setup measurements and initialization costs.</p><button class="btn secondary slim" data-view="results-offline">View offline phase breakdown →</button></div>
+<section class="timing-methodology" aria-labelledby="timing-heading">
    <h2 class="result-section-title" id="timing-heading">Measurement methodology</h2>
    <div class="timing-method-card">
     <p>We measure <b>synchronized host wall-clock latency</b> with Python <code>time.perf_counter()</code>—not CPU execution time or isolated TPU-kernel time.</p>
@@ -411,6 +410,78 @@ compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python pa
  </div>
 </section>
 
+
+
+<section class="screen" id="view-results-online" aria-labelledby="onlineTitle">
+<div class="results-wrap">
+ <div class="eyebrow">04 / Results · Online Phase Breakdown</div><h1 id="onlineTitle">Online Phase Breakdown</h1>
+ <p class="lede">Independently measured stage timings for Native CROSS and HEIR Prepared, in milliseconds.</p>
+ <h2 class="result-section-title">Five online phases</h2><div class="phase-table-wrap"><table class="phase-table" aria-label="Online phase descriptions"><thead><tr><th scope="col">Phase</th><th scope="col">What it does</th></tr></thead><tbody><tr><th scope="row">Pack</th><td>Rearranges image numbers into the CKKS slot layout, potentially inserting zeros, repeating or reordering values; does not encrypt.</td></tr>
+<tr><th scope="row">Encode + Encrypt</th><td>Converts slot values into a CKKS plaintext polynomial at the chosen scale, then encrypts it into a ciphertext.</td></tr>
+<tr><th scope="row">Raw Compute</th><td>Executes the prepared, compiled neural network on ciphertext arrays, including linear layers and square activations; excludes encryption, decryption and output-object wrapping.</td></tr>
+<tr><th scope="row">Decrypt</th><td>Uses the secret key to recover a plaintext polynomial and decodes it to numerical slot values.</td></tr>
+<tr><th scope="row">Extract</th><td>Selects and rearranges decoded slots into the final 10 class scores, removing padding or layout-related duplication.</td></tr></tbody></table></div>
+ <h2 class="result-section-title">Phase-wise timing comparison</h2>
+ <div class="phase-table-wrap"><table class="phase-table" aria-label="Online phase timings in milliseconds"><thead><tr><th scope="col">Model / ring</th><th scope="col">Path</th><th scope="col">Pack (ms)</th><th scope="col">Encode + Encrypt (ms)</th><th scope="col">Raw Compute (ms)</th><th scope="col">Decrypt (ms)</th><th scope="col">Extract (ms)</th></tr></thead><tbody><tr><th scope="row">AlexNet-Tiny 8K</th><td>Native</td><td>0.031</td><td>96.105</td><td>46.272</td><td>28.534</td><td>0.006</td></tr>
+<tr><th scope="row">AlexNet-Tiny 8K</th><td>HEIR</td><td>1.131</td><td>88.504</td><td>20.458</td><td>27.958</td><td>1.032</td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td>Native</td><td>0.029</td><td>206.777</td><td>88.711</td><td>61.587</td><td>0.007</td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td>HEIR</td><td>2.078</td><td>193.209</td><td>37.578</td><td>61.765</td><td>2.095</td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td>Native</td><td>0.029</td><td>424.819</td><td>256.554</td><td>126.757</td><td>0.008</td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td>HEIR</td><td>3.892</td><td>359.666</td><td>83.120</td><td>127.039</td><td>3.678</td></tr>
+<tr><th scope="row">LeNet 8K</th><td>Native</td><td>0.033</td><td>96.367</td><td>59.265</td><td>28.481</td><td>0.006</td></tr>
+<tr><th scope="row">LeNet 8K</th><td>HEIR</td><td>0.971</td><td>88.778</td><td>42.301</td><td>28.389</td><td>0.988</td></tr>
+<tr><th scope="row">LeNet 16K</th><td>Native</td><td>0.029</td><td>218.194</td><td>110.705</td><td>62.539</td><td>0.008</td></tr>
+<tr><th scope="row">LeNet 16K</th><td>HEIR</td><td>1.771</td><td>184.812</td><td>91.336</td><td>61.454</td><td>1.979</td></tr>
+<tr><th scope="row">LeNet 32K</th><td>Native</td><td>0.030</td><td>431.110</td><td>285.960</td><td>127.449</td><td>0.008</td></tr>
+<tr><th scope="row">LeNet 32K</th><td>HEIR</td><td>3.316</td><td>356.972</td><td>214.499</td><td>126.340</td><td>3.769</td></tr></tbody></table></div>
+ <p class="phase-note">Each stage is timed independently: medians are not additive and should not be summed to calculate client-to-client latency. These values were not extracted from XProf traces.</p>
+ <div class="btn-row"><button class="btn secondary" data-view="results">← Results overview</button><button class="btn" data-view="results-offline">Offline phase breakdown →</button></div>
+</div></section>
+
+
+<section class="screen" id="view-results-offline" aria-labelledby="offlineTitle">
+<div class="results-wrap">
+ <div class="eyebrow">04 / Results · Offline Phase Breakdown</div><h1 id="offlineTitle">Offline Phase Breakdown</h1>
+ <p class="lede">One-time initialization and preparation of reusable encrypted computation resources before online inference.</p>
+ <h2 class="result-section-title">Recorded setup boundaries</h2><div class="phase-table-wrap"><table class="phase-table" aria-label="Offline preparation phase definitions"><thead><tr><th scope="col">Implementation</th><th scope="col">Stage</th><th scope="col">What it measures</th></tr></thead><tbody><tr><th scope="row">Native CROSS</th><td>Build plan</td><td>Trace, vectorize and pack the neural-network computation to construct a mapping plan.</td></tr>
+<tr><th scope="row">Native CROSS</th><td>Materialize mapping / compile</td><td>Initialize required CKKS resources and model constants, realize the encrypted mapping, and produce a compiled program.</td></tr>
+<tr><th scope="row">HEIR Prepared</th><td>Crypto initialization</td><td>Create/configure CKKS context, generate PKE/evaluation keys and construct evaluation-key layout.</td></tr>
+<tr><th scope="row">HEIR Prepared</th><td>Preprocessing</td><td>Perform generated model preprocessing and prepare reusable computation resources/constants.</td></tr>
+<tr><th scope="row">HEIR Prepared</th><td>Preparation / compile</td><td>Construct and compile the prepared encrypted program, including setup work performed within the preparation function.</td></tr></tbody></table></div>
+ <p class="phase-note"><strong>Native setup</strong> = build plan + materialize mapping. <strong>HEIR setup</strong> = crypto initialization + preprocessing + preparation/compile.</p>
+ <h2 class="result-section-title">Recorded setup totals</h2>
+ <div class="phase-table-wrap"><table class="phase-table" aria-label="Native and HEIR recorded setup totals in seconds"><thead><tr><th scope="col">Model / ring</th><th scope="col">Native setup (s)</th><th scope="col">HEIR setup (s)</th><th scope="col">HEIR − Native (s)</th></tr></thead><tbody><tr><th scope="row">AlexNet-Tiny 8K</th><td>276.58</td><td>601.25</td><td>+324.67</td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td>463.61</td><td>700.24</td><td>+236.62</td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td>1,046.81</td><td>829.51</td><td>−217.30</td></tr>
+<tr><th scope="row">LeNet 8K</th><td>359.74</td><td>1,615.41</td><td>+1,255.67</td></tr>
+<tr><th scope="row">LeNet 16K</th><td>624.72</td><td>1,743.97</td><td>+1,119.24</td></tr>
+<tr><th scope="row">LeNet 32K</th><td>1,387.46</td><td>1,932.95</td><td>+545.48</td></tr></tbody></table></div>
+ <p class="phase-note">Positive differences mean HEIR took longer. The recorded totals cover different operations and are not an identical-work or compiler-only speedup comparison. Model/data loading is excluded under the recorded setup boundary.</p>
+ <h2 class="result-section-title">Native CROSS breakdown</h2>
+ <div class="phase-table-wrap"><table class="phase-table" aria-label="Native CROSS offline breakdown in seconds"><thead><tr><th scope="col">Model / ring</th><th scope="col">Build plan (s)</th><th scope="col">Materialize mapping / compile (s)</th><th scope="col">Recorded setup total (s)</th></tr></thead><tbody><tr><th scope="row">AlexNet-Tiny 8K</th><td>0.055</td><td>276.53</td><td>276.58</td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td>0.125</td><td>463.49</td><td>463.61</td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td>0.122</td><td>1,046.69</td><td>1,046.81</td></tr>
+<tr><th scope="row">LeNet 8K</th><td>0.072</td><td>359.67</td><td>359.74</td></tr>
+<tr><th scope="row">LeNet 16K</th><td>0.057</td><td>624.67</td><td>624.72</td></tr>
+<tr><th scope="row">LeNet 32K</th><td>0.076</td><td>1,387.39</td><td>1,387.46</td></tr></tbody></table></div>
+ <h2 class="result-section-title">HEIR Prepared breakdown</h2>
+ <div class="phase-table-wrap"><table class="phase-table" aria-label="HEIR Prepared offline breakdown in seconds"><thead><tr><th scope="col">Model / ring</th><th scope="col">Crypto initialization (s)</th><th scope="col">Preprocessing (s)</th><th scope="col">Preparation / compile (s)</th><th scope="col">Recorded setup total (s)</th></tr></thead><tbody><tr><th scope="row">AlexNet-Tiny 8K</th><td>4.57</td><td>23.43</td><td>573.25</td><td>601.25</td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td>7.51</td><td>47.88</td><td>644.85</td><td>700.24</td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td>15.61</td><td>90.51</td><td>723.38</td><td>829.51</td></tr>
+<tr><th scope="row">LeNet 8K</th><td>5.78</td><td>74.88</td><td>1,534.75</td><td>1,615.41</td></tr>
+<tr><th scope="row">LeNet 16K</th><td>9.66</td><td>145.78</td><td>1,588.53</td><td>1,743.97</td></tr>
+<tr><th scope="row">LeNet 32K</th><td>20.05</td><td>294.06</td><td>1,618.83</td><td>1,932.95</td></tr></tbody></table></div>
+ <p class="phase-note">HEIR preparation/compile times the complete preparation function, not an isolated XLA compiler invocation. Crypto initialization already includes context configuration; do not count it twice.</p>
+ <h2 class="result-section-title">HEIR crypto-initialization subphases</h2>
+ <div class="phase-table-wrap"><table class="phase-table" aria-label="HEIR crypto-initialization subphases in milliseconds"><thead><tr><th scope="col">Model / ring</th><th scope="col">Generate context (ms)</th><th scope="col">PKE keygen (ms)</th><th scope="col">Evaluation keygen (ms)</th><th scope="col">Eval-key layout (ms)</th><th scope="col">Configure context (ms)</th></tr></thead><tbody><tr><th scope="row">AlexNet-Tiny 8K</th><td>0.031</td><td>1,233.67</td><td>269.43</td><td>137.47</td><td>2,929.21</td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td>0.028</td><td>2,614.90</td><td>552.21</td><td>204.21</td><td>4,134.59</td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td>0.027</td><td>5,428.12</td><td>1,110.24</td><td>158.68</td><td>8,911.89</td></tr>
+<tr><th scope="row">LeNet 8K</th><td>0.032</td><td>1,242.03</td><td>268.60</td><td>129.96</td><td>4,138.46</td></tr>
+<tr><th scope="row">LeNet 16K</th><td>0.028</td><td>2,537.53</td><td>537.03</td><td>207.14</td><td>6,374.53</td></tr>
+<tr><th scope="row">LeNet 32K</th><td>0.030</td><td>5,295.63</td><td>1,128.82</td><td>159.01</td><td>13,469.21</td></tr></tbody></table></div>
+ <p class="phase-note">These subphase timings are in <strong>milliseconds</strong>; the HEIR Prepared setup table above uses <strong>seconds</strong>.</p>
+ <div class="btn-row"><button class="btn secondary" data-view="results-online">← Online phase breakdown</button><button class="btn" data-view="validation">Full-dataset validation →</button></div>
+</div></section>
 
 <section class="screen" id="view-validation" aria-labelledby="validationTitle">
 <div class="fdv-wrap">
@@ -656,9 +727,9 @@ document.getElementById('xprofModel').addEventListener('change',xprofSelect);
 document.getElementById('xprofRing').addEventListener('change',xprofSelect);
 xprofSelect();
 
-const viewNames=['motivation','overview','architecture','results','validation','xprof'];
+const viewNames=['motivation','overview','architecture','results','results-online','results-offline','validation','xprof'];
 let lastFocus=null; let currentView='motivation';
-function navigate(view,recordHash=true){if(!viewNames.includes(view))return;currentView=view;document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='view-'+view));document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.matches('.nav button')) b.setAttribute('aria-current',b.dataset.view===view?'page':'false');});if(recordHash)history.replaceState(null,'','#'+view);hideTip();window.scrollTo({top:0,behavior:'instant'});}
+function navigate(view,recordHash=true){if(!viewNames.includes(view))return;currentView=view;document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='view-'+view));document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.matches('.nav button')) b.setAttribute('aria-current',b.dataset.view===view?'page':'false');});document.querySelectorAll('.nav button[data-view="results"]').forEach(b=>b.classList.toggle('parent-active',view==='results-online'||view==='results-offline'));if(recordHash)history.replaceState(null,'','#'+view);hideTip();window.scrollTo({top:0,behavior:'instant'});}
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.view)));
 function detailsFor(target){if(target.dataset.detail)return DATA[target.dataset.detail];if(target.dataset.pipeline){const n=Number(target.dataset.pipeline); if(n===11)return null;const p=PIPELINE[n-1];return {tag:'Pipeline · Step '+n,title:p[0],summary:p[1]+'.',points:n===12?DATA.emitter.points:n===13?DATA['offline-array'].points:n===14?DATA.execute.points:['This stage is represented in the user-provided HEIR → CROSS → TPU pipeline diagram.'],cta:n===12?{label:'Explore the emitter',view:'architecture'}:n===13||n===14?{label:'See offline and online paths',view:'architecture'}:null};}return null;}
 const tip=document.getElementById('tooltip');let tipTimeout;
