@@ -199,6 +199,17 @@
 .phase-jump-note{background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px 19px}
 .phase-jump-note p{margin:0 0 12px;color:#576f82;font-size:12px;line-height:1.7}
 @media(max-width:760px){.phase-table{font-size:11px}.phase-table th,.phase-table td{padding:9px 10px}}
+
+/* Subtle implementation identity for online phase-timing pairs only. */
+.phase-compare-table tbody tr.phase-native{background:#f2f7fc}
+.phase-compare-table tbody tr.phase-heir{background:#eff9f5}
+.phase-compare-table tbody tr.phase-native th:first-child{border-left:4px solid #78a1c7;padding-left:8px}
+.phase-compare-table tbody tr.phase-heir th:first-child{border-left:4px solid #43a98b;padding-left:8px}
+.phase-compare-table td:nth-child(2){text-align:center}
+.phase-compare-table thead th:nth-child(2){text-align:center}
+.phase-path-label{display:inline-block;border-radius:5px;padding:3px 9px;min-width:57px;font-size:11px;font-weight:800;text-align:center}
+.phase-path-label.native{background:#e1ecf7;border:1px solid #cbdceb;color:#2f658d}
+.phase-path-label.heir{background:#dbf2e6;border:1px solid #bee5d1;color:#16775c}
 </style>
 </head>
 <body>
@@ -422,18 +433,18 @@ compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python pa
 <tr><th scope="row">Decrypt</th><td>Uses the secret key to recover a plaintext polynomial and decodes it to numerical slot values.</td></tr>
 <tr><th scope="row">Extract</th><td>Selects and rearranges decoded slots into the final 10 class scores, removing padding or layout-related duplication.</td></tr></tbody></table></div>
  <h2 class="result-section-title">Phase-wise timing comparison</h2>
- <div class="phase-table-wrap"><table class="phase-table" aria-label="Online phase timings in milliseconds"><thead><tr><th scope="col">Model / ring</th><th scope="col">Path</th><th scope="col">Pack (ms)</th><th scope="col">Encode + Encrypt (ms)</th><th scope="col">Raw Compute (ms)</th><th scope="col">Decrypt (ms)</th><th scope="col">Extract (ms)</th></tr></thead><tbody><tr><th scope="row">AlexNet-Tiny 8K</th><td>Native</td><td>0.031</td><td>96.105</td><td>46.272</td><td>28.534</td><td>0.006</td></tr>
-<tr><th scope="row">AlexNet-Tiny 8K</th><td>HEIR</td><td>1.131</td><td>88.504</td><td>20.458</td><td>27.958</td><td>1.032</td></tr>
-<tr><th scope="row">AlexNet-Tiny 16K</th><td>Native</td><td>0.029</td><td>206.777</td><td>88.711</td><td>61.587</td><td>0.007</td></tr>
-<tr><th scope="row">AlexNet-Tiny 16K</th><td>HEIR</td><td>2.078</td><td>193.209</td><td>37.578</td><td>61.765</td><td>2.095</td></tr>
-<tr><th scope="row">AlexNet-Tiny 32K</th><td>Native</td><td>0.029</td><td>424.819</td><td>256.554</td><td>126.757</td><td>0.008</td></tr>
-<tr><th scope="row">AlexNet-Tiny 32K</th><td>HEIR</td><td>3.892</td><td>359.666</td><td>83.120</td><td>127.039</td><td>3.678</td></tr>
-<tr><th scope="row">LeNet 8K</th><td>Native</td><td>0.033</td><td>96.367</td><td>59.265</td><td>28.481</td><td>0.006</td></tr>
-<tr><th scope="row">LeNet 8K</th><td>HEIR</td><td>0.971</td><td>88.778</td><td>42.301</td><td>28.389</td><td>0.988</td></tr>
-<tr><th scope="row">LeNet 16K</th><td>Native</td><td>0.029</td><td>218.194</td><td>110.705</td><td>62.539</td><td>0.008</td></tr>
-<tr><th scope="row">LeNet 16K</th><td>HEIR</td><td>1.771</td><td>184.812</td><td>91.336</td><td>61.454</td><td>1.979</td></tr>
-<tr><th scope="row">LeNet 32K</th><td>Native</td><td>0.030</td><td>431.110</td><td>285.960</td><td>127.449</td><td>0.008</td></tr>
-<tr><th scope="row">LeNet 32K</th><td>HEIR</td><td>3.316</td><td>356.972</td><td>214.499</td><td>126.340</td><td>3.769</td></tr></tbody></table></div>
+ <div class="phase-table-wrap"><table class="phase-table phase-compare-table" aria-label="Online phase timings in milliseconds"><thead><tr><th scope="col">Model / ring</th><th scope="col">Path</th><th scope="col">Pack (ms)</th><th scope="col">Encode + Encrypt (ms)</th><th scope="col">Raw Compute (ms)</th><th scope="col">Decrypt (ms)</th><th scope="col">Extract (ms)</th></tr></thead><tbody><tr class="phase-native"><th scope="row">AlexNet-Tiny 8K</th><td><span class="phase-path-label native">Native</span></td><td>0.031</td><td>96.105</td><td>46.272</td><td>28.534</td><td>0.006</td></tr>
+<tr class="phase-heir"><th scope="row">AlexNet-Tiny 8K</th><td><span class="phase-path-label heir">HEIR</span></td><td>1.131</td><td>88.504</td><td>20.458</td><td>27.958</td><td>1.032</td></tr>
+<tr class="phase-native"><th scope="row">AlexNet-Tiny 16K</th><td><span class="phase-path-label native">Native</span></td><td>0.029</td><td>206.777</td><td>88.711</td><td>61.587</td><td>0.007</td></tr>
+<tr class="phase-heir"><th scope="row">AlexNet-Tiny 16K</th><td><span class="phase-path-label heir">HEIR</span></td><td>2.078</td><td>193.209</td><td>37.578</td><td>61.765</td><td>2.095</td></tr>
+<tr class="phase-native"><th scope="row">AlexNet-Tiny 32K</th><td><span class="phase-path-label native">Native</span></td><td>0.029</td><td>424.819</td><td>256.554</td><td>126.757</td><td>0.008</td></tr>
+<tr class="phase-heir"><th scope="row">AlexNet-Tiny 32K</th><td><span class="phase-path-label heir">HEIR</span></td><td>3.892</td><td>359.666</td><td>83.120</td><td>127.039</td><td>3.678</td></tr>
+<tr class="phase-native"><th scope="row">LeNet 8K</th><td><span class="phase-path-label native">Native</span></td><td>0.033</td><td>96.367</td><td>59.265</td><td>28.481</td><td>0.006</td></tr>
+<tr class="phase-heir"><th scope="row">LeNet 8K</th><td><span class="phase-path-label heir">HEIR</span></td><td>0.971</td><td>88.778</td><td>42.301</td><td>28.389</td><td>0.988</td></tr>
+<tr class="phase-native"><th scope="row">LeNet 16K</th><td><span class="phase-path-label native">Native</span></td><td>0.029</td><td>218.194</td><td>110.705</td><td>62.539</td><td>0.008</td></tr>
+<tr class="phase-heir"><th scope="row">LeNet 16K</th><td><span class="phase-path-label heir">HEIR</span></td><td>1.771</td><td>184.812</td><td>91.336</td><td>61.454</td><td>1.979</td></tr>
+<tr class="phase-native"><th scope="row">LeNet 32K</th><td><span class="phase-path-label native">Native</span></td><td>0.030</td><td>431.110</td><td>285.960</td><td>127.449</td><td>0.008</td></tr>
+<tr class="phase-heir"><th scope="row">LeNet 32K</th><td><span class="phase-path-label heir">HEIR</span></td><td>3.316</td><td>356.972</td><td>214.499</td><td>126.340</td><td>3.769</td></tr></tbody></table></div>
  <p class="phase-note">Each stage is timed independently: medians are not additive and should not be summed to calculate client-to-client latency. These values were not extracted from XProf traces.</p>
  <div class="btn-row"><button class="btn secondary" data-view="results">← Results overview</button><button class="btn" data-view="results-offline">Offline phase breakdown →</button></div>
 </div></section>
