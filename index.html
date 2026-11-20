@@ -88,17 +88,6 @@
 @media(max-width:950px){.measure-guide{grid-template-columns:1fr}.measure-card.offline{grid-column:auto}.result-chart-card{padding:17px}}
 @media(max-width:760px){.result-kpis{grid-template-columns:repeat(3,1fr);gap:6px}.result-kpi{padding:11px}.result-kpi strong{font-size:21px}.result-kpi span{font-size:10px}.setup-pairs{grid-template-columns:1fr}.chart-top{align-items:flex-start}.metric-switch{width:100%}.metric-switch button{flex:1;padding:8px 5px}.bar-line{grid-template-columns:45px minmax(0,1fr) 65px}.result-chart-card{padding:12px}}
 
-/* Cleartext-reference correctness validation. */
-.correctness-method-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px 20px}
-.correctness-method-card p{font-size:12.5px;line-height:1.65;color:#526a7c;margin:0 0 11px}
-.correctness-method-card p:last-child{margin-bottom:0}
-.correctness-method-card b{color:#233e55}
-.correctness-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.correctness-input{background:#f6f9fc;border:1px solid #dfe8f0;border-radius:9px;padding:11px 13px;font-size:12px;line-height:1.5;color:#41576b}
-.correctness-input strong{display:block;color:#1d3a52;font-size:12.5px;margin-bottom:4px}
-.correctness-input code{font-size:11.5px;background:#e9f1f8;border-radius:4px;padding:1px 4px;color:#245b8a}
-@media(max-width:630px){.correctness-method-card{padding:15px}.correctness-inputs{grid-template-columns:1fr}}
-
 /* Synchronized benchmark timing methodology, placed before Experimental setup. */
 .timing-method-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px 20px}
 .timing-method-card p{font-size:12.5px;line-height:1.7;color:#526a7c;margin:0 0 12px}
@@ -286,7 +275,7 @@ compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python pa
   <div class="result-kpis">
    <div class="result-kpi"><strong>3.09×</strong><span>Peak warm compute speedup</span></div>
    <div class="result-kpi"><strong>1.39×</strong><span>Peak client-to-client speedup</span></div>
-   <div class="result-kpi"><strong>6 / 6</strong><span>Correctness checks passed</span></div>
+   <div class="result-kpi"><strong>6 / 6</strong><span>Configurations benchmarked</span></div>
   </div>
   <h2 class="result-section-title">Online measurement boundaries</h2>
   <div class="measure-guide">
@@ -356,38 +345,6 @@ compiled = jax.jit(original_model)</pre><p>Simply applying JIT to this Python pa
     <tr><td>LeNet 32K</td><td>1,387.46</td><td>1,932.95</td><td class="positive">+545.48</td></tr>
     </tbody></table></div>
   <p class="result-footer">Recorded setup boundaries differ, so this table is <b>not</b> an isolated compiler-time comparison. HEIR has faster warm encrypted compute in all six cases; its recorded setup is longer in five of six.</p>
-  <section class="correctness-methodology" aria-labelledby="correctness-heading">
-   <h2 class="result-section-title" id="correctness-heading">Correctness validation</h2>
-   <div class="correctness-method-card">
-    <p>For each model, we first run <b>unencrypted inference</b> with the trained weights and a fixed input to obtain a plaintext reference output.</p>
-    <div class="correctness-inputs">
-     <div class="correctness-input"><strong>AlexNet-Tiny</strong>Random input generated with seed <code>42</code>.</div>
-     <div class="correctness-input"><strong>LeNet</strong>MNIST test image at index <code>42</code>, using the same normalization.</div>
-    </div>
-    <p>We then run encrypted inference with <b>Native CROSS</b> and <b>HEIR Prepared</b>, decrypt the results, and compare them with the plaintext reference using <b>relative error, maximum absolute error, and output argmax</b>.</p>
-    <p>This checks numerical correctness for the selected inputs—not classification accuracy over the full dataset.</p>
-    <section class="correctness-results" aria-labelledby="recorded-correctness-heading">
-     <h3 id="recorded-correctness-heading">Recorded correctness results</h3>
-     <p class="correctness-table-intro">Maximum absolute error against the unencrypted plaintext reference, using the same deterministic test input for each implementation.</p>
-     <div class="correctness-table-wrap">
-      <table aria-label="Fixed-input numerical correctness for Native CROSS and HEIR Prepared">
-       <thead><tr><th scope="col">Configuration</th><th scope="col">Native max error</th><th scope="col">HEIR max error</th><th scope="col">Same reference argmax?</th></tr></thead>
-       <tbody>
-     <tr><th scope="row">AlexNet-Tiny 8K</th><td class="correctness-numeric">1.11 × 10<sup>−9</sup></td><td class="correctness-numeric">6.23 × 10<sup>−6</sup></td><td class="correctness-match">✓ Yes</td></tr>
-     <tr><th scope="row">AlexNet-Tiny 16K</th><td class="correctness-numeric">1.11 × 10<sup>−9</sup></td><td class="correctness-numeric">6.23 × 10<sup>−6</sup></td><td class="correctness-match">✓ Yes</td></tr>
-     <tr><th scope="row">AlexNet-Tiny 32K</th><td class="correctness-numeric">1.11 × 10<sup>−9</sup></td><td class="correctness-numeric">6.23 × 10<sup>−6</sup></td><td class="correctness-match">✓ Yes</td></tr>
-     <tr><th scope="row">LeNet 8K</th><td class="correctness-numeric">2.81 × 10<sup>−12</sup></td><td class="correctness-numeric">4.73 × 10<sup>−6</sup></td><td class="correctness-match">✓ Yes</td></tr>
-     <tr><th scope="row">LeNet 16K</th><td class="correctness-numeric">1.90 × 10<sup>−12</sup></td><td class="correctness-numeric">4.73 × 10<sup>−6</sup></td><td class="correctness-match">✓ Yes</td></tr>
-     <tr><th scope="row">LeNet 32K</th><td class="correctness-numeric">8.03 × 10<sup>−12</sup></td><td class="correctness-numeric">4.73 × 10<sup>−6</sup></td><td class="correctness-match">✓ Yes</td></tr>
-       </tbody>
-      </table>
-     </div>
-     <p class="correctness-table-note">All six pairs pass the recorded numerical correctness checks. For AlexNet-Tiny 8K, the maximum difference <em>between the Native and HEIR decrypted outputs</em> is approximately 6.23 × 10<sup>−6</sup>. These single-input results do not establish accuracy across a full dataset.</p>
-    </section>
-
-   </div>
-  </section>
-  <div class="result-footline"><b>Recorded correctness:</b> all six paired configurations pass the fixed-input numerical checks and match the plaintext reference argmax. HEIR uses the propagated output scale for its primary correctness check.</div>
   <section class="timing-methodology" aria-labelledby="timing-heading">
    <h2 class="result-section-title" id="timing-heading">Measurement methodology</h2>
    <div class="timing-method-card">
