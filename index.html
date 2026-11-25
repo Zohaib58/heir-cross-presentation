@@ -249,6 +249,10 @@
 @media(max-width:760px){.mobile-campaign-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#eef4f9;border-bottom:1px solid #d9e5ee;padding:10px 15px}.mobile-campaign-heading strong{font-size:11px;color:#234763}.mobile-campaign-heading span{font-size:10px;color:#687f91}.mobile-nav{top:102px}}
 @media(max-width:420px){.mobile-campaign-heading{align-items:flex-start;flex-direction:column;gap:2px}.mobile-nav{top:117px}}
 
+
+.campaign-sidebar .campaign-group + .campaign-group{margin-top:10px}
+.mobile-campaign-divider{align-self:center;flex:none;font-size:10px;font-weight:800;color:#7d90a3;letter-spacing:.02em;white-space:nowrap;padding:0 4px}
+@media(max-width:760px){.mobile-nav button[data-view="validation-nov25"]{background:#eaf2f9;color:#245675;font-weight:800}.mobile-nav button[data-view="validation-nov25"].active{background:#d5e7f7;color:#1c4d75}}
 </style>
 </head>
 <body>
@@ -257,7 +261,17 @@
   <div class="brand"><div class="brand-mark">H↗C</div><div><strong>HEIR → CROSS</strong></div></div>
   <div class="campaign-sidebar">
    <div class="side-label">Benchmark campaigns</div>
-   <details class="campaign-group" open>
+   <details class="campaign-group" open id="campaign-nov25">
+    <summary class="campaign-heading">
+     <span class="campaign-icon" aria-hidden="true">02</span>
+     <span class="campaign-heading-text"><strong>November 25, 2026</strong><small>FP64 Full-Dataset Validation</small><small>New campaign</small></span>
+     <span class="campaign-chevron" aria-hidden="true">⌄</span>
+    </summary>
+    <nav class="nav" aria-label="November 25, 2026 campaign sections">
+     <button class="active" data-view="validation-nov25"><span class="nav-num">01</span><span class="nav-name">Full-dataset validation</span></button>
+    </nav>
+   </details>
+   <details class="campaign-group" id="campaign-nov22">
     <summary class="campaign-heading">
      <span class="campaign-icon" aria-hidden="true">01</span>
      <span class="campaign-heading-text"><strong>November 22, 2026</strong><small>HEIR vs. Native CROSS · TPU</small><small>Closed campaign</small></span>
@@ -280,9 +294,128 @@
 </aside>
 <div class="main">
 <header class="topbar"><div class="topbar-left"><span class="dot"></span> HEIR → CROSS · TPU</div><div class="topbar-right">Compilation · preparation · inference</div></header>
-<div class="mobile-campaign-heading"><strong>Campaign 01 · November 22, 2026</strong><span>Closed</span></div>
-<nav class="mobile-nav" aria-label="November 22, 2026 campaign navigation"><button class="active" data-view="motivation">01 Motivation</button><button data-view="overview">02 Pipeline</button><button data-view="architecture">03 Optimization</button><button data-view="results">04 Results</button><button data-view="results-online">04a Online</button><button data-view="results-offline">04b Offline</button><button data-view="validation">05 Validation</button><button data-view="xprof">06 XProf</button></nav>
+<div class="mobile-campaign-heading"><strong>Benchmark campaigns</strong><span>November 25 · FP64 | November 22 · Archived</span></div>
+<nav class="mobile-nav" aria-label="Benchmark campaign navigation"><button data-view="validation-nov25">Nov 25 · FP64 Validation</button><span class="mobile-campaign-divider">Nov 22 · Archive</span><button class="active" data-view="motivation">01 Motivation</button><button data-view="overview">02 Pipeline</button><button data-view="architecture">03 Optimization</button><button data-view="results">04 Results</button><button data-view="results-online">04a Online</button><button data-view="results-offline">04b Offline</button><button data-view="validation">05 Validation</button><button data-view="xprof">06 XProf</button></nav>
 <main class="content" id="mainContent">
+<section class="screen" id="view-validation-nov25" aria-labelledby="validationNov25Title">
+<div class="fdv-wrap">
+ <div class="eyebrow">November 25, 2026 / Full-Dataset Correctness Validation</div><h1 id="validationNov25Title">Full-Dataset Correctness Validation</h1>
+ <p class="fdv-note"><strong>November 25 campaign · HEIR FP64 validation.</strong> The new HEIR FP64 results are from <code>precision-f64-20261122.zip</code> (<code>comparison.json</code> and six per-model inference records). Plaintext and Native CROSS results are matched baselines from the previous campaign; the new runs reevaluate HEIR at improved FP64 output precision.</p>
+ <div class="fdv-panel">
+  <p>We evaluate three implementations:</p>
+  <div class="fdv-scroll"><table class="fdv-table" aria-label="Three inference implementations"><thead><tr><th>Implementation</th><th>Description</th></tr></thead><tbody>
+   <tr><th scope="row">Plaintext</th><td>Execute the original neural network without encryption</td></tr>
+   <tr><th scope="row">Native CROSS</th><td>Encrypt the input, execute Native CROSS inference, and decrypt the output</td></tr>
+   <tr><th scope="row">HEIR Prepared (FP64)</th><td>Encrypt the input, execute the HEIR-generated prepared computation using CROSS, and decrypt the output</td></tr>
+  </tbody></table></div>
+  <p style="margin-top:12px">All three implementations use the same trained model weights and normalized input values. No model retraining is performed.</p>
+  <p>The objective is <strong>implementation correctness</strong>.</p>
+ </div>
+ <h2>2. Models and Datasets</h2>
+ <p class="fdv-note">We evaluate two neural network architectures using their corresponding labeled test datasets.</p>
+ <div class="fdv-scroll"><table class="fdv-table" aria-label="Models and datasets"><thead><tr><th>Property</th><th>LeNet</th><th>AlexNet-Tiny</th></tr></thead><tbody><tr><th>Dataset</th><td>MNIST</td><td>CIFAR-10</td></tr><tr><th>Classification task</th><td>Handwritten digits 0–9</td><td>10 real-world object classes</td></tr><tr><th>Original image dimensions</th><td>28 × 28 × 1</td><td>32 × 32 × 3</td></tr><tr><th>Training images</th><td>60,000</td><td>50,000</td></tr><tr><th>Test images</th><td>10,000</td><td>10,000</td></tr><tr><th>Encrypted model input shape</th><td>1 × 1 × 28 × 28</td><td>1 × 3 × 16 × 16</td></tr></tbody></table></div>
+ <div class="fdv-panel" style="margin-top:12px">
+  <p><strong>Dataset preprocessing</strong></p>
+  <p>Images are provided to the inference implementations as numerical arrays.</p>
+  <p><strong>LeNet / MNIST</strong></p>
+  <ul class="fdv-list">
+   <li>Load each grayscale image as a 28 × 28 pixel array.</li>
+   <li>Convert the pixel values to float32.</li>
+   <li>Scale pixel values by dividing by 255.</li>
+   <li>Normalize with mean 0.1307 and standard deviation 0.3081.</li>
+   <li>Produce an input tensor of shape 1 × 1 × 28 × 28.</li>
+  </ul>
+  <p><strong>AlexNet-Tiny / CIFAR-10</strong></p>
+  <ul class="fdv-list">
+   <li>Load each RGB image as a 32 × 32 × 3 array.</li>
+   <li>Scale the float32 pixel values by dividing by 255.</li>
+   <li>Normalize the three channels using means (0.4914, 0.4822, 0.4465) and standard deviations (0.2023, 0.1994, 0.2010).</li>
+   <li>Apply 2 × 2 average pooling with stride 2 before encryption.</li>
+   <li>Produce an input tensor of shape 1 × 3 × 16 × 16.</li>
+  </ul>
+  <p>The exact same normalized image values are used for all three inference paths.</p>
+ </div>
+ <h2>3. Experimental Workflow</h2>
+ <div class="fdv-panel"><p>For each model and CKKS ring configuration:</p>
+ <ol class="fdv-steps">
+  <li><strong>Load the trained network and dataset.</strong> Reuse the model weights from the original benchmark.</li>
+  <li><strong>Preprocess the input images.</strong> Apply the appropriate dataset normalization and model-specific transformations.</li>
+  <li><strong>Prepare encrypted execution once.</strong> Initialize the cryptographic resources and prepared/compiled execution paths. Reuse them across the entire dataset.</li>
+  <li><strong>Execute the three inference paths.</strong> Run plaintext inference, Native CROSS encrypted inference, and HEIR Prepared (FP64) encrypted inference on the same inputs.</li>
+  <li><strong>Decrypt encrypted outputs.</strong> Recover the output logits from Native CROSS and HEIR.</li>
+  <li><strong>Compare predictions and numerical outputs.</strong> Calculate accuracy, prediction agreement, logit differences, and execution failures.</li>
+ </ol>
+ <p>Each input image is encrypted separately for each encrypted path. The three implementation phases execute in separate processes.</p></div>
+ <h2>4. Correctness Metrics</h2>
+ <p class="fdv-note">Every model produces ten output logits per image, one for each class.</p>
+ <div class="fdv-formula" style="margin-bottom:12px">The predicted class is the index of the maximum logit: <strong>ŷ = argmax<sub>k∈{0,…,9}</sub> z<sub>k</sub></strong></div>
+ <p class="fdv-note">We evaluate four complementary correctness metrics.</p>
+ <div class="fdv-metrics">
+  <article><h3>4.1 Classification Accuracy</h3>
+   <p>Measures how often the predicted class matches the ground-truth label.</p>
+   <div class="fdv-formula">Accuracy = (Correct predictions / Total test images) × 100%</div>
+   <p style="margin-top:9px">We calculate this separately for plaintext, Native CROSS, and HEIR Prepared (FP64).</p>
+   <p><strong>Interpretation:</strong> Accuracy measures the predictive performance of the neural network, not whether two implementations behave identically.</p>
+  </article>
+  <article><h3>4.2 Prediction Agreement</h3>
+   <p>Measures whether two implementations produce the same predicted class for the same image, regardless of whether the prediction is correct.</p>
+   <div class="fdv-formula">Agreement(A,B) = (Matching predictions / Successfully compared images) × 100%</div>
+   <p style="margin-top:9px">We evaluate three pairs:</p><ul class="fdv-list"><li>Plaintext vs. Native CROSS</li><li>Plaintext vs. HEIR Prepared (FP64)</li><li>Native CROSS vs. HEIR Prepared (FP64)</li></ul>
+   <p>Two implementations can achieve identical classification accuracy while making different mistakes. Therefore, <strong>equal accuracy alone does not establish prediction equivalence</strong>.</p>
+   <p>A 100% three-way agreement means that all three implementations predict the same class for every successfully evaluated image, including identical incorrect predictions.</p>
+  </article>
+  <article><h3>4.3 Numerical Consistency</h3>
+   <p>Matching predicted classes does not imply identical numerical outputs.</p>
+   <p>For corresponding output logits, we calculate the absolute difference:</p>
+   <div class="fdv-formula">e<sub>i,k</sub> = |z<sub>i,k</sub><sup>Native</sup> − z<sub>i,k</sub><sup>HEIR</sup>|</div>
+   <p style="margin-top:9px">Here, <i>i</i> identifies the test image and <i>k</i> identifies the output class.</p>
+   <p>We report:</p>
+   <p><strong>Maximum absolute logit difference</strong></p>
+   <div class="fdv-formula">e<sub>max</sub> = max<sub>i,k</sub> e<sub>i,k</sub></div>
+   <p style="margin-top:9px"><strong>Mean absolute logit difference</strong></p>
+   <div class="fdv-formula">e<sub>mean</sub> = [Σ<sub>i=1…M</sub> Σ<sub>k=0…9</sub> e<sub>i,k</sub>] / (10M)</div>
+   <p style="margin-top:9px">where <i>M</i> is the number of successfully compared image pairs.</p>
+   <p>For 10,000 successfully compared images, these metrics cover <strong>100,000 output logits</strong>.</p>
+   <p>Small numerical differences can occur without changing the predicted class. Numerical comparison therefore provides evidence beyond classification agreement.</p>
+  </article>
+  <article><h3>4.4 Execution Reliability</h3>
+   <p>For each implementation, record:</p>
+   <ul class="fdv-list"><li>Total images attempted</li><li>Successful inferences</li><li>Failed inferences</li><li>Invalid or nonfinite output logits</li></ul>
+   <p>Failed inferences count against classification accuracy. Prediction agreement and logit differences are calculated on successful pairs, with the compared-image count reported separately.</p>
+  </article>
+ </div>
+ <h2>5. Completed Full-Dataset Results</h2>
+ <h3>5.1 Classification Accuracy and Prediction Agreement</h3>
+ <div class="fdv-scroll"><table class="fdv-table" aria-label="All six full-dataset classification validation results"><thead><tr><th>Model</th><th>Dataset</th><th>Test images</th><th>Successful / path</th><th>Plaintext accuracy</th><th>Native accuracy</th><th>HEIR FP64 accuracy</th><th>Correct / path</th><th>Wrong / path</th><th>Plaintext–Native agreement</th><th>Plaintext–HEIR FP64 agreement</th><th>Native–HEIR FP64 agreement</th><th>Failures</th></tr></thead><tbody><tr><th scope="row">LeNet 8K</th><td>MNIST</td><td>10,000</td><td>10,000</td><td>98.52%</td><td>98.52%</td><td>98.52%</td><td>9,852</td><td>148</td><td>100%</td><td>100%</td><td>100%</td><td>0</td></tr>
+<tr><th scope="row">LeNet 16K</th><td>MNIST</td><td>10,000</td><td>10,000</td><td>98.52%</td><td>98.52%</td><td>98.52%</td><td>9,852</td><td>148</td><td>100%</td><td>100%</td><td>100%</td><td>0</td></tr>
+<tr><th scope="row">LeNet 32K</th><td>MNIST</td><td>10,000</td><td>10,000</td><td>98.52%</td><td>98.52%</td><td>98.52%</td><td>9,852</td><td>148</td><td>100%</td><td>100%</td><td>100%</td><td>0</td></tr>
+<tr><th scope="row">AlexNet-Tiny 8K</th><td>CIFAR-10</td><td>10,000</td><td>10,000</td><td>48.66%</td><td>48.66%</td><td>48.66%</td><td>4,866</td><td>5,134</td><td>100%</td><td>100%</td><td>100%</td><td>0</td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td>CIFAR-10</td><td>10,000</td><td>10,000</td><td>48.66%</td><td>48.66%</td><td>48.66%</td><td>4,866</td><td>5,134</td><td>100%</td><td>100%</td><td>100%</td><td>0</td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td>CIFAR-10</td><td>10,000</td><td>10,000</td><td>48.66%</td><td>48.66%</td><td>48.66%</td><td>4,866</td><td>5,134</td><td>100%</td><td>100%</td><td>100%</td><td>0</td></tr></tbody></table></div>
+ <h3>5.2 Numerical Error Analysis</h3>
+ <p class="fdv-note">Absolute differences between the decrypted output logits and the corresponding reference outputs:</p>
+ <div class="fdv-scroll"><table class="fdv-table" aria-label="All eighteen model pair numerical comparisons"><thead><tr><th>Model</th><th>Comparison</th><th>Successful pairs</th><th>Agreement</th><th>Max absolute logit difference</th><th>Mean absolute logit difference</th></tr></thead><tbody><tr><th scope="row">LeNet 8K</th><td>Native–HEIR FP64</td><td>10,000</td><td>100%</td><td><span title="1.7251977624255233e-11">1.7251978 × 10<sup>−11</sup></span></td><td><span title="9.096703429588228e-13">9.0967034 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">LeNet 8K</th><td>Plaintext–Native</td><td>10,000</td><td>100%</td><td><span title="1.7266188478970435e-11">1.7266188 × 10<sup>−11</sup></span></td><td><span title="9.013768912001442e-13">9.0137689 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">LeNet 8K</th><td>Plaintext–HEIR FP64</td><td>10,000</td><td>100%</td><td><span title="1.4210854715202004e-12">1.4210855 × 10<sup>−12</sup></span></td><td><span title="1.1563686812786356e-13">1.1563687 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">LeNet 16K</th><td>Native–HEIR FP64</td><td>10,000</td><td>100%</td><td><span title="2.1309176645445405e-11">2.1309177 × 10<sup>−11</sup></span></td><td><span title="1.8703759545473406e-12">1.8703760 × 10<sup>−12</sup></span></td></tr>
+<tr><th scope="row">LeNet 16K</th><td>Plaintext–Native</td><td>10,000</td><td>100%</td><td><span title="2.020783540501725e-11">2.0207835 × 10<sup>−11</sup></span></td><td><span title="1.856243135778306e-12">1.8562431 × 10<sup>−12</sup></span></td></tr>
+<tr><th scope="row">LeNet 16K</th><td>Plaintext–HEIR FP64</td><td>10,000</td><td>100%</td><td><span title="3.140598892059643e-12">3.1405989 × 10<sup>−12</sup></span></td><td><span title="2.2859626051745347e-13">2.2859626 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">LeNet 32K</th><td>Native–HEIR FP64</td><td>10,000</td><td>100%</td><td><span title="6.632205895584775e-11">6.6322059 × 10<sup>−11</sup></span></td><td><span title="6.387040324784776e-12">6.3870403 × 10<sup>−12</sup></span></td></tr>
+<tr><th scope="row">LeNet 32K</th><td>Plaintext–Native</td><td>10,000</td><td>100%</td><td><span title="6.718892109347507e-11">6.7188921 × 10<sup>−11</sup></span></td><td><span title="6.368395364078123e-12">6.3683954 × 10<sup>−12</sup></span></td></tr>
+<tr><th scope="row">LeNet 32K</th><td>Plaintext–HEIR FP64</td><td>10,000</td><td>100%</td><td><span title="6.437517185986508e-12">6.4375172 × 10<sup>−12</sup></span></td><td><span title="4.4036680449328946e-13">4.4036680 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 8K</th><td>Native–HEIR FP64</td><td>10,000</td><td>100%</td><td><span title="4.234834705130197e-12">4.2348347 × 10<sup>−12</sup></span></td><td><span title="1.023231915539026e-13">1.0232319 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 8K</th><td>Plaintext–Native</td><td>10,000</td><td>100%</td><td><span title="4.774847184307873e-12">4.7748472 × 10<sup>−12</sup></span></td><td><span title="1.0100253189303481e-13">1.0100253 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 8K</th><td>Plaintext–HEIR FP64</td><td>10,000</td><td>100%</td><td><span title="1.1510792319313623e-12">1.1510792 × 10<sup>−12</sup></span></td><td><span title="1.4950967046025624e-14">1.4950967 × 10<sup>−14</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td>Native–HEIR FP64</td><td>10,000</td><td>100%</td><td><span title="5.101696842757519e-12">5.1016968 × 10<sup>−12</sup></span></td><td><span title="1.9741444529404048e-13">1.9741445 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td>Plaintext–Native</td><td>10,000</td><td>100%</td><td><span title="4.177991286269389e-12">4.1779913 × 10<sup>−12</sup></span></td><td><span title="1.9612785268807488e-13">1.9612785 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 16K</th><td>Plaintext–HEIR FP64</td><td>10,000</td><td>100%</td><td><span title="1.2718714970105793e-12">1.2718715 × 10<sup>−12</sup></span></td><td><span title="2.916461331310905e-14">2.9164613 × 10<sup>−14</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td>Native–HEIR FP64</td><td>10,000</td><td>100%</td><td><span title="8.995471034722868e-12">8.9954710 × 10<sup>−12</sup></span></td><td><span title="4.502331236152241e-13">4.5023312 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td>Plaintext–Native</td><td>10,000</td><td>100%</td><td><span title="6.181721801112872e-12">6.1817218 × 10<sup>−12</sup></span></td><td><span title="4.4521726017451836e-13">4.4521726 × 10<sup>−13</sup></span></td></tr>
+<tr><th scope="row">AlexNet-Tiny 32K</th><td>Plaintext–HEIR FP64</td><td>10,000</td><td>100%</td><td><span title="2.8137492336099967e-12">2.8137492 × 10<sup>−12</sup></span></td><td><span title="5.780979151324707e-14">5.7809792 × 10<sup>−14</sup></span></td></tr></tbody></table></div>
+ <div class="btn-row"><button class="btn secondary" data-view="results">← Benchmark results</button><button class="btn" data-view="xprof">XProf traces →</button></div>
+</div></section>
+
+
 <section class="screen" id="view-overview" aria-labelledby="overviewTitle">
  <div class="eyebrow">02 / Pipeline</div><h1 id="overviewTitle">HEIR → CROSS → TPU pipeline</h1>
  <p class="lede">Explore the compilation pipeline. Select Stage 11 to open our optimization.</p>
@@ -832,9 +965,9 @@ document.getElementById('xprofModel').addEventListener('change',xprofSelect);
 document.getElementById('xprofRing').addEventListener('change',xprofSelect);
 xprofSelect();
 
-const viewNames=['motivation','overview','architecture','results','results-online','results-offline','validation','xprof'];
+const viewNames=['validation-nov25','motivation','overview','architecture','results','results-online','results-offline','validation','xprof'];
 let lastFocus=null; let currentView='motivation';
-function navigate(view,recordHash=true){if(!viewNames.includes(view))return;currentView=view;document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='view-'+view));document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.matches('.nav button')) b.setAttribute('aria-current',b.dataset.view===view?'page':'false');});document.querySelectorAll('.nav button[data-view="results"]').forEach(b=>b.classList.toggle('parent-active',view==='results-online'||view==='results-offline'));if(recordHash)history.replaceState(null,'','#'+view);hideTip();window.scrollTo({top:0,behavior:'instant'});}
+function navigate(view,recordHash=true){if(!viewNames.includes(view))return;currentView=view;document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='view-'+view));document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.matches('.nav button')) b.setAttribute('aria-current',b.dataset.view===view?'page':'false');});document.querySelectorAll('.nav button[data-view="results"]').forEach(b=>b.classList.toggle('parent-active',view==='results-online'||view==='results-offline'));document.querySelector('.campaign-sidebar .nav button[data-view="'+view+'"]')?.closest('.campaign-group')?.setAttribute('open','');if(recordHash)history.replaceState(null,'','#'+view);hideTip();window.scrollTo({top:0,behavior:'instant'});}
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.view)));
 function detailsFor(target){if(target.dataset.detail)return DATA[target.dataset.detail];if(target.dataset.pipeline){const n=Number(target.dataset.pipeline); if(n===11)return null;const p=PIPELINE[n-1];return {tag:'Pipeline · Step '+n,title:p[0],summary:p[1]+'.',points:n===12?DATA.emitter.points:n===13?DATA['offline-array'].points:n===14?DATA.execute.points:['This stage is represented in the user-provided HEIR → CROSS → TPU pipeline diagram.'],cta:n===12?{label:'Explore the emitter',view:'architecture'}:n===13||n===14?{label:'See offline and online paths',view:'architecture'}:null};}return null;}
 const tip=document.getElementById('tooltip');let tipTimeout;
@@ -883,5 +1016,6 @@ document.querySelectorAll('[data-detail], [data-pipeline]').forEach(wire);
 document.getElementById('jump11').addEventListener('click',()=>{const target=document.querySelector('[data-pipeline="11"]');const scroller=document.getElementById('pipelineScroll');scroller.scrollTo({top:target.getBoundingClientRect().top-scroller.getBoundingClientRect().top+scroller.scrollTop-scroller.clientHeight/2+target.getBoundingClientRect().height/2,behavior:'smooth'})});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();return}if(e.target.matches('input,textarea,select')||document.getElementById('drawer').classList.contains('show'))return;if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const next=Math.max(0,Math.min(viewNames.length-1,viewNames.indexOf(currentView)+(e.key==='ArrowRight'?1:-1)));navigate(viewNames[next])}});
 if(viewNames.includes(location.hash.slice(1)))navigate(location.hash.slice(1),false);
+else navigate('validation-nov25',false);
 </script>
 </body></html>
