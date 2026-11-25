@@ -823,53 +823,74 @@ outputs = jax.lax.map(
 
 
 <section class="screen" id="view-singlechip-results-nov25" aria-labelledby="singlechipResultsTitle">
- <div class="fdv-wrap serving-doc">
+ <div class="results-wrap">
   <div class="eyebrow">November 25, 2026 / Single-Chip Inference / Performance Results</div>
-  <h1 id="singlechipResultsTitle">Single-chip inference performance</h1>
-  <p class="lede">HEIR Prepared · one TPU v6e chip · one encrypted image per call · six model/ring configurations · November 24 profiling campaign.</p>
+  <h1 id="singlechipResultsTitle">Native CROSS vs. HEIR Prepared</h1>
+  <p class="lede">Six model/ring configurations · Google TPU v6e · one chip · one image per call.</p>
   <div class="result-kpis">
-   <div class="result-kpi"><strong>6 / 6</strong><span>Configurations completed</span></div>
-   <div class="result-kpi"><strong>1</strong><span>Image per inference call</span></div>
-   <div class="result-kpi"><strong>5</strong><span>Recorded repetitions per online metric</span></div>
+   <div class="result-kpi"><strong id="singlechipPeakWarm">—</strong><span>Peak server latency ratio (Native / HEIR)</span></div>
+   <div class="result-kpi"><strong id="singlechipPeakOnline">—</strong><span>Peak client-to-client latency ratio</span></div>
+   <div class="result-kpi"><strong>6 / 6</strong><span>Configurations with both implementations</span></div>
   </div>
-  <article class="serve-card">
-   <h2>Measurement scope</h2>
-   <p>Unlike concurrent serving, these experiments use the original single-image execution path. Each whole-run XProf capture includes setup, preparation/compilation, warmup and online execution. The values below come from the corresponding experiment JSON field <code>phases_s_under_profiler</code>, with the median of five recorded samples for each online phase. They are timings recorded under the profiler, not independently extracted from raw trace events or uninstrumented benchmark results.</p>
-   <p><strong>Server</strong> measures encrypted inference; <strong>end-to-end</strong> measures the online request. <strong>Prepare compiled</strong> is a separate one-time preparation/compilation phase. The new captures are HEIR-only; no matching new Native CROSS single-image run is available in this folder. The earlier Native comparisons remain in the November 22 archive.</p>
-  </article>
-  <div class="result-chart-card vmap-chart">
-   <div class="chart-top"><h3>HEIR Prepared performance</h3></div>
-   <div class="vmap-controls"><label>Metric <select id="singlechipMetric"><option value="server">Server latency (ms)</option><option value="end_to_end">End-to-end latency (ms)</option><option value="prepare_compiled">Prepare compiled (s)</option></select></label></div>
+  <h2 class="result-section-title">Measurement boundaries</h2>
+  <div class="measure-guide">
+   <article class="measure-card">
+    <h3>Warm encrypted computation</h3>
+    <p class="measure-scope">Prepared encrypted forward pass, including host dispatch and synchronization.</p>
+    <p class="measure-note">Excludes online input preparation, encryption, decryption and one-time setup/compilation. Not isolated TPU kernel time.</p>
+   </article>
+   <article class="measure-card">
+    <h3>Client-to-client online latency</h3>
+    <p class="measure-scope">Complete online inference request after preparation, including packing, encryption, encrypted execution, decryption and output extraction.</p>
+    <p class="measure-note">One-time setup and compilation are excluded from online latency.</p>
+   </article>
+  </div>
+  <p class="phase-note"><strong>Comparison provenance:</strong> Native CROSS values are the October 13 benchmark medians (three repetitions, without profiling), carried forward from the November 22 archive. HEIR values are from the November 24 single-image experiments: medians of five recorded samples in <code>phases_s_under_profiler</code>. Same model/ring and single-image workload, but different dates and profiling conditions. Treat these as cross-campaign reference comparisons, not a controlled rerun or a profiler-matched speedup claim.</p>
+  <h2 class="result-section-title">Online performance</h2>
+  <div class="result-chart-card">
+   <div class="chart-top"><h3>Native vs. HEIR latency</h3>
+    <div class="metric-switch" role="group" aria-label="Select single-chip latency metric">
+     <button type="button" data-singlechip-metric="server" aria-pressed="true">Warm encrypted compute</button>
+     <button type="button" data-singlechip-metric="end_to_end" aria-pressed="false">Client-to-client</button>
+    </div>
+   </div>
    <div class="chart-note" id="singlechipChartNote"></div>
-   <div class="results-legend"><span><i class="heir"></i>HEIR Prepared</span></div>
-   <div id="singlechipBars" class="bar-comparison" role="img" aria-label="Single-chip profiling results"></div>
+   <div class="results-legend"><span><i></i>Native CROSS · Oct 13</span><span><i class="heir"></i>HEIR Prepared · Nov 24</span><span>Latency ratio = Native ÷ HEIR</span></div>
+   <div id="singlechipBars" class="bar-comparison" role="img" aria-label="Single-chip latency comparison"></div>
   </div>
-  <article class="serve-card" style="margin-top:16px">
-   <h2>Online performance and correctness</h2>
-   <div class="vmap-table-wrap"><table class="serve-table vmap-table"><thead><tr><th>Model</th><th>Ring</th><th>Server (ms)</th><th>End-to-end (ms)</th><th>Correctness check</th><th>Max absolute error</th><th>Source JSON</th></tr></thead><tbody id="singlechipOnlineTable"></tbody></table></div>
-   <p style="margin-top:12px">The correctness check is for the input used in each profiling experiment, not full-dataset accuracy.</p>
-  </article>
-  <article class="serve-card">
-   <h2>One-time preparation and warmup</h2>
-   <p>All values in seconds. Each phase has one recorded sample. Preparation/compilation is not included in the online medians.</p>
-   <div class="vmap-table-wrap"><table class="serve-table vmap-table"><thead><tr><th>Model</th><th>Ring</th><th>Context generation</th><th>PKE keygen</th><th>Eval keygen</th><th>Configure context</th><th>Preprocessing</th><th>Initial encrypt</th><th>Prepare compiled</th><th>Warmup</th><th>Decrypt check</th></tr></thead><tbody id="singlechipOfflineTable"></tbody></table></div>
-  </article>
+  <h2 class="result-section-title">Online timing comparison</h2>
+  <div class="phase-table-wrap"><table class="phase-table" aria-label="Single-chip online latency comparison"><thead><tr><th>Model / ring</th><th>Path</th><th>Server (ms)</th><th>End-to-end (ms)</th><th>Source</th></tr></thead><tbody id="singlechipOnlineTable"></tbody></table></div>
+  <p class="phase-note">The new HEIR timing JSON does not isolate all five online subphases. The original phase-wise Native and HEIR timings remain available in the <a href="#results-online" data-view="results-online">November 22 online breakdown</a>.</p>
+  <h2 class="result-section-title">Offline setup comparison</h2>
+  <div class="phase-table-wrap"><table class="phase-table" aria-label="Single-chip recorded setup totals"><thead><tr><th>Model / ring</th><th>Native setup (s) · Oct 13</th><th>HEIR setup (s) · Nov 24</th><th>HEIR − Native (s)</th></tr></thead><tbody id="singlechipSetupTable"></tbody></table></div>
+  <p class="phase-note">Native setup = build plan + materialize mapping. HEIR setup = recorded context generation + PKE/evaluation key generation + context configuration + preprocessing + prepare compiled. Initial encryption, warmup and decrypt check are excluded. These setup totals cover different work and are not isolated compiler times.</p>
+  <h2 class="result-section-title">Native CROSS breakdown</h2>
+  <div class="phase-table-wrap"><table class="phase-table" aria-label="Archived Native offline timings"><thead><tr><th>Model / ring</th><th>Build plan (s)</th><th>Materialize mapping / compile (s)</th><th>Recorded setup total (s)</th></tr></thead><tbody id="singlechipNativeOffline"></tbody></table></div>
+  <h2 class="result-section-title">HEIR Prepared breakdown</h2>
+  <div class="phase-table-wrap"><table class="phase-table" aria-label="New HEIR offline timings"><thead><tr><th>Model / ring</th><th>Crypto initialization (s)</th><th>Preprocessing (s)</th><th>Preparation / compile (s)</th><th>Recorded setup total (s)</th></tr></thead><tbody id="singlechipHeirOffline"></tbody></table></div>
+  <h2 class="result-section-title">HEIR crypto-initialization and other recorded phases</h2>
+  <div class="phase-table-wrap"><table class="phase-table" aria-label="HEIR detailed profiled phase timings"><thead><tr><th>Model / ring</th><th>Generate context (ms)</th><th>PKE keygen (ms)</th><th>Eval keygen (ms)</th><th>Configure context (ms)</th><th>Initial encrypt (ms)</th><th>Warmup (ms)</th><th>Decrypt check (ms)</th></tr></thead><tbody id="singlechipOfflineTable"></tbody></table></div>
+  <p class="phase-note">Each offline phase has one sample. Evaluation-key layout is not separately recorded in the new JSONs.</p>
+  <h2 class="result-section-title">HEIR profiling correctness</h2>
+  <div class="phase-table-wrap"><table class="phase-table"><thead><tr><th>Model / ring</th><th>Correctness check</th><th>Max absolute error</th><th>Source JSON</th></tr></thead><tbody id="singlechipCorrectness"></tbody></table></div>
+  <p class="phase-note">Correctness refers to the profiling input, not full-dataset accuracy.</p>
   <div class="btn-row"><button class="btn secondary" data-view="singlechip-xprof-nov25">Explore original XProf traces →</button></div>
  </div>
 </section>
 <section class="screen" id="view-singlechip-xprof-nov25" aria-labelledby="singlechipXprofTitle">
- <div class="fdv-wrap serving-doc">
+ <div class="xprof-wrap">
   <div class="eyebrow">November 25, 2026 / Single-Chip Inference / XProf Traces</div>
-  <h1 id="singlechipXprofTitle">Single-chip whole-run XProf traces</h1>
-  <p class="lede">HEIR Prepared · one chip · one image per call · setup, compilation, warmup and online execution.</p>
+  <h1 id="singlechipXprofTitle">XProf execution traces</h1>
+  <p class="lede">Native CROSS (October archive) and HEIR Prepared (November 24) · one chip · one image per call.</p>
   <div class="xprof-shell">
-   <p class="xprof-intro">Select a model and ring degree. Both original trace formats are linked directly to their respective files on Google Drive.</p>
+   <p class="xprof-intro">Select a workload and implementation. The original files are linked directly on Google Drive; the Chrome timeline can be opened manually in Perfetto.</p>
    <div class="xprof-controls">
     <label class="xprof-field">Model<select id="singlechipModel"><option value="alexnet-tiny">AlexNet-Tiny</option><option value="lenet">LeNet</option></select></label>
     <label class="xprof-field">Ring degree<select id="singlechipRing"><option value="8k">8K · N = 8192</option><option value="16k">16K · N = 16384</option><option value="32k">32K · N = 32768</option></select></label>
+    <div class="xprof-field xprof-variants-wrap"><span>Implementation</span><div class="xprof-variants" role="group" aria-label="Select implementation"><button type="button" data-singlechip-variant="native" aria-pressed="true">Native CROSS</button><button type="button" data-singlechip-variant="heir" aria-pressed="false">HEIR Prepared</button></div></div>
    </div>
    <div class="xprof-selection" aria-live="polite">
-    <div class="xprof-selection-head"><div><h2 id="singlechipTraceTitle"></h2><p>Whole-run profiling · one TPU chip · one image per call</p></div></div>
+    <div class="xprof-selection-head"><div><h2 id="singlechipTraceTitle"></h2><p id="singlechipTraceScope"></p></div></div>
     <div class="vmap-step-values" id="singlechipTraceDetails"></div>
     <div class="xprof-actions vmap-trace-actions">
      <a class="xprof-action primary" id="singlechipXplane" target="_blank" rel="noopener noreferrer">Get complete XPlane (.pb) ↗</a>
@@ -880,9 +901,9 @@ outputs = jax.lax.map(
    </div>
    <div class="xprof-steps">
     <article class="xprof-step"><h3>Complete capture · XProf / TensorBoard</h3><p>Download the selected <code>.xplane.pb</code> file. Place it in the appropriate <code>plugins/profile/&lt;timestamp&gt;/</code> directory of a local profiling log directory and open it with XProf or the TensorBoard profile plugin.</p></article>
-    <article class="xprof-step"><h3>Chrome timeline · Perfetto</h3><p>Download the selected <code>.trace.json.gz</code> file and open it manually in Perfetto. These exports reach the approximately one-million-event limit and may stop before the online phase. Use the complete XPlane capture when inspecting the full run.</p></article>
+    <article class="xprof-step"><h3>Chrome timeline · Perfetto</h3><p>Download the selected <code>.trace.json.gz</code> file and open it manually in Perfetto. The new HEIR exports reach the approximately one-million-event limit and may stop before the online phase. Use the complete XPlane capture when inspecting the full HEIR run.</p></article>
    </div>
-   <p class="xprof-note">These are whole-run captures, not separate server and end-to-end traces. No approximated timeline is shown. Drive sharing permissions are unchanged. Performance Results uses the accompanying profiled phase timing JSONs, not the truncated Chrome export.</p>
+   <p class="xprof-note">The Native CROSS traces are the original October captures linked in the November 22 archive. The new HEIR captures are whole-run traces including compilation; both file formats are available for HEIR. Only the archived Chrome export is linked for Native. Trace scope and event coverage may differ. No approximated timeline is shown.</p>
   </div>
   <div class="btn-row"><button class="btn secondary" data-view="singlechip-results-nov25">← Single-chip performance results</button></div>
  </div>
@@ -1493,36 +1514,66 @@ vmapRenderResults();vmapRenderTable();vmapSelectTrace();
 
 /* Original single-image profiling JSONs: phase seconds under profiler, direct trace IDs. */
 const SINGLECHIP_NOV25=[{"model":"lenet","ring":"8k","result":"1oECs0xBTo1ZUdEX291h-gQrd3-LX9JSn","trace":"1m8nSua01UT0t9thjFSgCpI9IOZZKqcxO","xplane":"17WooMmYGYQ7jQIEnkuE-jmRguByTZKYO","traceBytes":12840421,"xplaneBytes":341364056,"events":1000917,"status":"PASS","correct":true,"match":true,"error":6.252776074688882e-13,"phases":{"generate_context":[0.00006278000000747852],"keygen_pke":[1.2562483229999089],"keygen_eval":[0.40702901100007693],"configure_crypto_context":[42.17822425500003],"preprocessing":[73.892248634],"encrypt":[0.3565557209999497],"prepare_compiled":[1428.3246602709999],"warmup":[0.22655984999983048],"server":[0.04259546000002956,0.04221125999993092,0.04217753000011726,0.0421500699999342,0.04219410000041535],"end_to_end":[0.19270096999980524,0.1593337999997857,0.16020359900039693,0.15958883999974205,0.15896020999980465],"decrypt_check":[0.0286228600002687]}},{"model":"lenet","ring":"16k","result":"1tsqM3RU1qudC05dkIhyK4RxcGrLKourS","trace":"11OgWx8bq4pexDppncbYkSzSKEnhY4GUQ","xplane":"1PzJea_QTTWqtgL9Clk_28Z40TrzDNjsj","traceBytes":12405084,"xplaneBytes":368709457,"events":1000935,"status":"PASS","correct":true,"match":true,"error":1.9753088054130785e-12,"phases":{"generate_context":[0.00006543000017700251],"keygen_pke":[2.5963160010001047],"keygen_eval":[0.7575687150001613],"configure_crypto_context":[73.35696471600022],"preprocessing":[150.4993331679998],"encrypt":[0.5762852190000558],"prepare_compiled":[1479.992272768],"warmup":[1.3776996360002158],"server":[0.09103906000018469,0.09105074899980536,0.0909403489995384,0.09087157900012244,0.09100129899979947],"end_to_end":[0.3822235059997183,0.3348819270004242,0.3281543969997074,0.33118077700055437,0.3279206869992777],"decrypt_check":[0.06026438899971254]}},{"model":"lenet","ring":"32k","result":"1ZyS3wDDCqrA2NoQ0RQgRJiVvAJGLoAw7","trace":"1x5bc1-G1oNLw75W0X0jQMkQ4Sb_O9OpD","xplane":"1y9mOHQcYRa4Uk4LWL6VpAdVYtpR_xpCJ","traceBytes":12316199,"xplaneBytes":406805553,"events":1000887,"status":"PASS","correct":true,"match":true,"error":1.0478284906412227e-12,"phases":{"generate_context":[0.00006511999981739791],"keygen_pke":[5.371119815000384],"keygen_eval":[1.3203872519998185],"configure_crypto_context":[150.01616125100009],"preprocessing":[297.3247950490004],"encrypt":[0.8089601439996841],"prepare_compiled":[1477.9635661720004],"warmup":[2.694989121000617],"server":[0.21447713799989288,0.21451539899953787,0.21425435799937986,0.21432760900006542,0.21425802799967641],"end_to_end":[0.7721649239992985,0.6987911850001183,0.698983285000395,0.7011686650002957,0.7020392650001668],"decrypt_check":[0.12535987900082546]}},{"model":"alexnet-tiny","ring":"8k","result":"1-ktyYQMVwfRx7LHSv7GeRyS-e-RNJVR3","trace":"1VmXykeSlLmX1OpEAfsmwnW1o_us7uF--","xplane":"17AgLjr6PBm5wcqpJ-S3dUGmgChkM6iw_","traceBytes":12724336,"xplaneBytes":189701336,"events":1000755,"status":"PASS","correct":true,"match":true,"error":1.1141425559912932e-9,"phases":{"generate_context":[0.00006222000001798733],"keygen_pke":[1.2474103200001991],"keygen_eval":[0.40535621899971375],"configure_crypto_context":[27.104844376000074],"preprocessing":[23.199522118000004],"encrypt":[0.3504902499998934],"prepare_compiled":[518.1065006270001],"warmup":[1.2851869310002257],"server":[0.020738189999974566,0.020462550000047486,0.02043092899975818,0.020476879999932862,0.02043954999999187],"end_to_end":[0.1803117290000955,0.13909559900002932,0.13681988899998032,0.13667807899992113,0.13742300900003102],"decrypt_check":[0.027913949999856413]}},{"model":"alexnet-tiny","ring":"16k","result":"1Bv0LZnrkqC9g_HdOcaPlEFE4U5wnBqgp","trace":"1hoz7WedlTd072v_JjRrEwUAf5Q3XdfXf","xplane":"1_Wy4ym0RT0eg_hIxsJQfyLAleOy62ixJ","traceBytes":11784887,"xplaneBytes":201761661,"events":1000761,"status":"PASS","correct":true,"match":true,"error":1.114078163055865e-9,"phases":{"generate_context":[0.00006289999964792514],"keygen_pke":[2.621806905000085],"keygen_eval":[0.7762298019997615],"configure_crypto_context":[45.39745634600058],"preprocessing":[44.52601458400022],"encrypt":[0.5724098640002921],"prepare_compiled":[550.6725735139999],"warmup":[1.76151463899987],"server":[0.037924199999906705,0.03765956000006554,0.0377168189997974,0.03762919000018883,0.037691649999942456],"end_to_end":[0.33238908800012723,0.2842007380004361,0.2879156580002018,0.28331737799999246,0.2829159390003042],"decrypt_check":[0.05893501899936382]}},{"model":"alexnet-tiny","ring":"32k","result":"1CVdEb-KCO1OAbSlKWC7oFl3gGQ1ceoD2","trace":"18gzkA_yR-kOUXPwQNGEGgLm4oAW-obce","xplane":"1_lRj5FPMYq2hEMKfrtdjt7Gi7d2VlAOV","traceBytes":11002111,"xplaneBytes":216146451,"events":1000759,"status":"PASS","correct":true,"match":true,"error":1.1141443323481326e-9,"phases":{"generate_context":[0.00006383999971149024],"keygen_pke":[5.38685532099953],"keygen_eval":[1.2993391899999551],"configure_crypto_context":[91.42294618499909],"preprocessing":[90.42273122999995],"encrypt":[0.8370630139997957],"prepare_compiled":[596.516902231001],"warmup":[3.8941739269994287],"server":[0.08308776900048542,0.08308122999915213,0.0830494189995079,0.08305068899971957,0.08301429899984214],"end_to_end":[0.6401918350002234,0.5738211749994662,0.5666694650008139,0.5660266249997221,0.5642321560007986],"decrypt_check":[0.1233925590004219]}}];
+
 const singlechipMedian=a=>{const s=[...a].sort((a,b)=>a-b),m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2};
 const singlechipLabel=m=>m==='lenet'?'LeNet':'AlexNet-Tiny';
 const singlechipURL=id=>'https://drive.google.com/file/d/'+id+'/view';
 const singlechipOnline=(r,phase)=>singlechipMedian(r.phases[phase])*1000;
-function singlechipRenderChart(){
- const phase=document.getElementById('singlechipMetric').value;
- const offline=phase==='prepare_compiled';
- const vals=SINGLECHIP_NOV25.map(r=>singlechipMedian(r.phases[phase])*(offline?1:1000));
- const max=Math.max(...vals);
- const note=(offline?'One-time prepared-plan creation / compilation · seconds':'Median of five profiled '+(phase==='server'?'server':'end-to-end')+' samples · milliseconds')+' · lower is better';
+const SINGLECHIP_ORDERED=[...SINGLECHIP_NOV25].sort((a,b)=>a.model.localeCompare(b.model)||parseInt(a.ring)-parseInt(b.ring));
+const SINGLECHIP_NATIVE_SETUP=[[0.055,276.53,276.58],[0.125,463.49,463.61],[0.122,1046.69,1046.81],[0.072,359.67,359.74],[0.057,624.67,624.72],[0.076,1387.39,1387.46]];
+const singlechipName=r=>singlechipLabel(r.model)+' '+r.ring.toUpperCase();
+const singlechipNative=r=>RESULT_DATA.find(n=>n.model===singlechipName(r));
+const singlechipNativeOnline=(r,phase)=>singlechipNative(r)[phase==='server'?'warm':'online'][0];
+const singlechipPhase=(r,p)=>singlechipMedian(r.phases[p]);
+const singlechipCrypto=r=>['generate_context','keygen_pke','keygen_eval','configure_crypto_context'].reduce((a,p)=>a+singlechipPhase(r,p),0);
+const singlechipSetup=r=>singlechipCrypto(r)+singlechipPhase(r,'preprocessing')+singlechipPhase(r,'prepare_compiled');
+function singlechipRenderChart(phase='server'){
+ const rows=SINGLECHIP_ORDERED;
+ const max=Math.max(...rows.flatMap(r=>[singlechipNativeOnline(r,phase),singlechipOnline(r,phase)]));
+ const note=(phase==='server'?'Warm encrypted forward pass':'Complete online inference request')+' · milliseconds · lower is better · cross-campaign reference';
  document.getElementById('singlechipChartNote').textContent=note;
+ document.querySelectorAll('[data-singlechip-metric]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.singlechipMetric===phase)));
  const bars=document.getElementById('singlechipBars');
- bars.setAttribute('aria-label',note+'; six HEIR configurations');
- bars.innerHTML=SINGLECHIP_NOV25.map((r,i)=>'<div class="bar-group"><div style="font-size:13px;font-weight:700;color:#24455f">'+singlechipLabel(r.model)+' · '+r.ring.toUpperCase()+'</div><div class="bar-pair"><div class="vmap-bar-row"><span>HEIR Prepared</span><div class="vmap-track"><div class="vmap-fill heir" style="width:'+(100*vals[i]/max)+'%"></div></div><span class="vmap-bar-value">'+vals[i].toFixed(2)+'</span></div></div></div>').join('');
+ bars.setAttribute('aria-label',note+'; six Native and HEIR configurations');
+ bars.innerHTML=rows.map(r=>{
+  const n=singlechipNativeOnline(r,phase),h=singlechipOnline(r,phase);
+  const line=(v,cl,label)=>'<div class="bar-line '+cl+'"><span class="bar-label">'+label+'</span><div class="bar-track"><div class="bar-fill" style="width:'+(100*v/max).toFixed(2)+'%"></div></div><span class="bar-number">'+v.toFixed(2)+' ms</span></div>';
+  return '<div class="bar-group"><div class="bar-heading"><strong>'+singlechipName(r)+'</strong><span class="speedup">'+(n/h).toFixed(2)+'× ratio</span></div>'+line(n,'native','Native')+line(h,'heir','HEIR')+'</div>';
+ }).join('');
 }
 function singlechipRenderTables(){
- document.getElementById('singlechipOnlineTable').innerHTML=SINGLECHIP_NOV25.map(r=>'<tr><th scope="row">'+singlechipLabel(r.model)+'</th><td>'+r.ring.toUpperCase()+'</td><td>'+singlechipOnline(r,'server').toFixed(3)+'</td><td>'+singlechipOnline(r,'end_to_end').toFixed(3)+'</td><td class="'+(r.correct&&r.match?'vmap-better':'vmap-slower')+'">'+(r.correct&&r.match?'PASS':'CHECK')+'</td><td>'+r.error.toExponential(3)+'</td><td><a href="'+singlechipURL(r.result)+'" target="_blank" rel="noopener noreferrer">JSON ↗</a></td></tr>').join('');
- const phases=['generate_context','keygen_pke','keygen_eval','configure_crypto_context','preprocessing','encrypt','prepare_compiled','warmup','decrypt_check'];
- document.getElementById('singlechipOfflineTable').innerHTML=SINGLECHIP_NOV25.map(r=>'<tr><th scope="row">'+singlechipLabel(r.model)+'</th><td>'+r.ring.toUpperCase()+'</td>'+phases.map(p=>{const v=singlechipMedian(r.phases[p]);return '<td>'+(v<0.001?v.toExponential(3):v.toFixed(3))+'</td>'}).join('')+'</tr>').join('');
+ const rows=SINGLECHIP_ORDERED;
+ const fmt=(x,n=2)=>x.toLocaleString('en-US',{minimumFractionDigits:n,maximumFractionDigits:n});
+ const tr=(r,values)=>'<tr><th scope="row">'+singlechipName(r)+'</th>'+values.map(x=>'<td>'+x+'</td>').join('')+'</tr>';
+ const peak=p=>Math.max(...rows.map(r=>singlechipNativeOnline(r,p)/singlechipOnline(r,p))).toFixed(2)+'×';
+ document.getElementById('singlechipPeakWarm').textContent=peak('server');
+ document.getElementById('singlechipPeakOnline').textContent=peak('end_to_end');
+ document.getElementById('singlechipOnlineTable').innerHTML=rows.map(r=>{
+  const row=(cl,impl,server,e2e,src)=>'<tr class="phase-'+cl+'"><th scope="row">'+singlechipName(r)+'</th><td><span class="phase-path-label '+cl+'">'+impl+'</span></td><td>'+fmt(server,3)+'</td><td>'+fmt(e2e,3)+'</td><td>'+src+'</td></tr>';
+  return row('native','Native',singlechipNativeOnline(r,'server'),singlechipNativeOnline(r,'end_to_end'),'<a href="#results" data-view="results">Oct 13 benchmark</a>')+row('heir','HEIR',singlechipOnline(r,'server'),singlechipOnline(r,'end_to_end'),'<a href="'+singlechipURL(r.result)+'" target="_blank" rel="noopener noreferrer">Nov 24 JSON ↗</a>');
+ }).join('');
+ document.getElementById('singlechipSetupTable').innerHTML=rows.map((r,i)=>{const n=SINGLECHIP_NATIVE_SETUP[i][2],h=singlechipSetup(r);return tr(r,[fmt(n),fmt(h),(h>=n?'+':'')+fmt(h-n)])}).join('');
+ document.getElementById('singlechipNativeOffline').innerHTML=rows.map((r,i)=>tr(r,SINGLECHIP_NATIVE_SETUP[i].map((v,j)=>fmt(v,j===0?3:2)))).join('');
+ document.getElementById('singlechipHeirOffline').innerHTML=rows.map(r=>tr(r,[singlechipCrypto(r),singlechipPhase(r,'preprocessing'),singlechipPhase(r,'prepare_compiled'),singlechipSetup(r)].map(v=>fmt(v)))).join('');
+ const phases=['generate_context','keygen_pke','keygen_eval','configure_crypto_context','encrypt','warmup','decrypt_check'];
+ document.getElementById('singlechipOfflineTable').innerHTML=rows.map(r=>tr(r,phases.map(p=>fmt(singlechipPhase(r,p)*1000,3)))).join('');
+ document.getElementById('singlechipCorrectness').innerHTML=rows.map(r=>tr(r,[r.correct&&r.match?'PASS':'CHECK',r.error.toExponential(3),'<a href="'+singlechipURL(r.result)+'" target="_blank" rel="noopener noreferrer">JSON ↗</a>'])).join('');
 }
+let singlechipVariant='native';
 function singlechipSelectTrace(){
  const model=document.getElementById('singlechipModel').value,ring=document.getElementById('singlechipRing').value;
- const r=SINGLECHIP_NOV25.find(r=>r.model===model&&r.ring===ring);
- document.getElementById('singlechipTraceTitle').textContent='HEIR Prepared · '+singlechipLabel(model)+' · '+ring.toUpperCase();
- document.getElementById('singlechipTraceDetails').textContent='Complete XPlane: '+(r.xplaneBytes/1e6).toFixed(1)+' MB · Chrome export: '+(r.traceBytes/1e6).toFixed(1)+' MB · '+r.events.toLocaleString('en-US')+' Chrome trace events (event limit reached).';
- document.getElementById('singlechipXplane').href=singlechipURL(r.xplane);
- document.getElementById('singlechipChrome').href=singlechipURL(r.trace);
- document.getElementById('singlechipJSON').href=singlechipURL(r.result);
+ const r=SINGLECHIP_NOV25.find(r=>r.model===model&&r.ring===ring),native=singlechipVariant==='native';
+ document.getElementById('singlechipTraceTitle').textContent=(native?'Native CROSS':'HEIR Prepared')+' · '+singlechipLabel(model)+' · '+ring.toUpperCase();
+ document.getElementById('singlechipTraceScope').textContent=native?'Original October XProf capture · November 22 archive':'November 24 whole-run profiling · one chip · one image per call';
+ document.getElementById('singlechipTraceDetails').textContent=native?'Original archived Native CROSS Chrome trace. A complete XPlane file is not linked in the archive.':'Complete XPlane: '+(r.xplaneBytes/1e6).toFixed(1)+' MB · Chrome export: '+(r.traceBytes/1e6).toFixed(1)+' MB · '+r.events.toLocaleString('en-US')+' Chrome trace events (event limit reached).';
+ const xplane=document.getElementById('singlechipXplane'),json=document.getElementById('singlechipJSON');
+ xplane.style.display=native?'none':'';json.style.display=native?'none':'';
+ xplane.href=singlechipURL(r.xplane);json.href=singlechipURL(r.result);
+ document.getElementById('singlechipChrome').href=singlechipURL(native?XPROF_DRIVE[model+'-'+ring][0]:r.trace);
+ document.querySelectorAll('[data-singlechip-variant]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.singlechipVariant===singlechipVariant)));
 }
-document.getElementById('singlechipMetric').addEventListener('change',singlechipRenderChart);
+document.querySelectorAll('[data-singlechip-metric]').forEach(b=>b.addEventListener('click',()=>singlechipRenderChart(b.dataset.singlechipMetric)));
+document.querySelectorAll('[data-singlechip-variant]').forEach(b=>b.addEventListener('click',()=>{singlechipVariant=b.dataset.singlechipVariant;singlechipSelectTrace()}));
 ['singlechipModel','singlechipRing'].forEach(id=>document.getElementById(id).addEventListener('change',singlechipSelectTrace));
 singlechipRenderChart();singlechipRenderTables();singlechipSelectTrace();
 
