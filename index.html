@@ -287,6 +287,31 @@
 .serving-doc .serve-table thead th{background:#f2f6fa;color:#24455f}
 .serving-doc .serve-table tbody tr:last-child td,.serving-doc .serve-table tbody tr:last-child th{border-bottom:0}
 @media(max-width:900px){.serving-doc .serve-grid{grid-template-columns:1fr}.serving-doc .serve-grid .serve-card{height:auto}}
+
+/* November 25 / Concurrent serving / vmap profiling. */
+.campaign-group .nav .vmap-subnav{margin:1px 0 4px 7px;padding-left:8px;border-left:1px solid #d5e2ec;display:grid;gap:3px}
+.vmap-subnav .vmap-nav-label{font-size:10px;letter-spacing:.04em;font-weight:750;color:#526d80;padding:5px 7px 2px}
+.serving-doc .vmap-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0}
+.serving-doc .vmap-controls label{font-size:12px;font-weight:700;color:#40596f;display:flex;gap:8px;align-items:center}
+.serving-doc .vmap-controls select{border:1px solid #d0dce6;background:white;border-radius:7px;padding:8px 12px;color:#24455f;font:inherit;font-size:12px}
+.serving-doc .vmap-chart .bar-pair{display:grid;gap:5px;margin:8px 0}
+.serving-doc .vmap-chart .vmap-bar-row{display:grid;grid-template-columns:105px minmax(0,1fr) 75px;align-items:center;gap:8px;font-size:11px;color:#40596f}
+.serving-doc .vmap-chart .vmap-track{height:14px;background:#edf3f8;border-radius:4px;overflow:hidden}
+.serving-doc .vmap-chart .vmap-fill{height:100%;border-radius:4px;background:#8a9db1;min-width:1px}
+.serving-doc .vmap-chart .vmap-fill.heir{background:#217f8b}
+.serving-doc .vmap-chart .vmap-bar-value{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.serving-doc .vmap-table-wrap{overflow-x:auto}
+.serving-doc .vmap-table{min-width:700px;font-variant-numeric:tabular-nums}
+.serving-doc .vmap-table th,.serving-doc .vmap-table td{vertical-align:middle}
+.serving-doc .vmap-table td small{display:block;color:#74899b;font-size:10px;margin-top:3px}
+.serving-doc .vmap-table a{color:#236b97;text-decoration:underline;text-underline-offset:2px}
+.serving-doc .vmap-table .vmap-better{color:#16766c;font-weight:750}
+.serving-doc .vmap-table .vmap-slower{color:#965e31;font-weight:750}
+.serving-doc .vmap-trace-actions{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}
+.serving-doc .vmap-trace-actions a[hidden]{display:none}
+.serving-doc .vmap-step-values{font-size:12px;line-height:1.75;overflow-wrap:anywhere;color:#40596f}
+@media(max-width:520px){.serving-doc .vmap-chart .vmap-bar-row{grid-template-columns:80px minmax(0,1fr) 58px;gap:5px}.serving-doc .vmap-trace-actions{display:grid}}
+
 </style>
 </head>
 <body>
@@ -310,6 +335,11 @@
      <div class="result-subnav serving-subnav" aria-label="Concurrent serving subpages">
       <button data-view="concurrent-serving">Motivation</button>
       <button data-view="concurrent-serving-mapping">vmap and lax.map</button>
+      <div class="vmap-subnav" aria-label="vmap profiling pages">
+       <span class="vmap-nav-label">vmap</span>
+       <button data-view="concurrent-serving-vmap-results">Performance Results</button>
+       <button data-view="concurrent-serving-vmap-xprof">XProf Traces</button>
+      </div>
      </div>
     </nav>
    </details>
@@ -337,7 +367,7 @@
 <div class="main">
 <header class="topbar"><div class="topbar-left"><span class="dot"></span> HEIR → CROSS · TPU</div><div class="topbar-right">Compilation · preparation · inference</div></header>
 <div class="mobile-campaign-heading"><strong>Benchmark campaigns</strong><span>November 25 · FP64 | November 22 · Archived</span></div>
-<nav class="mobile-nav" aria-label="Benchmark campaign navigation"><button data-view="validation-nov25">Nov 25 · FP64 Validation</button><button data-view="precision-fixes-nov25">Nov 25 · Precision Fixes</button><button data-view="concurrent-serving">Nov 25 · Concurrent Serving</button><button data-view="concurrent-serving-mapping">Nov 25 · vmap and lax.map</button><span class="mobile-campaign-divider">Nov 22 · Archive</span><button class="active" data-view="motivation">01 Motivation</button><button data-view="overview">02 Pipeline</button><button data-view="architecture">03 Optimization</button><button data-view="results">04 Results</button><button data-view="results-online">04a Online</button><button data-view="results-offline">04b Offline</button><button data-view="validation">05 Validation</button><button data-view="xprof">06 XProf</button></nav>
+<nav class="mobile-nav" aria-label="Benchmark campaign navigation"><button data-view="validation-nov25">Nov 25 · FP64 Validation</button><button data-view="precision-fixes-nov25">Nov 25 · Precision Fixes</button><button data-view="concurrent-serving">Nov 25 · Concurrent Serving</button><button data-view="concurrent-serving-mapping">Nov 25 · vmap and lax.map</button><button data-view="concurrent-serving-vmap-results">Nov 25 · vmap Results</button><button data-view="concurrent-serving-vmap-xprof">Nov 25 · vmap XProf</button><span class="mobile-campaign-divider">Nov 22 · Archive</span><button class="active" data-view="motivation">01 Motivation</button><button data-view="overview">02 Pipeline</button><button data-view="architecture">03 Optimization</button><button data-view="results">04 Results</button><button data-view="results-online">04a Online</button><button data-view="results-offline">04b Offline</button><button data-view="validation">05 Validation</button><button data-view="xprof">06 XProf</button></nav>
 <main class="content" id="mainContent">
 <section class="screen" id="view-validation-nov25" aria-labelledby="validationNov25Title">
 <div class="fdv-wrap">
@@ -605,7 +635,83 @@ Stored in float32:
    <h2>Across-chip versus within-chip parallelism</h2>
    <p>With 8 chips for 8 images, each chip handles only one image, so no inter-image batching within a chip is needed. With 2 or 4 chips, each chip handles multiple images and the choice of mapping strategy matters. Batched execution is not automatically faster: performance depends on how XLA lowers the resulting operations and how they utilize the TPU.</p>
    <button class="btn secondary" data-view="concurrent-serving">← Concurrent serving motivation</button>
+   <button class="btn secondary" data-view="concurrent-serving-vmap-results">vmap performance results →</button>
+   <button class="btn secondary" data-view="concurrent-serving-vmap-xprof">vmap XProf traces →</button>
   </article>
+ </div>
+</section>
+
+
+<section class="screen" id="view-concurrent-serving-vmap-results" aria-labelledby="vmapResultsTitle">
+ <div class="fdv-wrap serving-doc">
+  <div class="eyebrow">November 25, 2026 / Concurrent Serving / vmap / Performance Results</div>
+  <h1 id="vmapResultsTitle">HEIR vmap vs. Native CROSS</h1>
+  <p class="lede">XProf-derived server execution measurements · 8 encrypted images per experiment · 1, 2, 4, and 8 TPU v6e chips.</p>
+  <div class="result-kpis">
+   <div class="result-kpi"><strong>45</strong><span>Raw server traces analyzed</span></div>
+   <div class="result-kpi"><strong>21 / 24</strong><span>Matched HEIR / Native comparisons</span></div>
+   <div class="result-kpi"><strong id="vmapPeakSpeedup">—</strong><span>Peak trace-derived speedup</span></div>
+  </div>
+  <article class="serve-card">
+   <h2>Measurement methodology</h2>
+   <p>These results are extracted directly from the original compressed XProf trace JSON files, not from the benchmark summary JSON. For each server trace, we identify complete host-side <code>server</code> events (<code>ph = X</code>) with a <code>step_num</code> argument on the CPU host process. The median recorded event duration is converted from microseconds to milliseconds.</p>
+   <p><b>Batch server latency</b> is the median profiled duration for all eight images. <b>Server time per image</b> is batch latency divided by eight; it measures amortized cost, not individual-request latency. <b>Throughput</b> is eight images divided by batch latency in seconds. The server marker is a host-measured interval, not a sum of TPU kernel durations.</p>
+   <p>Each trace contains 3–5 complete server markers; the actual sample count is shown in the table. Missing Native traces are shown as unavailable. These are instrumented profiling measurements; they are not uninstrumented benchmark medians.</p>
+  </article>
+  <div class="result-chart-card vmap-chart">
+   <div class="chart-top"><h3>Server performance by chip count</h3></div>
+   <div class="vmap-controls">
+    <label>TPU chips <select id="vmapResultChips"><option value="1">1 chip · 8 images/chip</option><option value="2">2 chips · 4 images/chip</option><option value="4">4 chips · 2 images/chip</option><option value="8">8 chips · 1 image/chip</option></select></label>
+    <label>Metric <select id="vmapResultMetric"><option value="image">Server ms / image</option><option value="batch">Batch server latency (ms)</option><option value="throughput">Throughput (images/s)</option></select></label>
+   </div>
+   <div class="chart-note" id="vmapResultDescription"></div>
+   <div class="results-legend"><span><i></i>Native CROSS</span><span><i class="heir"></i>HEIR vmap</span><span>Speedup = Native time ÷ HEIR time</span></div>
+   <div id="vmapResultBars" class="bar-comparison" role="img" aria-label="Trace-derived server performance comparison"></div>
+  </div>
+  <article class="serve-card" style="margin-top:16px">
+   <h2>Complete trace-derived results</h2>
+   <p>All 24 HEIR configurations and 21 available Native configurations. Click a timing to inspect its original server trace. Parenthetical sample counts refer to complete recorded host events.</p>
+   <div class="vmap-table-wrap">
+    <table class="serve-table vmap-table"><thead><tr><th>Model</th><th>Ring</th><th>Chips</th><th>Images/chip</th><th>Native ms/image</th><th>HEIR vmap ms/image</th><th>Native / HEIR</th></tr></thead><tbody id="vmapResultTable"></tbody></table>
+   </div>
+   <p style="margin-top:12px">Unavailable Native traces: LeNet 32K with 1 or 8 chips; AlexNet-Tiny 32K with 1 chip. End-to-end timing extraction is separate from these server results; the original end-to-end traces are available on the XProf page.</p>
+  </article>
+  <div class="btn-row"><button class="btn secondary" data-view="concurrent-serving-vmap-xprof">Explore original XProf traces →</button></div>
+ </div>
+</section>
+<section class="screen" id="view-concurrent-serving-vmap-xprof" aria-labelledby="vmapXprofTitle">
+ <div class="fdv-wrap serving-doc">
+  <div class="eyebrow">November 25, 2026 / Concurrent Serving / vmap / XProf Traces</div>
+  <h1 id="vmapXprofTitle">Concurrent serving XProf traces</h1>
+  <p class="lede">Native CROSS and HEIR vmap · six model/ring configurations · 1, 2, 4, or 8 TPU chips · 8 images per experiment.</p>
+  <div class="xprof-shell">
+   <p class="xprof-intro">Select a configuration and implementation. The original server trace can be downloaded directly from Drive and viewed in Perfetto. End-to-end captures are available in their original Drive folders.</p>
+   <div class="xprof-controls">
+    <label class="xprof-field">Model<select id="vmapTraceModel"><option value="alexnet-tiny">AlexNet-Tiny</option><option value="lenet">LeNet</option></select></label>
+    <label class="xprof-field">Ring degree<select id="vmapTraceRing"><option value="8k">8K · N = 8192</option><option value="16k">16K · N = 16384</option><option value="32k">32K · N = 32768</option></select></label>
+    <label class="xprof-field">TPU chips<select id="vmapTraceChips"><option value="1">1 · 8 images/chip</option><option value="2">2 · 4 images/chip</option><option value="4">4 · 2 images/chip</option><option value="8">8 · 1 image/chip</option></select></label>
+    <div class="xprof-field xprof-variants-wrap"><span>Implementation</span><div class="xprof-variants" role="group" aria-label="Select vmap profiling implementation"><button type="button" data-vmap-trace-variant="native" aria-pressed="false">Native CROSS</button><button type="button" data-vmap-trace-variant="heir" aria-pressed="true">HEIR vmap</button></div></div>
+    <label class="xprof-field">Profiling scope<select id="vmapTraceScope"><option value="server">Server</option><option value="end-to-end">End-to-end</option></select></label>
+   </div>
+   <div class="xprof-selection" aria-live="polite">
+    <div class="xprof-selection-head"><div><h2 id="vmapTraceTitle"></h2><p id="vmapTraceSummary"></p></div></div>
+    <div class="vmap-step-values" id="vmapTraceSteps"></div>
+    <div class="xprof-actions vmap-trace-actions">
+     <a class="xprof-action primary" id="vmapTraceDownload" target="_blank" rel="noopener noreferrer">Get selected trace from Drive ↗</a>
+     <a class="xprof-action" id="vmapTracePerfetto" href="https://ui.perfetto.dev/" target="_blank" rel="noopener noreferrer">Open Perfetto ↗</a>
+    </div>
+   </div>
+   <div class="xprof-steps">
+    <article class="xprof-step"><h3>1 · Download the original trace</h3><p>For server captures, use the direct file link. For end-to-end captures, open the selected Drive folder and navigate through <code>plugins/profile/</code> to the timestamped capture, then download <code>.trace.json.gz</code>.</p></article>
+    <article class="xprof-step"><h3>2 · Inspect it in Perfetto</h3><p>Open Perfetto, select <strong>Open trace file</strong>, and choose the downloaded file. Inspect the real host and TPU timeline, including the complete <code>server</code> step markers.</p></article>
+   </div>
+   <p class="xprof-note">No custom timeline is shown. The Drive-to-Perfetto workflow requires downloading the file because direct cross-origin loading is not reliable. Access depends on the original Drive sharing permissions.</p>
+  </div>
+  <div class="xprof-guide">
+   <div><h3>One chip vs. multiple chips</h3><p>The one-chip captures come from <code>c1-vmap</code> and <code>c1-native</code> (8 images on one chip). The 2-, 4-, and 8-chip captures come from <code>vmap</code> and <code>native</code>.</p></div>
+   <div><h3>Trace-derived performance</h3><p>The Results page uses the median duration of complete recorded host-side server markers from these same server trace files. Kernel attribution and end-to-end timing extraction are not included in those server results.</p></div>
+  </div>
+  <div class="btn-row"><button class="btn secondary" data-view="concurrent-serving-vmap-results">← vmap performance results</button></div>
  </div>
 </section>
 
@@ -1158,9 +1264,62 @@ document.getElementById('xprofModel').addEventListener('change',xprofSelect);
 document.getElementById('xprofRing').addEventListener('change',xprofSelect);
 xprofSelect();
 
-const viewNames=['validation-nov25','precision-fixes-nov25','concurrent-serving','concurrent-serving-mapping','motivation','overview','architecture','results','results-online','results-offline','validation','xprof'];
+
+/* Source: November 24/25 original XProf host server events, duration in microseconds.
+   Row: [model, ring, chips, HEIR, Native]; variant: [Drive server file ID, end-to-end folder ID, complete server step durations]. */
+const VMAP_PROFILE_DATA=[["lenet","8k",1,["1qi6qG4e9Ebmqan059Il4aTKIIYccpr-Z","1LVlgjJQPwgeH51wPbXIJXDZPNESCSYGZ",[388867.352,388659.933,388548.302,388670.562,388688.323]],["1CqZeeeT6P67C_dBxHylfr8OEbhPC04Y-","1q9xP1SI6PAa8HXZstccBjzlOszKC0Nbh",[312394.756,312147.135,312213.065,312166.016,312211.185]]],["lenet","8k",2,["1xCUmC9TWYI9-bbH5fsNuLPTcY736AAO1","1BigF_HtaIb1KwpJx-1QZQqebyI2LIcxf",[186449.417,186349.686,186190.916,186122.506,186196.457]],["1O6q0gKSSy32nOP-c1ACJqUC3FQ7kE2fq","1Y3PlDmcePH_y-Oa75Cod7sfz-86OR5t4",[171115.437,170982.278,170933.597,170914.918,170976.237]]],["lenet","8k",4,["1dKvGSTG4UCaR3-ZH9LR3gQwCbTHL_l_n","1_QsIR9PwzkoFfNG-2qf24MOYdI6pK1Kw",[85214.804,85101.784,85061.963,85029.574,85006.314]],["1i8OryhKFzKjQnF2pKob-zXprlaFbDiW1","1mW8dmkkVnqiuWA3UVSVBNI6vUviJxgz2",[104780.108,104748.999,104723.348,104657.618,104707.639]]],["lenet","8k",8,["1SGnOU8CpZ_6y0I0W7iEJNLBW48Hh8JiU","11e57OYFOVhFQiA3Vtn47Ra-wJ_vR5ra5",[44421.847,43592.097,43527.387,43657.657,43433.506]],["1filNW0iLQBiDWbkqa6s62hqwDooA-LpI","12hxMiyYjMlqwGy5Ti9M7-rVrNMVs4990",[60022.749,59817.359,59767.859]]],["lenet","16k",1,["1vH9X-cmIPR0iNgwFplhnU7xqISnL8MM4","1J9MBcD3tL6GllhiNA-KnVPZVV8blmuDx",[861770.103,861940.912,861613.453,861404.902,861461.343]],["1QIsltSz1h4fdvhU32mMD9pUd300VHg-H","17oXIYY4Q49JkUFzN-Untd_r96ei_20dJ",[684892,684685.24,684721.319,684638.67,685035.84]]],["lenet","16k",2,["1RKjHakZ5HvgdIIgjkZVHeRoi3UJepb6O","1USbc-cslEJq44GVPD2FBfVMjjud623gv",[405953.33,406106.781,405810.25,405759,405807.73]],["1FYynp3dqHoGnbmtWb6Cb9KmRZuWdoVK4","1HzY8ieiv1DFgv2z94GKGJteZk4WpfvzJ",[334477.515,334358.275,334352.285,334328.285,334358.275]]],["lenet","16k",4,["1yus-MIngDA6vQi_GnlVWsAqIVyDMxczu","1mt27KbKATrrO0zN5562SCS1ZarN_mYAQ",[203437.595,203532.505,203355.286,203431.735,203336.735]],["17Bny8dbp5_F1DbfYT4JYXbKZ_R983mdy","1OO-ITvxEDQsj0zZM75V6pZOi_O5o9PVU",[201065.607,200950.077,201020.657,201021.217,200969.337]]],["lenet","16k",8,["1Bm-uCpPzwdgMv156ECt49UIuos12LJaq","1FQcjzKt69PSUsqUWNoKke8Ma-1hl1apK",[93113.744,93049.693,93103.123,93095.183]],["1CU_eNa6s-jTk9B4QKWX5mYCH7xWPUEZE","1LmZUmSAJZTr4VG7lMxAis662edlSX0-F",[111518.078,111184.379,111205.048]]],["lenet","32k",1,["1g5L4NHPM5tB06AvA-UhQjV1YaQNmsk1q","1VqFhZik6PqCOVYL2Z8rYE8qzoO7ivoYZ",[1869024.922,1869113.412,1868999.482,1868371.853,1868743.132]],null],["lenet","32k",2,["1aknwd8Bgqke-RA5XmLRj9610iZwocQwQ","1ILCMqWlC7P4n4BmJQy7YsknF4QOqiYtl",[887295.885,887295.765,887025.325,887055.645,887061.775]],["1VVNAszo5UStga9CvCP67qxtd5hgdHg6X","1HvqEOmnxuV6GcmFd9gQL_kS3hZWcRxUc",[1004630.155,1002477.525,1002407.665,1002539.265,1003321.225]]],["lenet","32k",4,["1mwy8T7uYkQCRaW6QUZezpVH8YkNidLl1","1fsNJITWjf5-EZ4ocdtrlpl86y62icPf6",[434850.678,434981.308,434826.078,434945.678,434801.678]],["1MDAA-ycIlb9QEsHUp1WXoib-BKJEEIFW","1skYxT7iRM1TwNZiFXAJJ9YlglnEDx5a8",[513876.542,513904.522,514011.032]]],["lenet","32k",8,["10809uyFPTFJHx-YwOaRvMu1SpMB96mNn","1Gegp_fvNbRJgxi-we4F8hZU8TD4F4hxb",[216784.414,216649.834,216640.174,216536.835]],null],["alexnet-tiny","8k",1,["1WWmKwSHusLhYSNm5gRKeZH0wyVfH1-iW","1aPvJibmAWm0XT6HuLblJSh9__eeIfuH-",[145712.429,145503.999,145487.839,145488.679,145440.529]],["1DJLfCP15m-84-r9xoFeOEpbbRqLPr9nK","1QkYyIN1BAiw8gUbIh-g-R384Z5AHNDVu",[240067.666,239978.316,239945.037,239926.866,239928.026]]],["alexnet-tiny","8k",2,["1qjhk8tfA4ki7RVgF8wiwXuj_5xOkCJC4","18KY0UVvmU2iTgSnuA0eOMYSXYblnnP3m",[66988.865,66765.986,66681.075,66605.025,66721.405]],["1C9jb11bS2F-PVf_ezD3gF_e7AtF1DfKm","10egtW_5zXhtYRF9wT-0mQ58CcG9b9heO",[133092.768,132897.018,132863.818,132960.318,132881.478]]],["alexnet-tiny","8k",4,["1BOlobNjzozPntnUwyvEYu_UlXDIhD-0R","1SB4r9ubvHe6vgLG4HXIlkM1l1l7JE7AW",[37555.757,37008.877,36903.828,36979.557,37034.507]],["12PnYtpITYY9RwSBO3cP_0TaJ265kFaem","1Kht-BLCKGU1nephBBnzlnSR-PNuOkQFz",[84212.899,84052.769,83999.498,83968.589,84054.989]]],["alexnet-tiny","8k",8,["19L28Rouu1z-FWJ22XA6YLMvZklwJ5tvZ","1832EeI7Hw87QUZS7HyWN4R91rF0hKIyh",[21556.249,20790.178,20837.149,20765.078,20767.219]],["17eO6XmnGW9enPkhy_zsi-uY7WVKptRJQ","1XuU3K1GoHDvMo5HOiPH63dwwn-F4PSmz",[46914.059,46841.239,46841.02,46883.689]]],["alexnet-tiny","16k",1,["1f2mflUVz7N4dSMifEBP1jFDH_S947nPr","1hgprOFU-FFd39D3G_qdsuW1X79D4XYPE",[348203.617,348214.666,348006.527,347985.566,347969.797]],["1p98i6TreSZgqCM3IfBiQuH-J9d60mVaC","1uT2KXX_YUntSahWi41fhSccZi68hUTQv",[544358.192,544261.312,544176.012,544179.831,544211.562]]],["alexnet-tiny","16k",2,["1rAVb6P9S8_spg4YRsxF2k6qOX8hiDDuz","1EvLU2JOOV1EYNALRHnQf4_wkuqZ-VbYK",[156337.749,156181.508,156423.849,156261.608,156110.049]],["1QVChO0vtefAxvph-Qg3P05kVcx-oxGMW","1hUAjwgZhiiEQiPzCPoU55MG1RY_o80e7",[260202.496,259991.106,260010.696,260132.136,260082.386]]],["alexnet-tiny","16k",4,["1RL4XsWJhXVAObVZYmsqvlORQI3jz8kO8","10yBFpcwOT7Wyz-U5PmP8ru1k2YvHO15O",[77137.044,76729.595,76718.344,76647.605,76632.504]],["1gXMej_BfrJMDfqQUpC3R28zl1IruITsH","1FxShXUQqu20DyKTR6Xm5cG4Mm1vdlZnd",[160913.667,162880.828,160880.618,160833.437,160878.308]]],["alexnet-tiny","16k",8,["1W7357CA3RroGUd1golft7XrRnwm91BhQ","1Mt8NszQCIV2uJc5nA03KRGIxfPJJdnct",[39408.607,38634.357,38660.647,38656.497,38674.878]],["1gOMKBhStZLgAbWpGgr1z-qpaWjlOEMP0","1jhg8-6ytkybOuGOJp0sMQb_QPVg1wID5",[89405.518,89396.539,89381.629,91127.738]]],["alexnet-tiny","32k",1,["1nt4YcsHT5fv00ZQdoymygUjxlClB7oGa","1cf-i7BopLEJ18QWIeoMcy2c38jAJQgbm",[771562.183,771599.123,771401.123,771796.953,772115.543]],null],["alexnet-tiny","32k",2,["1EFp6GzEwGhgxSWIqMl741NB4wtNZgRtu","1v810lcHyLgfq2GgmkEGvbBgJzl8XVBI1",[380576.466,380821.735,380417.376,380376.975,380274.156]],["1d7W6ZNQF0dCLKtTtdi5gzjCLB4AswR5L","1c6piryd-e1ezN3awQLPde98meo4ffE8o",[912429.536,912501.095,912469.576,912458.795,912307.465]]],["alexnet-tiny","32k",4,["1ujO9dkXFEXFfZ14C84iKWmP3oDGOvgMr","1EIHRXQvR3d7_0_7K_7L64K7yHtxzQhp-",[175433.087,175347.288,176145.097,175395.717,175211.578]],["19QV-EgPNoO27B5K1d2Q9HUdwvuCXrpAw","1qAJ2__zd4ctR0jqKwzbzAu1tt_1v--25",[462136.612,461973.313,461924.752]]],["alexnet-tiny","32k",8,["1FKodt2hLFQ0vn4zHVjUq_uQG6Ta0WHku","1ceuYoRp0PRBhAjulG-2Sc-hnk6gCcISk",[84462.659,84308.829,84242.369,84291.729,84303.849]],["1ufPioPa59zSJQSJPlRurkGcs3p30vKi8","1Zjawna2XZ_VyhXbQdp4TYiiiyq4YPdTj",[257555.546,257410.196,257487.067]]]];
+const vmapMedian=values=>{const a=[...values].sort((x,y)=>x-y),m=Math.floor(a.length/2);return a.length%2?a[m]:(a[m-1]+a[m])/2};
+const vmapBatch=variant=>variant?vmapMedian(variant[2])/1000:null;
+const vmapMetric=(variant,metric)=>{const b=vmapBatch(variant);return b===null?null:metric==='batch'?b:metric==='throughput'?8000/b:b/8};
+const vmapModelLabel=m=>m==='lenet'?'LeNet':'AlexNet-Tiny';
+const vmapDriveFile=id=>'https://drive.google.com/file/d/'+id+'/view';
+const vmapDriveFolder=id=>'https://drive.google.com/drive/folders/'+id;
+const vmapFmt=n=>n===null?'—':n.toFixed(2);
+function vmapRenderResults(){
+ const chips=Number(document.getElementById('vmapResultChips').value),metric=document.getElementById('vmapResultMetric').value;
+ const rows=VMAP_PROFILE_DATA.filter(r=>r[2]===chips);
+ const max=Math.max(...rows.flatMap(r=>[vmapMetric(r[3],metric),vmapMetric(r[4],metric)]).filter(v=>v!==null));
+ const description=metric==='image'?'Median profiled batch server duration ÷ 8 · ms/image · lower is better':metric==='batch'?'Median profiled server duration for all 8 images · ms/batch · lower is better':'8 images ÷ median profiled server duration in seconds · images/s · higher is better';
+ document.getElementById('vmapResultDescription').textContent=description;
+ document.getElementById('vmapResultBars').setAttribute('aria-label',description+'; '+chips+' TPU chips; six model/ring configurations');
+ document.getElementById('vmapResultBars').innerHTML=rows.map(r=>{
+  const h=vmapMetric(r[3],metric),n=vmapMetric(r[4],metric),ratio=r[4]?vmapBatch(r[4])/vmapBatch(r[3]):null;
+  const bar=(v,label,cls)=>'<div class="vmap-bar-row"><span>'+label+'</span><div class="vmap-track">'+(v===null?'':'<div class="vmap-fill '+cls+'" style="width:'+(100*v/max)+'%"></div>')+'</div><span class="vmap-bar-value">'+vmapFmt(v)+'</span></div>';
+  return '<div class="bar-group"><div style="display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:700;color:#24455f"><span>'+vmapModelLabel(r[0])+' · '+r[1].toUpperCase()+'</span><span>'+(ratio===null?'Native unavailable':ratio.toFixed(2)+'× speedup')+'</span></div><div class="bar-pair">'+bar(n,'Native CROSS','')+bar(h,'HEIR vmap','heir')+'</div></div>';
+ }).join('');
+}
+function vmapRenderTable(){
+ const cell=v=>v?'<a href="'+vmapDriveFile(v[0])+'" target="_blank" rel="noopener noreferrer" title="Open original server trace">'+vmapFmt(vmapMetric(v,'image'))+'</a><small>n = '+v[2].length+'</small>':'—';
+ document.getElementById('vmapResultTable').innerHTML=VMAP_PROFILE_DATA.map(r=>{
+  const ratio=r[4]?vmapBatch(r[4])/vmapBatch(r[3]):null;
+  return '<tr><th scope="row">'+vmapModelLabel(r[0])+'</th><td>'+r[1].toUpperCase()+'</td><td>'+r[2]+'</td><td>'+8/r[2]+'</td><td>'+cell(r[4])+'</td><td>'+cell(r[3])+'</td><td class="'+(ratio===null?'':ratio>=1?'vmap-better':'vmap-slower')+'">'+(ratio===null?'—':ratio.toFixed(2)+'×')+'</td></tr>';
+ }).join('');
+ const peak=Math.max(...VMAP_PROFILE_DATA.filter(r=>r[4]).map(r=>vmapBatch(r[4])/vmapBatch(r[3])));
+ document.getElementById('vmapPeakSpeedup').textContent=peak.toFixed(2)+'×';
+}
+let vmapTraceVariant='heir';
+function vmapSelectTrace(){
+ const model=document.getElementById('vmapTraceModel').value,ring=document.getElementById('vmapTraceRing').value,chips=Number(document.getElementById('vmapTraceChips').value),scope=document.getElementById('vmapTraceScope').value;
+ const r=VMAP_PROFILE_DATA.find(r=>r[0]===model&&r[1]===ring&&r[2]===chips),v=r?.[vmapTraceVariant==='heir'?3:4];
+ const title=(vmapTraceVariant==='heir'?'HEIR vmap':'Native CROSS')+' · '+vmapModelLabel(model)+' · '+ring.toUpperCase()+' · '+chips+' chip'+(chips===1?'':'s');
+ document.getElementById('vmapTraceTitle').textContent=title;
+ document.getElementById('vmapTraceSummary').textContent=scope==='server'?'Server profiling · 8 images · '+8/chips+' images/chip':'End-to-end profiling · 8 images · '+8/chips+' images/chip';
+ const download=document.getElementById('vmapTraceDownload'),steps=document.getElementById('vmapTraceSteps'),perfetto=document.getElementById('vmapTracePerfetto');
+ download.hidden=!v;perfetto.hidden=!v;
+ if(!v){download.removeAttribute('href');steps.textContent='No original trace was available for this Native configuration.'}
+ else if(scope==='server'){download.href=vmapDriveFile(v[0]);download.textContent='Get server trace from Drive ↗';steps.textContent='Complete host server steps: '+v[2].length+' · durations (ms): '+v[2].map(x=>(x/1000).toFixed(3)).join(', ')+' · median batch: '+vmapFmt(vmapBatch(v))+' ms · amortized: '+vmapFmt(vmapMetric(v,'image'))+' ms/image.'}
+ else{download.href=vmapDriveFolder(v[1]);download.textContent='Open end-to-end trace folder ↗';steps.textContent='Original end-to-end capture folder. Timing values have not been independently extracted for this phase.'}
+ document.querySelectorAll('[data-vmap-trace-variant]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.vmapTraceVariant===vmapTraceVariant)));
+}
+document.getElementById('vmapResultChips').addEventListener('change',vmapRenderResults);
+document.getElementById('vmapResultMetric').addEventListener('change',vmapRenderResults);
+['vmapTraceModel','vmapTraceRing','vmapTraceChips','vmapTraceScope'].forEach(id=>document.getElementById(id).addEventListener('change',vmapSelectTrace));
+document.querySelectorAll('[data-vmap-trace-variant]').forEach(b=>b.addEventListener('click',()=>{vmapTraceVariant=b.dataset.vmapTraceVariant;vmapSelectTrace()}));
+vmapRenderResults();vmapRenderTable();vmapSelectTrace();
+
+const viewNames=['validation-nov25','precision-fixes-nov25','concurrent-serving','concurrent-serving-mapping','concurrent-serving-vmap-results','concurrent-serving-vmap-xprof','motivation','overview','architecture','results','results-online','results-offline','validation','xprof'];
 let lastFocus=null; let currentView='motivation';
-function navigate(view,recordHash=true){if(!viewNames.includes(view))return;currentView=view;document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='view-'+view));document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.matches('.nav button')) b.setAttribute('aria-current',b.dataset.view===view?'page':'false');});document.querySelectorAll('.nav button[data-view="results"]').forEach(b=>b.classList.toggle('parent-active',view==='results-online'||view==='results-offline'));document.querySelectorAll('.nav button[data-view="validation-nov25"]').forEach(b=>b.classList.toggle('parent-active',view==='precision-fixes-nov25'));document.querySelectorAll('.nav button[data-view="concurrent-serving"]').forEach(b=>b.classList.toggle('parent-active',view==='concurrent-serving-mapping'&&!b.closest('.serving-subnav')));document.querySelector('.campaign-sidebar .nav button[data-view="'+view+'"]')?.closest('.campaign-group')?.setAttribute('open','');if(recordHash)history.replaceState(null,'','#'+view);hideTip();window.scrollTo({top:0,behavior:'instant'});}
+function navigate(view,recordHash=true){if(!viewNames.includes(view))return;currentView=view;document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='view-'+view));document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.matches('.nav button')) b.setAttribute('aria-current',b.dataset.view===view?'page':'false');});document.querySelectorAll('.nav button[data-view="results"]').forEach(b=>b.classList.toggle('parent-active',view==='results-online'||view==='results-offline'));document.querySelectorAll('.nav button[data-view="validation-nov25"]').forEach(b=>b.classList.toggle('parent-active',view==='precision-fixes-nov25'));document.querySelectorAll('.nav button[data-view="concurrent-serving"]').forEach(b=>b.classList.toggle('parent-active',['concurrent-serving-mapping','concurrent-serving-vmap-results','concurrent-serving-vmap-xprof'].includes(view)&&!b.closest('.serving-subnav')));document.querySelector('.campaign-sidebar .nav button[data-view="'+view+'"]')?.closest('.campaign-group')?.setAttribute('open','');if(recordHash)history.replaceState(null,'','#'+view);hideTip();window.scrollTo({top:0,behavior:'instant'});}
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.view)));
 function detailsFor(target){if(target.dataset.detail)return DATA[target.dataset.detail];if(target.dataset.pipeline){const n=Number(target.dataset.pipeline); if(n===11)return null;const p=PIPELINE[n-1];return {tag:'Pipeline · Step '+n,title:p[0],summary:p[1]+'.',points:n===12?DATA.emitter.points:n===13?DATA['offline-array'].points:n===14?DATA.execute.points:['This stage is represented in the user-provided HEIR → CROSS → TPU pipeline diagram.'],cta:n===12?{label:'Explore the emitter',view:'architecture'}:n===13||n===14?{label:'See offline and online paths',view:'architecture'}:null};}return null;}
 const tip=document.getElementById('tooltip');let tipTimeout;
