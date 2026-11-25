@@ -253,6 +253,21 @@
 .campaign-sidebar .campaign-group + .campaign-group{margin-top:10px}
 .mobile-campaign-divider{align-self:center;flex:none;font-size:10px;font-weight:800;color:#7d90a3;letter-spacing:.02em;white-space:nowrap;padding:0 4px}
 @media(max-width:760px){.mobile-nav button[data-view="validation-nov25"]{background:#eaf2f9;color:#245675;font-weight:800}.mobile-nav button[data-view="validation-nov25"].active{background:#d5e7f7;color:#1c4d75}}
+
+/* November 25 precision-fix notes, displayed as a nested validation page. */
+.precision-doc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:clamp(19px,3.5vw,33px);color:#40596f;line-height:1.78;font-size:13.5px;box-shadow:var(--shadow)}
+.precision-doc h2{font-size:19px;line-height:1.4;color:#1e425f;margin:30px 0 15px;padding-top:22px;border-top:1px solid #e5edf4;letter-spacing:-.35px}
+.precision-doc h2:first-of-type{border-top:0;padding-top:0}
+.precision-doc p{margin:0 0 14px}.precision-doc p:last-child{margin-bottom:0}
+.precision-doc strong{color:#24455f}
+.precision-doc ul,.precision-doc ol{padding-left:24px;margin:4px 0 18px}.precision-doc li{margin:4px 0}
+.precision-doc code{padding:2px 5px;border-radius:4px;background:#f0f5fa;color:#244e72;font-size:.92em;overflow-wrap:anywhere}
+.precision-doc pre{background:#f2f6fa;border:1px solid #dde7ef;border-radius:10px;padding:14px 17px;overflow:auto;line-height:1.75;color:#244e72;margin:10px 0 20px}
+.precision-doc pre code{padding:0;background:transparent}
+.precision-doc .precision-equation{text-align:center;font-size:16px;color:#1e405e;margin:12px 0 17px;font-family:Georgia,"Times New Roman",serif}
+.precision-doc .precision-equation + .precision-equation{margin-top:-9px}
+.precision-doc .precision-plain{margin-top:17px;background:#f4f8fb;border-left:3px solid #2b72b8;padding:11px 14px;border-radius:0 8px 8px 0}
+.precision-doc .precision-plain:last-child{margin-bottom:0}
 </style>
 </head>
 <body>
@@ -269,6 +284,9 @@
     </summary>
     <nav class="nav" aria-label="November 25, 2026 campaign sections">
      <button class="active" data-view="validation-nov25"><span class="nav-num">01</span><span class="nav-name">Full-dataset validation</span></button>
+     <div class="result-subnav validation-subnav" aria-label="November 25 validation subpages">
+      <button data-view="precision-fixes-nov25">Changes to Achieve Precision</button>
+     </div>
     </nav>
    </details>
    <details class="campaign-group" id="campaign-nov22">
@@ -295,7 +313,7 @@
 <div class="main">
 <header class="topbar"><div class="topbar-left"><span class="dot"></span> HEIR → CROSS · TPU</div><div class="topbar-right">Compilation · preparation · inference</div></header>
 <div class="mobile-campaign-heading"><strong>Benchmark campaigns</strong><span>November 25 · FP64 | November 22 · Archived</span></div>
-<nav class="mobile-nav" aria-label="Benchmark campaign navigation"><button data-view="validation-nov25">Nov 25 · FP64 Validation</button><span class="mobile-campaign-divider">Nov 22 · Archive</span><button class="active" data-view="motivation">01 Motivation</button><button data-view="overview">02 Pipeline</button><button data-view="architecture">03 Optimization</button><button data-view="results">04 Results</button><button data-view="results-online">04a Online</button><button data-view="results-offline">04b Offline</button><button data-view="validation">05 Validation</button><button data-view="xprof">06 XProf</button></nav>
+<nav class="mobile-nav" aria-label="Benchmark campaign navigation"><button data-view="validation-nov25">Nov 25 · FP64 Validation</button><button data-view="precision-fixes-nov25">Nov 25 · Precision Fixes</button><span class="mobile-campaign-divider">Nov 22 · Archive</span><button class="active" data-view="motivation">01 Motivation</button><button data-view="overview">02 Pipeline</button><button data-view="architecture">03 Optimization</button><button data-view="results">04 Results</button><button data-view="results-online">04a Online</button><button data-view="results-offline">04b Offline</button><button data-view="validation">05 Validation</button><button data-view="xprof">06 XProf</button></nav>
 <main class="content" id="mainContent">
 <section class="screen" id="view-validation-nov25" aria-labelledby="validationNov25Title">
 <div class="fdv-wrap">
@@ -415,6 +433,96 @@
  <div class="btn-row"><button class="btn secondary" data-view="results">← Benchmark results</button><button class="btn" data-view="xprof">XProf traces →</button></div>
 </div></section>
 
+
+
+<section class="screen" id="view-precision-fixes-nov25" aria-labelledby="precisionFixTitle">
+<div class="fdv-wrap">
+ <div class="eyebrow">November 25, 2026 / Full-Dataset Validation / Precision Fixes</div>
+ <h1 id="precisionFixTitle">Three Precision Problems We Fixed in HEIR → CROSS</h1>
+ <div class="precision-doc">
+  <p>The important thing to understand is that <strong>HEIR was already predicting the correct classes for all 10,000 images</strong>. The problem was that its output numbers (<em>logits</em>) were slightly different from the plaintext results.</p>
+  <p>We identified three sources of precision loss.</p>
+
+  <h2>Issue 1: HEIR was not preserving all the digits of model weights</h2>
+  <p><strong>What was happening?</strong></p>
+  <p>Our neural networks contain many trained weights. These weights are numbers that can have many decimal digits.</p>
+  <p>For example, suppose a trained weight is:</p>
+  <p><code>0.12345678901234566</code></p>
+  <p>When HEIR generated Python code for CROSS, it was printing fewer digits, something like:</p>
+  <p><code>0.1234568</code></p>
+  <p>So the weight used during execution was slightly different from the original weight. These small differences could accumulate through the neural network's forward pass.</p>
+  <p><strong>How did we fix it?</strong></p>
+  <p>We modified <code>JaxiteWordEmitter.cpp</code> so it prints enough digits to preserve the original floating-point values.</p>
+  <ul>
+   <li><code>float64</code>: 17 significant digits (<code>%.16e</code>)</li>
+   <li><code>float32</code>: 9 significant digits (<code>%.8e</code>)</li>
+  </ul>
+  <p><strong>Implementation details:</strong></p>
+  <ul>
+   <li>File: <code>JaxiteWordEmitter.cpp</code></li>
+   <li>Function: <code>printFloatLiteral</code> — lines <strong>94–96</strong></li>
+   <li>Used at lines <strong>1660, 1679, 1695</strong></li>
+   <li>Test: <code>emit_float_constants.mlir</code></li>
+  </ul>
+  <p class="precision-plain"><strong>In simple words:</strong> HEIR now preserves the precision of model constants when generating executable code instead of unnecessarily rounding them.</p>
+
+  <h2>Issue 2: Decryption was rounding the final output values</h2>
+  <p><strong>What was happening?</strong></p>
+  <p>After the TPU finished encrypted inference, we decrypted the results to obtain the final logits.</p>
+  <p>However, the generated decryption function was storing those values in <code>float32</code> arrays.</p>
+  <p>Even if the decrypted result had higher precision, storing it in <code>float32</code> would round it.</p>
+  <p>For example:</p>
+  <pre><code>Decrypted logit:
+0.123456789012345
+
+Stored in float32:
+0.12345679</code></pre>
+  <p>Notice that the last several digits are lost.</p>
+  <p><strong>How did we fix it?</strong></p>
+  <p>We modified <code>JaxiteWordEmitter.cpp</code> so that the client decryption functions store the output in <code>float64</code> arrays, even when the model's output type is <code>f32</code>.</p>
+  <p>Other functions can still use <code>float32</code> when appropriate.</p>
+  <p><strong>Implementation details:</strong></p>
+  <ul>
+   <li>File: <code>JaxiteWordEmitter.cpp</code></li>
+   <li>Function: <code>getNumpyDtype</code> — lines <strong>103–106</strong></li>
+   <li>Used at lines <strong>1430, 1668, 1707</strong></li>
+   <li>Test: <code>emit_decrypt_float64.mlir</code></li>
+  </ul>
+  <p class="precision-plain"><strong>In simple words:</strong> Even when the encrypted computation produced a highly precise result, our decryption function was unnecessarily rounding that result. We fixed the output storage so it no longer loses those digits.</p>
+
+  <h2>Issue 3: AlexNet-Tiny's convolution and pooling matrices were generated at lower precision</h2>
+  <p><strong>What was happening?</strong></p>
+  <p>Remember that AlexNet-Tiny contains convolution and average-pooling layers.</p>
+  <p>Before HEIR compilation, our custom Python exporter converts these operations into equivalent matrix multiplications.</p>
+  <p>Mathematically:</p>
+  <div class="precision-equation"><i>y</i> = <i>P</i>(<i>Wx</i> + <i>b</i>)</div>
+  <p>can be rewritten as:</p>
+  <div class="precision-equation"><i>y</i> = (<i>PW</i>)<i>x</i> + <i>Pb</i></div>
+  <p>Here, <i>W</i> represents convolution and <i>P</i> represents average pooling.</p>
+  <p>Previously, the combined matrix <i>PW</i> was computed using <code>float32</code>, introducing rounding errors <strong>before the MLIR even reached HEIR</strong>.</p>
+  <p><strong>How did we fix it?</strong></p>
+  <p>We developed an automatic exporter, <code>export_model_mlir.py</code>, that:</p>
+  <ol>
+   <li>Loads the trained model weights.</li>
+   <li>Constructs the equivalent matrices using <code>float64</code>.</li>
+   <li>Verifies that the matrix-based computation matches the original layer-by-layer model, with relative error below 10<sup>−12</sup>.</li>
+   <li>Generates the MLIR automatically using <code>float64</code> values.</li>
+  </ol>
+  <p>The script <code>build_model_programs.py</code> handles the subsequent compilation pipeline.</p>
+  <p><strong>Implementation details:</strong></p>
+  <ul>
+   <li>File: <code>export_model_mlir.py</code></li>
+   <li>Weight loading: line <strong>110</strong></li>
+   <li>Matrix lowering: line <strong>177</strong></li>
+   <li>Correctness verification: line <strong>200</strong></li>
+   <li>Error tolerance check (<code>1e-12</code>): line <strong>213</strong></li>
+   <li>MLIR generation (<code>render</code>): line <strong>267</strong></li>
+   <li>End-to-end build script: <code>build_model_programs.py</code></li>
+  </ul>
+  <p class="precision-plain"><strong>In simple words:</strong> Our model exporter now creates more precise matrices before handing them to HEIR, preventing precision loss at the very beginning of compilation.</p>
+ </div>
+</div>
+</section>
 
 <section class="screen" id="view-overview" aria-labelledby="overviewTitle">
  <div class="eyebrow">02 / Pipeline</div><h1 id="overviewTitle">HEIR → CROSS → TPU pipeline</h1>
@@ -965,9 +1073,9 @@ document.getElementById('xprofModel').addEventListener('change',xprofSelect);
 document.getElementById('xprofRing').addEventListener('change',xprofSelect);
 xprofSelect();
 
-const viewNames=['validation-nov25','motivation','overview','architecture','results','results-online','results-offline','validation','xprof'];
+const viewNames=['validation-nov25','precision-fixes-nov25','motivation','overview','architecture','results','results-online','results-offline','validation','xprof'];
 let lastFocus=null; let currentView='motivation';
-function navigate(view,recordHash=true){if(!viewNames.includes(view))return;currentView=view;document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='view-'+view));document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.matches('.nav button')) b.setAttribute('aria-current',b.dataset.view===view?'page':'false');});document.querySelectorAll('.nav button[data-view="results"]').forEach(b=>b.classList.toggle('parent-active',view==='results-online'||view==='results-offline'));document.querySelector('.campaign-sidebar .nav button[data-view="'+view+'"]')?.closest('.campaign-group')?.setAttribute('open','');if(recordHash)history.replaceState(null,'','#'+view);hideTip();window.scrollTo({top:0,behavior:'instant'});}
+function navigate(view,recordHash=true){if(!viewNames.includes(view))return;currentView=view;document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='view-'+view));document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view); if(b.matches('.nav button')) b.setAttribute('aria-current',b.dataset.view===view?'page':'false');});document.querySelectorAll('.nav button[data-view="results"]').forEach(b=>b.classList.toggle('parent-active',view==='results-online'||view==='results-offline'));document.querySelectorAll('.nav button[data-view="validation-nov25"]').forEach(b=>b.classList.toggle('parent-active',view==='precision-fixes-nov25'));document.querySelector('.campaign-sidebar .nav button[data-view="'+view+'"]')?.closest('.campaign-group')?.setAttribute('open','');if(recordHash)history.replaceState(null,'','#'+view);hideTip();window.scrollTo({top:0,behavior:'instant'});}
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.view)));
 function detailsFor(target){if(target.dataset.detail)return DATA[target.dataset.detail];if(target.dataset.pipeline){const n=Number(target.dataset.pipeline); if(n===11)return null;const p=PIPELINE[n-1];return {tag:'Pipeline · Step '+n,title:p[0],summary:p[1]+'.',points:n===12?DATA.emitter.points:n===13?DATA['offline-array'].points:n===14?DATA.execute.points:['This stage is represented in the user-provided HEIR → CROSS → TPU pipeline diagram.'],cta:n===12?{label:'Explore the emitter',view:'architecture'}:n===13||n===14?{label:'See offline and online paths',view:'architecture'}:null};}return null;}
 const tip=document.getElementById('tooltip');let tipTimeout;
